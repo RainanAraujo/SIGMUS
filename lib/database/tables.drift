@@ -1,0 +1,114 @@
+CREATE TABLE mutiroes (
+    id INT PRIMARY KEY,
+    tipo TEXT NOT NULL,
+    data_inicio TEXT NOT NULL,
+    data_final TEXT NOT NULL,
+    estado TEXT NOT NULL,
+    municipio TEXT NOT NULL,
+    local TEXT NOT NULL,
+    demandante TEXT NOT NULL,
+    contratante TEXT NOT NULL,
+    atualizado_em INT NOT NULL,
+    status INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE permissoes (
+    mutiraoId INT NOT NULL,
+    email TEXT NOT NULL,
+    permissoes JSON NOT NULL,
+    PRIMARY KEY (mutiraoId, email),
+    FOREIGN KEY (mutiraoId) REFERENCES mutiroes (id) ON DELETE CASCADE
+);
+
+CREATE TABLE colaboradores (
+    id INT PRIMARY KEY,
+    mutiraoId INT NOT NULL,
+    nome TEXT NOT NULL,
+    funcao TEXT NOT NULL,
+    atualizado_em INT NOT NULL,
+    status INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE pacientes (
+    id INT PRIMARY KEY,
+    cpf TEXT,
+    cns TEXT,
+    nome TEXT,
+    tel TEXT,
+    dataNascimento TEXT,
+    uf TEXT,
+    municipio TEXT,
+    endereco TEXT,
+    nomeDaMae TEXT,
+    atualizado_em INT NOT NULL,
+    status INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE medicos (
+    id INT PRIMARY KEY,
+    mutiraoId INT NOT NULL,
+    nome TEXT NOT NULL,
+    crm TEXT NOT NULL,
+    atualizado_em INT NOT NULL,
+    status INT NOT NULL DEFAULT 0
+);
+CREATE TABLE condutas (
+    id INT PRIMARY KEY,
+    data TEXT,
+    mutiraoId INT NOT NULL,
+    pacienteId INT NOT NULL,
+    medicoId INT,
+    tipo TEXT,
+    dados JSONB,
+    atualizado_em INT NOT NULL,
+    status INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (mutiraoId) REFERENCES mutiroes (id),
+    FOREIGN KEY (pacienteId) REFERENCES pacientes (id)
+);
+
+CREATE TABLE procedimentos (
+    id INT PRIMARY KEY,
+    data TEXT,
+    mutiraoId INT NOT NULL,
+    pacienteId INT NOT NULL,
+    medicoId INT NOT NULL,
+    tipo TEXT NOT NULL,
+    olho TEXT NOT NULL,
+    dioptriaLente TEXT,
+    intercorrencia TEXT,
+    observacao TEXT,
+    atualizado_em INT NOT NULL,
+    status INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (mutiraoId) REFERENCES mutiroes (id),
+    FOREIGN KEY (pacienteId) REFERENCES pacientes (id),
+    FOREIGN KEY (medicoId) REFERENCES medicos (id)
+);
+
+CREATE TABLE condutas_genericas (
+    id INT PRIMARY KEY,
+    data TEXT,
+    mutiraoId INT NOT NULL,
+    pacienteId INT NOT NULL,
+    medicoId INT,
+    conduta TEXT,
+    observacao TEXT,
+    atualizado_em INT NOT NULL,
+    status INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (mutiraoId) REFERENCES mutiroes (id),
+    FOREIGN KEY (pacienteId) REFERENCES pacientes (id),
+    FOREIGN KEY (medicoId) REFERENCES medicos (id)
+);
+
+CREATE TABLE mutirao_condutas (
+    mutiraoId INT NOT NULL,
+    conduta TEXT,
+    PRIMARY KEY (mutiraoId, conduta),
+    FOREIGN KEY (mutiraoId) REFERENCES mutiroes (id)
+);
+
+CREATE TABLE historico_sincronizacao (
+    localTs INT PRIMARY KEY,
+    remoteTs INT NOT NULL,
+    mutiraoId INT NOT NULL,
+    FOREIGN KEY (mutiraoId) REFERENCES mutiroes (id)
+);
