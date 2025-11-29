@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sigmus/theme/app_colors.dart';
+import 'package:sigmus/theme/app_typography.dart';
 
 /// Dialog padrão da aplicação com header e footer customizáveis
 class AppDialog extends StatelessWidget {
@@ -26,6 +28,13 @@ class AppDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: AppColors.card,
+      surfaceTintColor: Colors.transparent,
+      insetPadding: const EdgeInsets.all(24),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: AppColors.border),
+      ),
       child: Container(
         constraints: BoxConstraints(
           maxWidth: maxWidth,
@@ -37,21 +46,17 @@ class AppDialog extends StatelessWidget {
             // Header
             _buildHeader(context),
 
-            const Divider(height: 1),
-
             // Content
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                physics: const ClampingScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
                 child: child,
               ),
             ),
 
             // Footer (se houver ações)
-            if (actions != null && actions!.isNotEmpty) ...[
-              const Divider(height: 1),
-              _buildFooter(context),
-            ],
+            if (actions != null && actions!.isNotEmpty) _buildFooter(context),
           ],
         ),
       ),
@@ -59,37 +64,43 @@ class AppDialog extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.all(24),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: Theme.of(context).textTheme.headlineSmall),
+                Text(title, style: AppTypography.sectionTitle),
                 if (description != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    description!,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withOpacity(0.6),
-                    ),
-                  ),
+                  const SizedBox(height: 4),
+                  Text(description!, style: AppTypography.sectionSubtitle),
                 ],
               ],
             ),
           ),
           if (showCloseButton)
-            IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                onClose?.call();
-                Navigator.of(context).pop();
-              },
-              tooltip: 'Fechar',
+            SizedBox(
+              width: 32,
+              height: 32,
+              child: IconButton(
+                focusNode: FocusNode(skipTraversal: true),
+                padding: EdgeInsets.zero,
+                icon: const Icon(Icons.close, size: 18),
+                color: AppColors.mutedForeground,
+                onPressed: () {
+                  onClose?.call();
+                  Navigator.of(context).pop();
+                },
+                tooltip: 'Fechar',
+                style: IconButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                ),
+              ),
             ),
         ],
       ),
@@ -97,8 +108,11 @@ class AppDialog extends StatelessWidget {
   }
 
   Widget _buildFooter(BuildContext context) {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.all(24),
+      decoration: const BoxDecoration(
+        border: Border(top: BorderSide(color: AppColors.border)),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

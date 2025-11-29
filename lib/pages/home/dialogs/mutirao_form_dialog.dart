@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../models/mutirao_info.dart';
-import '../../../widgets/app_dialog.dart';
+import 'package:sigmus/data/brasil_data.dart';
+import 'package:sigmus/models/mutirao_info.dart';
+import 'package:sigmus/theme/app_colors.dart';
+import 'package:sigmus/widgets/app_date_range_picker.dart';
+import 'package:sigmus/widgets/app_dialog.dart';
+import 'package:sigmus/widgets/app_dropdown.dart';
+import 'package:sigmus/widgets/app_searchable_select.dart';
+import 'package:sigmus/widgets/app_toast.dart';
 
 class MutiraoFormDialog extends StatefulWidget {
   final MutiraoInfo? mutirao;
@@ -71,38 +77,13 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
     super.dispose();
   }
 
-  Future<void> _selectDateRange() async {
-    final DateTimeRange? picked = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
-      initialDateRange: _dataInicio != null && _dataFinal != null
-          ? DateTimeRange(start: _dataInicio!, end: _dataFinal!)
-          : null,
-      locale: const Locale('pt', 'BR'),
-      builder: (context, child) {
-        return Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 500, maxHeight: 500),
-            child: Theme(data: Theme.of(context), child: child!),
-          ),
-        );
-      },
-    );
-
-    if (picked != null) {
-      setState(() {
-        _dataInicio = picked.start;
-        _dataFinal = picked.end;
-      });
-    }
-  }
-
   void _handleSubmit() async {
     if (_formKey.currentState!.validate()) {
       if (_dataInicio == null || _dataFinal == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Selecione a data do mutirão')),
+        AppToast.show(
+          context,
+          message: 'Selecione a data do mutirão',
+          isError: true,
         );
         return;
       }
@@ -141,8 +122,10 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
   void _addColaborador() {
     if (_colaboradorNomeController.text.isEmpty ||
         _colaboradorFuncaoController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Nome e função são obrigatórios')),
+      AppToast.show(
+        context,
+        message: 'Nome e função são obrigatórios',
+        isError: true,
       );
       return;
     }
@@ -167,8 +150,10 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
 
   void _addConduta() {
     if (_condutaController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Nome da conduta é obrigatório')),
+      AppToast.show(
+        context,
+        message: 'Nome da conduta é obrigatório',
+        isError: true,
       );
       return;
     }
@@ -188,10 +173,10 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
   void _addMedico() {
     if (_medicoNomeController.text.isEmpty ||
         _medicoCRMController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Nome e número de registro são obrigatórios'),
-        ),
+      AppToast.show(
+        context,
+        message: 'Nome e número de registro são obrigatórios',
+        isError: true,
       );
       return;
     }
@@ -214,18 +199,6 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
     });
   }
 
-  String _formatDateRange() {
-    if (_dataInicio == null || _dataFinal == null) {
-      return 'Selecione a data';
-    }
-
-    final format = DateFormat('dd \'de\' MMM \'de\' yy', 'pt_BR');
-    if (_dataInicio == _dataFinal) {
-      return format.format(_dataInicio!);
-    }
-    return '${format.format(_dataInicio!)} - ${format.format(_dataFinal!)}';
-  }
-
   @override
   Widget build(BuildContext context) {
     return AppDialog(
@@ -235,7 +208,7 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
           : 'Preencha as informações do novo mutirão',
       maxHeight: 600,
       actions: [
-        TextButton(
+        OutlinedButton(
           onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
           child: const Text('Cancelar'),
         ),
@@ -245,7 +218,10 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
               ? const SizedBox(
                   width: 16,
                   height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primaryForeground,
+                  ),
                 )
               : const Text('Salvar'),
         ),
@@ -259,11 +235,11 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
             Row(
               children: [
                 Expanded(
-                  child: DropdownButtonFormField<String>(
+                  child: AppDropdown<String>(
                     value: _tipo,
-                    decoration: const InputDecoration(
-                      labelText: 'Tipo de Mutirão *',
-                    ),
+                    label: 'Tipo de Mutirão',
+                    isRequired: true,
+                    enabled: widget.mutirao == null,
                     items: const [
                       DropdownMenuItem(
                         value: 'cirurgia',
@@ -278,26 +254,26 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
                         child: Text('Genérico'),
                       ),
                     ],
-                    onChanged: widget.mutirao != null
-                        ? null
-                        : (value) {
-                            setState(() {
-                              _tipo = value!;
-                            });
-                          },
+                    onChanged: (value) => setState(() => _tipo = value!),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: InkWell(
-                    onTap: _selectDateRange,
-                    child: InputDecorator(
-                      decoration: const InputDecoration(
-                        labelText: 'Data *',
-                        prefixIcon: Icon(Icons.calendar_today),
-                      ),
-                      child: Text(_formatDateRange()),
-                    ),
+                  child: AppDateRangePicker(
+                    label: 'Data',
+                    isRequired: true,
+                    startDate: _dataInicio,
+                    endDate: _dataFinal,
+                    firstDate: DateTime(2025),
+                    lastDate: DateTime(2030),
+                    onChanged: (range) {
+                      if (range != null) {
+                        setState(() {
+                          _dataInicio = range.start;
+                          _dataFinal = range.end;
+                        });
+                      }
+                    },
                   ),
                 ),
               ],
@@ -306,20 +282,20 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
             const SizedBox(height: 16),
 
             // Estado
-            DropdownButtonFormField<String>(
+            AppSearchableSelect<String>(
+              key: const ValueKey('estado'),
+              label: 'Estado',
+              isRequired: true,
               value: _estado.isEmpty ? null : _estado,
-              decoration: const InputDecoration(labelText: 'Estado *'),
-              items: _getEstados(),
-              onChanged: (value) {
-                setState(() {
-                  _estado = value!;
-                  _municipio = '';
-                });
-              },
+              options: _getEstadosOptions(),
+              searchHint: 'Buscar estado...',
+              onChanged: (value) => setState(() {
+                _estado = value ?? '';
+                _municipio = '';
+              }),
               validator: (value) {
-                if (value == null || value.isEmpty) {
+                if (value == null || value.isEmpty)
                   return 'Selecione um estado';
-                }
                 return null;
               },
             ),
@@ -330,21 +306,19 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
             Row(
               children: [
                 Expanded(
-                  child: DropdownButtonFormField<String>(
+                  child: AppSearchableSelect<String>(
+                    key: const ValueKey('municipio'),
+                    label: 'Município',
+                    isRequired: true,
                     value: _municipio.isEmpty ? null : _municipio,
-                    decoration: const InputDecoration(labelText: 'Município *'),
-                    items: _getMunicipios(),
-                    onChanged: _estado.isEmpty
-                        ? null
-                        : (value) {
-                            setState(() {
-                              _municipio = value!;
-                            });
-                          },
+                    options: _getMunicipiosOptions(),
+                    enabled: _estado.isNotEmpty,
+                    searchHint: 'Buscar município...',
+                    onChanged: (value) =>
+                        setState(() => _municipio = value ?? ''),
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
+                      if (value == null || value.isEmpty)
                         return 'Selecione um município';
-                      }
                       return null;
                     },
                   ),
@@ -359,9 +333,8 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
                     ),
                     onChanged: (value) => _local = value,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
+                      if (value == null || value.isEmpty)
                         return 'Digite o local';
-                      }
                       return null;
                     },
                   ),
@@ -384,9 +357,8 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
                     ),
                     onChanged: (value) => _demandante = value,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
+                      if (value == null || value.isEmpty)
                         return 'Digite o demandante';
-                      }
                       return null;
                     },
                   ),
@@ -402,9 +374,8 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
                     ),
                     onChanged: (value) => _contratante = value,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
+                      if (value == null || value.isEmpty)
                         return 'Digite o contratante';
-                      }
                       return null;
                     },
                   ),
@@ -415,9 +386,19 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
             // Condutas (apenas para tipo genérico)
             if (_tipo == 'generico') ...[
               const SizedBox(height: 24),
-              const Divider(),
-              const SizedBox(height: 16),
-              Text('Condutas', style: Theme.of(context).textTheme.titleMedium),
+              Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                height: 1,
+                color: AppColors.border,
+              ),
+              const Text(
+                'Condutas',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.foreground,
+                ),
+              ),
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -445,11 +426,18 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
 
             // Equipe envolvida
             const SizedBox(height: 24),
-            const Divider(),
-            const SizedBox(height: 16),
-            Text(
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              height: 1,
+              color: AppColors.border,
+            ),
+            const Text(
               'Equipe envolvida',
-              style: Theme.of(context).textTheme.titleMedium,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.foreground,
+              ),
             ),
             const SizedBox(height: 16),
             Row(
@@ -487,11 +475,18 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
 
             // Profissionais de saúde
             const SizedBox(height: 24),
-            const Divider(),
-            const SizedBox(height: 16),
-            Text(
+            Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              height: 1,
+              color: AppColors.border,
+            ),
+            const Text(
               'Profissionais de saúde',
-              style: Theme.of(context).textTheme.titleMedium,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.foreground,
+              ),
             ),
             const SizedBox(height: 16),
             Row(
@@ -533,16 +528,36 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
   }
 
   Widget _buildCondutasTable() {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Column(
-        children: _condutas.map((conduta) {
-          return ListTile(
-            dense: true,
-            title: Text(conduta),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: () => _removeConduta(conduta),
-              tooltip: 'Remover',
+        children: _condutas.asMap().entries.map((entry) {
+          final index = entry.key;
+          final conduta = entry.value;
+          return Container(
+            decoration: BoxDecoration(
+              border: index > 0
+                  ? const Border(top: BorderSide(color: AppColors.border))
+                  : null,
+            ),
+            child: ListTile(
+              dense: true,
+              title: Text(
+                conduta,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.foreground,
+                ),
+              ),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete_outline, size: 16),
+                color: AppColors.mutedForeground,
+                onPressed: () => _removeConduta(conduta),
+                tooltip: 'Remover',
+              ),
             ),
           );
         }).toList(),
@@ -551,17 +566,43 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
   }
 
   Widget _buildEquipeTable() {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Column(
-        children: _equipe.map((colaborador) {
-          return ListTile(
-            dense: true,
-            title: Text(colaborador.nome),
-            subtitle: Text(colaborador.funcao),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: () => _removeColaborador(colaborador),
-              tooltip: 'Remover',
+        children: _equipe.asMap().entries.map((entry) {
+          final index = entry.key;
+          final colaborador = entry.value;
+          return Container(
+            decoration: BoxDecoration(
+              border: index > 0
+                  ? const Border(top: BorderSide(color: AppColors.border))
+                  : null,
+            ),
+            child: ListTile(
+              dense: true,
+              title: Text(
+                colaborador.nome,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.foreground,
+                ),
+              ),
+              subtitle: Text(
+                colaborador.funcao,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.mutedForeground,
+                ),
+              ),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete_outline, size: 16),
+                color: AppColors.mutedForeground,
+                onPressed: () => _removeColaborador(colaborador),
+                tooltip: 'Remover',
+              ),
             ),
           );
         }).toList(),
@@ -570,17 +611,43 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
   }
 
   Widget _buildMedicosTable() {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Column(
-        children: _medicos.map((medico) {
-          return ListTile(
-            dense: true,
-            title: Text(medico.nome),
-            subtitle: Text(medico.crm),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: () => _removeMedico(medico),
-              tooltip: 'Remover',
+        children: _medicos.asMap().entries.map((entry) {
+          final index = entry.key;
+          final medico = entry.value;
+          return Container(
+            decoration: BoxDecoration(
+              border: index > 0
+                  ? const Border(top: BorderSide(color: AppColors.border))
+                  : null,
+            ),
+            child: ListTile(
+              dense: true,
+              title: Text(
+                medico.nome,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.foreground,
+                ),
+              ),
+              subtitle: Text(
+                medico.crm,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.mutedForeground,
+                ),
+              ),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete_outline, size: 16),
+                color: AppColors.mutedForeground,
+                onPressed: () => _removeMedico(medico),
+                tooltip: 'Remover',
+              ),
             ),
           );
         }).toList(),
@@ -588,26 +655,18 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
     );
   }
 
-  List<DropdownMenuItem<String>> _getEstados() {
-    // TODO: Carregar estados do arquivo JSON
-    return const [
-      DropdownMenuItem(value: 'SP', child: Text('São Paulo')),
-      DropdownMenuItem(value: 'RJ', child: Text('Rio de Janeiro')),
-      DropdownMenuItem(value: 'MG', child: Text('Minas Gerais')),
-      DropdownMenuItem(value: 'BA', child: Text('Bahia')),
-      DropdownMenuItem(value: 'PR', child: Text('Paraná')),
-    ];
+  List<SelectOption<String>> _getEstadosOptions() {
+    return BrasilData.estados
+        .map((e) => SelectOption(value: e.sigla, label: e.nome))
+        .toList();
   }
 
-  List<DropdownMenuItem<String>> _getMunicipios() {
-    // TODO: Carregar municípios do estado selecionado do arquivo JSON
+  List<SelectOption<String>> _getMunicipiosOptions() {
     if (_estado.isEmpty) return [];
 
-    return const [
-      DropdownMenuItem(value: 'São Paulo', child: Text('São Paulo')),
-      DropdownMenuItem(value: 'Campinas', child: Text('Campinas')),
-      DropdownMenuItem(value: 'Santos', child: Text('Santos')),
-    ];
+    return BrasilData.getMunicipios(
+      _estado,
+    ).map((cidade) => SelectOption(value: cidade, label: cidade)).toList();
   }
 }
 

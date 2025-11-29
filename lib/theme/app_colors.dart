@@ -20,7 +20,7 @@ class AppColors {
   static const Color popoverForeground = Color(0xFF0A0A0A);
 
   // Primary
-  static const Color primary = Color(0xFF0A0A0A);
+  static const Color primary = Color.fromARGB(255, 50, 104, 232);
   static const Color primaryForeground = Color(0xFFFAFAFA);
 
   // Secondary

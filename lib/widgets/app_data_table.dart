@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sigmus/theme/app_colors.dart';
 
 /// Configuração para uma coluna da tabela
 class TableColumnConfig<T> {
@@ -124,13 +125,7 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
-        _buildToolbar(),
-        const SizedBox(height: 16),
-        Row(
-          children: [Expanded(child: Card(child: _buildContent()))],
-        ),
-      ],
+      children: [_buildToolbar(), const SizedBox(height: 16), _buildContent()],
     );
   }
 
@@ -140,27 +135,53 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
         // Barra de pesquisa
         if (widget.enableSearch)
           Expanded(
-            child: SizedBox(
-              height: 36,
+            child: Container(
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.border),
+              ),
               child: TextField(
                 controller: _searchController,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.foreground,
+                ),
                 decoration: InputDecoration(
                   hintText: widget.searchHint ?? 'Buscar...',
-                  prefixIcon: const Icon(Icons.search),
+                  hintStyle: const TextStyle(
+                    color: AppColors.mutedForeground,
+                    fontSize: 14,
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    size: 18,
+                    color: AppColors.mutedForeground,
+                  ),
                   suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(
-                          icon: const Icon(Icons.clear),
+                          icon: const Icon(
+                            Icons.close,
+                            size: 16,
+                            color: AppColors.mutedForeground,
+                          ),
                           onPressed: () {
                             _searchController.clear();
                           },
                         )
                       : null,
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                 ),
               ),
             ),
           ),
         if (widget.enableSearch && widget.actions != null)
-          const SizedBox(width: 8),
+          const SizedBox(width: 12),
         // Ações customizadas (botões passados como parâmetro)
         if (widget.actions != null) ...widget.actions!,
       ],
@@ -169,9 +190,23 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
 
   Widget _buildContent() {
     if (widget.isLoading) {
-      return const Padding(
-        padding: EdgeInsets.all(32),
-        child: Center(child: CircularProgressIndicator()),
+      return Container(
+        padding: const EdgeInsets.all(48),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: const Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: AppColors.foreground,
+            ),
+          ),
+        ),
       );
     }
 
@@ -179,35 +214,71 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
       return _buildEmptyState();
     }
 
-    return Theme(
-      data: Theme.of(context).copyWith(
-        cardTheme: CardThemeData(
-          elevation: 0,
-          margin: EdgeInsets.zero,
-          color: Colors.transparent,
+    return SizedBox(
+      width: double.infinity,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.border),
         ),
-      ),
-      child: PaginatedDataTable(
-        header: null,
-        rowsPerPage: _rowsPerPage,
-        availableRowsPerPage: const [5, 10, 20, 50],
-        onRowsPerPageChanged: (value) {
-          setState(() {
-            _rowsPerPage = value ?? 10;
-          });
-        },
-        columns: [
-          ...widget.columns.map(
-            (column) => DataColumn(label: Text(column.label)),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              cardTheme: const CardThemeData(
+                elevation: 0,
+                margin: EdgeInsets.zero,
+                color: Colors.transparent,
+              ),
+              dataTableTheme: DataTableThemeData(
+                headingRowColor: WidgetStateProperty.all(AppColors.muted),
+                dataRowColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.hovered)) {
+                    return AppColors.accent;
+                  }
+                  return AppColors.card;
+                }),
+                headingTextStyle: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.mutedForeground,
+                  letterSpacing: 0.02,
+                ),
+                dataTextStyle: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.foreground,
+                ),
+                dividerThickness: 1,
+              ),
+              dividerColor: AppColors.border,
+            ),
+            child: PaginatedDataTable(
+              header: null,
+              rowsPerPage: _rowsPerPage,
+              availableRowsPerPage: const [5, 10, 20, 50],
+              onRowsPerPageChanged: (value) {
+                setState(() {
+                  _rowsPerPage = value ?? 10;
+                });
+              },
+              columns: [
+                ...widget.columns.map(
+                  (column) =>
+                      DataColumn(label: Text(column.label.toUpperCase())),
+                ),
+                if (widget.rowActions != null || widget.menuActions != null)
+                  const DataColumn(label: SizedBox.shrink(), numeric: true),
+              ],
+              source: _DataTableSourceAdapter<T>(
+                items: _filteredItems,
+                columns: widget.columns,
+                rowActions: widget.rowActions,
+                menuActions: widget.menuActions,
+              ),
+            ),
           ),
-          if (widget.rowActions != null || widget.menuActions != null)
-            const DataColumn(label: SizedBox.shrink(), numeric: true),
-        ],
-        source: _DataTableSourceAdapter<T>(
-          items: _filteredItems,
-          columns: widget.columns,
-          rowActions: widget.rowActions,
-          menuActions: widget.menuActions,
         ),
       ),
     );
@@ -216,36 +287,73 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
   Widget _buildEmptyState() {
     final isSearching = _searchController.text.isNotEmpty;
 
-    return Padding(
-      padding: const EdgeInsets.all(32),
-      child: Column(
-        children: [
-          if (isSearching && widget.emptySearchIcon != null)
-            widget.emptySearchIcon!
-          else if (!isSearching && widget.emptyIcon != null)
-            widget.emptyIcon!
-          else
-            Icon(
-              isSearching ? Icons.search_off : Icons.inbox_outlined,
-              size: 48,
-              color: Colors.grey.shade400,
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppColors.muted,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                isSearching ? Icons.search_off_outlined : Icons.inbox_outlined,
+                size: 24,
+                color: AppColors.mutedForeground,
+              ),
             ),
-          const SizedBox(height: 16),
-          Text(
-            isSearching
-                ? '${widget.emptySearchMessage} "${_searchController.text}"'
-                : widget.emptyMessage,
-            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-            textAlign: TextAlign.center,
-          ),
-          if (isSearching) ...[
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: () => _searchController.clear(),
-              child: const Text('Limpar busca'),
+            const SizedBox(height: 16),
+            Text(
+              isSearching
+                  ? '${widget.emptySearchMessage} "${_searchController.text}"'
+                  : widget.emptyMessage,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: AppColors.foreground,
+              ),
+              textAlign: TextAlign.center,
             ),
+            if (isSearching) ...[
+              const SizedBox(height: 4),
+              const Text(
+                'Tente ajustar os termos da sua busca',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppColors.mutedForeground,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.foreground,
+                  backgroundColor: AppColors.secondary,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () => _searchController.clear(),
+                child: const Text(
+                  'Limpar busca',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                ),
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
@@ -272,7 +380,14 @@ class _DataTableSourceAdapter<T> extends DataTableSource {
 
     return DataRow(
       cells: [
-        ...columns.map((column) => DataCell(Text(column.getValue(item)))),
+        ...columns.map(
+          (column) => DataCell(
+            Text(
+              column.getValue(item),
+              style: const TextStyle(fontSize: 14, color: AppColors.foreground),
+            ),
+          ),
+        ),
         if (rowActions != null || menuActions != null)
           DataCell(
             Row(
@@ -281,29 +396,78 @@ class _DataTableSourceAdapter<T> extends DataTableSource {
                 // Ações inline
                 if (rowActions != null)
                   ...rowActions!.map(
-                    (action) => IconButton(
-                      icon: Icon(action.icon, size: 20),
-                      onPressed: () => action.onPressed(item),
-                      tooltip: action.tooltip,
-                      color: action.color,
+                    (action) => Container(
+                      width: 32,
+                      height: 32,
+                      margin: const EdgeInsets.only(right: 4),
+                      child: IconButton(
+                        icon: Icon(action.icon, size: 16),
+                        onPressed: () => action.onPressed(item),
+                        tooltip: action.tooltip,
+                        color: action.color ?? AppColors.mutedForeground,
+                        hoverColor: AppColors.accent,
+                        padding: EdgeInsets.zero,
+                        splashRadius: 16,
+                        style: IconButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 // Menu de ações
                 if (menuActions != null)
                   PopupMenuButton<int>(
+                    icon: const Icon(
+                      Icons.more_horiz,
+                      size: 18,
+                      color: AppColors.mutedForeground,
+                    ),
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: const BorderSide(color: AppColors.border),
+                    ),
+                    color: AppColors.popover,
+                    elevation: 4,
+                    shadowColor: Colors.black.withOpacity(0.1),
                     itemBuilder: (context) => menuActions!
                         .asMap()
                         .entries
                         .map(
                           (entry) => PopupMenuItem<int>(
                             value: entry.key,
+                            height: 40,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: Row(
                               children: [
                                 if (entry.value.icon != null) ...[
-                                  Icon(entry.value.icon, size: 18),
+                                  Icon(
+                                    entry.value.icon,
+                                    size: 16,
+                                    color:
+                                        entry.value.label
+                                            .toLowerCase()
+                                            .contains('apagar')
+                                        ? AppColors.destructive
+                                        : AppColors.foreground,
+                                  ),
                                   const SizedBox(width: 8),
                                 ],
-                                Text(entry.value.label),
+                                Text(
+                                  entry.value.label,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w400,
+                                    color:
+                                        entry.value.label
+                                            .toLowerCase()
+                                            .contains('apagar')
+                                        ? AppColors.destructive
+                                        : AppColors.foreground,
+                                  ),
+                                ),
                               ],
                             ),
                           ),

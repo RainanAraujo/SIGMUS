@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sigmus/layouts/main_layout.dart';
 import 'package:sigmus/models/mutirao_info.dart';
+import 'package:sigmus/theme/app_typography.dart';
+import 'package:sigmus/widgets/app_alert.dart';
 import 'package:sigmus/widgets/app_data_table.dart';
 import 'package:sigmus/widgets/stat_card.dart';
 import 'package:sigmus/pages/home/dialogs/mutirao_form_dialog.dart';
@@ -95,30 +97,20 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _deleteMutirao(MutiraoInfo mutirao) {
-    showDialog(
+  void _deleteMutirao(MutiraoInfo mutirao) async {
+    final confirmed = await AppAlert.show(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmar exclusão'),
-        content: Text(
+      title: 'Confirmar exclusão',
+      message:
           'Tem certeza que deseja excluir o mutirão de ${mutirao.municipio}?\n\nA exclusão é permanente e não pode ser desfeita.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            onPressed: () {
-              Navigator.pop(context);
-              // TODO: Implementar exclusão
-            },
-            child: const Text('Excluir Mutirão'),
-          ),
-        ],
-      ),
+      cancelText: 'Cancelar',
+      confirmText: 'Excluir Mutirão',
+      isDestructive: true,
     );
+
+    if (confirmed == true) {
+      // TODO: Implementar exclusão
+    }
   }
 
   void _generateReport(MutiraoInfo mutirao) {
@@ -150,32 +142,28 @@ class _HomePageState extends State<HomePage> {
     return MainLayout(
       isOnline: isOnline,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildTitleSection(),
-            const SizedBox(height: 16),
-            _buildStatsCards(),
-            const SizedBox(height: 24),
-
-            // Tabela de mutirões
+            _buildHeaderSection(),
+            const SizedBox(height: 32),
             AppDataTable<MutiraoInfo>(
               items: mutiroes,
               isLoading: isLoading,
-              searchHint: 'Buscar por município, local, tipo ou data...',
-              emptyMessage: 'Nenhum mutirão encontrado',
+              searchHint: 'Filtrar',
+              emptyMessage: 'Sem dados',
               emptySearchMessage: 'Nenhum resultado para',
               actions: [
                 OutlinedButton.icon(
                   onPressed: isLoading ? null : _loadData,
-                  icon: const Icon(Icons.refresh),
+                  icon: const Icon(Icons.sync, size: 16),
                   label: const Text('Atualizar'),
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton.icon(
                   onPressed: isLoading ? null : _createMutirao,
-                  icon: const Icon(Icons.add),
+                  icon: const Icon(Icons.add, size: 16),
                   label: const Text('Criar mutirão'),
                 ),
               ],
@@ -236,48 +224,62 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildTitleSection() {
-    return Column(
+  Widget _buildHeaderSection() {
+    final statsCards = [
+      StatCard(
+        title: 'Mutirões criados',
+        value: mutiroes.length.toString(),
+        icon: Icons.calendar_today_outlined,
+      ),
+      StatCard(
+        title: 'Pacientes atendidos',
+        value: pacientesCount.toString(),
+        icon: Icons.people_outline,
+      ),
+      StatCard(
+        title: 'Cirurgias realizadas',
+        value: cirurgiasCount.toString(),
+        icon: Icons.medical_services_outlined,
+      ),
+      StatCard(
+        title: 'Prescrições de óculos realizadas',
+        value: prescricoesOculosCount.toString(),
+        icon: Icons.visibility_outlined,
+      ),
+    ];
+
+    final titleSection = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+
       children: [
-        const Text(
-          'Mutirões',
-          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-        ),
-        Text(
-          'Lista de mutirões',
-          style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-        ),
+        Text('Mutirões', style: AppTypography.pageTitle),
+        Text('Lista de mutirões', style: AppTypography.pageSubtitle),
       ],
     );
-  }
 
-  Widget _buildStatsCards() {
-    return Wrap(
-      spacing: 16,
-      runSpacing: 16,
-      children: [
-        StatCard(
-          title: 'Mutirões criados',
-          value: mutiroes.length.toString(),
-          icon: Icons.assignment,
-        ),
-        StatCard(
-          title: 'Pacientes atendidos',
-          value: pacientesCount.toString(),
-          icon: Icons.people,
-        ),
-        StatCard(
-          title: 'Cirurgias realizadas',
-          value: cirurgiasCount.toString(),
-          icon: Icons.business_center,
-        ),
-        StatCard(
-          title: 'Prescrições de óculos realizadas',
-          value: prescricoesOculosCount.toString(),
-          icon: Icons.visibility,
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isNarrow = constraints.maxWidth < 1200;
+
+        if (isNarrow) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              titleSection,
+              const SizedBox(height: 24),
+              Wrap(spacing: 16, runSpacing: 16, children: statsCards),
+            ],
+          );
+        }
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: titleSection),
+            Wrap(spacing: 16, children: statsCards),
+          ],
+        );
+      },
     );
   }
 }
