@@ -14,6 +14,7 @@ class LoginDialog extends StatefulWidget {
   }) {
     return showDialog(
       context: context,
+      useRootNavigator: false,
       barrierDismissible: true,
       builder: (context) => LoginDialog(onLogin: onLogin),
     );
@@ -45,7 +46,6 @@ class _LoginDialogState extends State<LoginDialog> {
         _passwordController.text,
       );
       setState(() => _isLoading = false);
-      Navigator.of(context).pop();
     }
   }
 

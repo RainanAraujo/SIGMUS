@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:sigmus/extensions/response_ext.dart';
 import 'package:sigmus/generated/sigmus_api.models.swagger.dart';
 import 'package:sigmus/services/sigmus_api.dart';
 import 'package:sigmus/theme/app_colors.dart';
+import 'package:sigmus/widgets/app_toast.dart';
 import 'package:sigmus/widgets/login_dialog.dart';
 
 class AppHeader extends StatefulWidget implements PreferredSizeWidget {
@@ -23,11 +25,18 @@ class _AppHeaderState extends State<AppHeader> {
   ValueNotifier<bool> isOnline = ValueNotifier<bool>(false);
 
   Future<void> _handleLogin(String email, String password) async {
-    final res = await sigmusApi.postEntrar(
-      body: PostEntrarReq(email: email, senha: password),
-    );
-    if (res.isSuccessful && res.body != null) {
-      sigmusApi.setToken(res.body?.token);
+    try {
+      final res = await sigmusApi.postEntrar(
+        body: PostEntrarReq(email: email, senha: password),
+      );
+      if (res.isSuccessful && res.body != null) {
+        sigmusApi.setToken(res.body?.token);
+      } else {
+        throw res.errorMessage?.messagem ?? 'Erro deconhecido';
+      }
+      Navigator.of(context).pop();
+    } catch (e) {
+      AppToast.show(context, message: 'Erro ao entrar: $e', isError: true);
     }
   }
 
