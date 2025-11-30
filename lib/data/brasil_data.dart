@@ -25,7 +25,7 @@ class BrasilData {
     if (_isLoaded) return;
 
     final jsonString = await rootBundle.loadString(
-      'lib/resources/json/estados-cidades.json',
+      'lib/data/json/estados-cidades.json',
     );
     final jsonData = json.decode(jsonString) as Map<String, dynamic>;
     final estadosList = jsonData['estados'] as List<dynamic>;

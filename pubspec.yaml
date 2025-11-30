@@ -41,7 +41,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/sigmus.svg
-    - lib/resources/json/
+    - lib/data/json/
   # fonts:
   #   - family: Schyler
   #     fonts:
