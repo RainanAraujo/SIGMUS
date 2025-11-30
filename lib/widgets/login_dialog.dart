@@ -15,7 +15,6 @@ class LoginDialog extends StatefulWidget {
     return showDialog(
       context: context,
       barrierDismissible: true,
-
       builder: (context) => LoginDialog(onLogin: onLogin),
     );
   }
@@ -41,13 +40,12 @@ class _LoginDialogState extends State<LoginDialog> {
   void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
-
       widget.onLogin?.call(
         _emailController.text.trim(),
         _passwordController.text,
       );
-
       setState(() => _isLoading = false);
+      Navigator.of(context).pop();
     }
   }
 

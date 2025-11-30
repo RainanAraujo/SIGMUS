@@ -2016,6 +2016,9 @@ class $MedicosTable extends Medicos with TableInfo<$MedicosTable, Medico> {
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES mutiroes (id)',
+    ),
   );
   static const VerificationMeta _nomeMeta = const VerificationMeta('nome');
   @override
@@ -4792,6 +4795,25 @@ final class $$MutiroesTableReferences
     );
   }
 
+  static MultiTypedResultKey<$MedicosTable, List<Medico>> _medicosRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.medicos,
+    aliasName: $_aliasNameGenerator(db.mutiroes.id, db.medicos.mutiraoId),
+  );
+
+  $$MedicosTableProcessedTableManager get medicosRefs {
+    final manager = $$MedicosTableTableManager(
+      $_db,
+      $_db.medicos,
+    ).filter((f) => f.mutiraoId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_medicosRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
   static MultiTypedResultKey<$CondutasTable, List<Conduta>> _condutasRefsTable(
     _$AppDatabase db,
   ) => MultiTypedResultKey.fromTable(
@@ -4985,6 +5007,31 @@ class $$MutiroesTableFilterComposer
           }) => $$PermissoesTableFilterComposer(
             $db: $db,
             $table: $db.permissoes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> medicosRefs(
+    Expression<bool> Function($$MedicosTableFilterComposer f) f,
+  ) {
+    final $$MedicosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.medicos,
+      getReferencedColumn: (t) => t.mutiraoId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MedicosTableFilterComposer(
+            $db: $db,
+            $table: $db.medicos,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -5261,6 +5308,31 @@ class $$MutiroesTableAnnotationComposer
     return f(composer);
   }
 
+  Expression<T> medicosRefs<T extends Object>(
+    Expression<T> Function($$MedicosTableAnnotationComposer a) f,
+  ) {
+    final $$MedicosTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.medicos,
+      getReferencedColumn: (t) => t.mutiraoId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MedicosTableAnnotationComposer(
+            $db: $db,
+            $table: $db.medicos,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
   Expression<T> condutasRefs<T extends Object>(
     Expression<T> Function($$CondutasTableAnnotationComposer a) f,
   ) {
@@ -5404,6 +5476,7 @@ class $$MutiroesTableTableManager
           Mutiroe,
           PrefetchHooks Function({
             bool permissoesRefs,
+            bool medicosRefs,
             bool condutasRefs,
             bool procedimentosRefs,
             bool condutasGenericasRefs,
@@ -5485,6 +5558,7 @@ class $$MutiroesTableTableManager
           prefetchHooksCallback:
               ({
                 permissoesRefs = false,
+                medicosRefs = false,
                 condutasRefs = false,
                 procedimentosRefs = false,
                 condutasGenericasRefs = false,
@@ -5495,6 +5569,7 @@ class $$MutiroesTableTableManager
                   db: db,
                   explicitlyWatchedTables: [
                     if (permissoesRefs) db.permissoes,
+                    if (medicosRefs) db.medicos,
                     if (condutasRefs) db.condutas,
                     if (procedimentosRefs) db.procedimentos,
                     if (condutasGenericasRefs) db.condutasGenericas,
@@ -5519,6 +5594,27 @@ class $$MutiroesTableTableManager
                                 table,
                                 p0,
                               ).permissoesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.mutiraoId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (medicosRefs)
+                        await $_getPrefetchedData<
+                          Mutiroe,
+                          $MutiroesTable,
+                          Medico
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MutiroesTableReferences
+                              ._medicosRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MutiroesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).medicosRefs,
                           referencedItemsForCurrentItem:
                               (item, referencedItems) => referencedItems.where(
                                 (e) => e.mutiraoId == item.id,
@@ -5652,6 +5748,7 @@ typedef $$MutiroesTableProcessedTableManager =
       Mutiroe,
       PrefetchHooks Function({
         bool permissoesRefs,
+        bool medicosRefs,
         bool condutasRefs,
         bool procedimentosRefs,
         bool condutasGenericasRefs,
@@ -6820,6 +6917,23 @@ final class $$MedicosTableReferences
     extends BaseReferences<_$AppDatabase, $MedicosTable, Medico> {
   $$MedicosTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
+  static $MutiroesTable _mutiraoIdTable(_$AppDatabase db) => db.mutiroes
+      .createAlias($_aliasNameGenerator(db.medicos.mutiraoId, db.mutiroes.id));
+
+  $$MutiroesTableProcessedTableManager get mutiraoId {
+    final $_column = $_itemColumn<int>('mutirao_id')!;
+
+    final manager = $$MutiroesTableTableManager(
+      $_db,
+      $_db.mutiroes,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_mutiraoIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
   static MultiTypedResultKey<$ProcedimentosTable, List<Procedimento>>
   _procedimentosRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.procedimentos,
@@ -6877,11 +6991,6 @@ class $$MedicosTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get mutiraoId => $composableBuilder(
-    column: $table.mutiraoId,
-    builder: (column) => ColumnFilters(column),
-  );
-
   ColumnFilters<String> get nome => $composableBuilder(
     column: $table.nome,
     builder: (column) => ColumnFilters(column),
@@ -6901,6 +7010,29 @@ class $$MedicosTableFilterComposer
     column: $table.status,
     builder: (column) => ColumnFilters(column),
   );
+
+  $$MutiroesTableFilterComposer get mutiraoId {
+    final $$MutiroesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.mutiraoId,
+      referencedTable: $db.mutiroes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MutiroesTableFilterComposer(
+            $db: $db,
+            $table: $db.mutiroes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<bool> procedimentosRefs(
     Expression<bool> Function($$ProcedimentosTableFilterComposer f) f,
@@ -6967,11 +7099,6 @@ class $$MedicosTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get mutiraoId => $composableBuilder(
-    column: $table.mutiraoId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<String> get nome => $composableBuilder(
     column: $table.nome,
     builder: (column) => ColumnOrderings(column),
@@ -6991,6 +7118,29 @@ class $$MedicosTableOrderingComposer
     column: $table.status,
     builder: (column) => ColumnOrderings(column),
   );
+
+  $$MutiroesTableOrderingComposer get mutiraoId {
+    final $$MutiroesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.mutiraoId,
+      referencedTable: $db.mutiroes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MutiroesTableOrderingComposer(
+            $db: $db,
+            $table: $db.mutiroes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$MedicosTableAnnotationComposer
@@ -7005,9 +7155,6 @@ class $$MedicosTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<int> get mutiraoId =>
-      $composableBuilder(column: $table.mutiraoId, builder: (column) => column);
-
   GeneratedColumn<String> get nome =>
       $composableBuilder(column: $table.nome, builder: (column) => column);
 
@@ -7021,6 +7168,29 @@ class $$MedicosTableAnnotationComposer
 
   GeneratedColumn<int> get status =>
       $composableBuilder(column: $table.status, builder: (column) => column);
+
+  $$MutiroesTableAnnotationComposer get mutiraoId {
+    final $$MutiroesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.mutiraoId,
+      referencedTable: $db.mutiroes,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MutiroesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.mutiroes,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 
   Expression<T> procedimentosRefs<T extends Object>(
     Expression<T> Function($$ProcedimentosTableAnnotationComposer a) f,
@@ -7088,6 +7258,7 @@ class $$MedicosTableTableManager
           (Medico, $$MedicosTableReferences),
           Medico,
           PrefetchHooks Function({
+            bool mutiraoId,
             bool procedimentosRefs,
             bool condutasGenericasRefs,
           })
@@ -7144,14 +7315,49 @@ class $$MedicosTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({procedimentosRefs = false, condutasGenericasRefs = false}) {
+              ({
+                mutiraoId = false,
+                procedimentosRefs = false,
+                condutasGenericasRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (procedimentosRefs) db.procedimentos,
                     if (condutasGenericasRefs) db.condutasGenericas,
                   ],
-                  addJoins: null,
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (mutiraoId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.mutiraoId,
+                                    referencedTable: $$MedicosTableReferences
+                                        ._mutiraoIdTable(db),
+                                    referencedColumn: $$MedicosTableReferences
+                                        ._mutiraoIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (procedimentosRefs)
@@ -7217,6 +7423,7 @@ typedef $$MedicosTableProcessedTableManager =
       (Medico, $$MedicosTableReferences),
       Medico,
       PrefetchHooks Function({
+        bool mutiraoId,
         bool procedimentosRefs,
         bool condutasGenericasRefs,
       })

@@ -1,26 +1,53 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'package:sigmus/generated/sigmus_api.models.swagger.dart';
+import 'package:sigmus/services/sigmus_api.dart';
 import 'package:sigmus/theme/app_colors.dart';
 import 'package:sigmus/widgets/login_dialog.dart';
 
-class AppHeader extends StatelessWidget implements PreferredSizeWidget {
-  final bool isOnline;
-  final bool isLoggedIn;
-  final String? userName;
-  final VoidCallback? onLogout;
-  final Function(String email, String password)? onLogin;
+class AppHeader extends StatefulWidget implements PreferredSizeWidget {
+  const AppHeader({super.key});
 
-  const AppHeader({
-    super.key,
-    this.isOnline = true,
-    this.isLoggedIn = false,
-    this.userName,
-    this.onLogout,
-    this.onLogin,
-  });
+  @override
+  State<AppHeader> createState() => _AppHeaderState();
 
   @override
   Size get preferredSize => const Size.fromHeight(64);
+}
+
+class _AppHeaderState extends State<AppHeader> {
+  late final StreamSubscription<InternetStatus> _subscription;
+  ValueNotifier<bool> isOnline = ValueNotifier<bool>(false);
+
+  Future<void> _handleLogin(String email, String password) async {
+    final res = await sigmusApi.entrarPost(
+      body: HandlersPostEntrarReq(email: email, senha: password),
+    );
+    if (res.isSuccessful && res.body != null) {
+      sigmusApi.setToken(res.body?.token);
+    }
+  }
+
+  Future<void> _handleLogout() async {
+    sigmusApi.setToken(null);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _subscription = InternetConnection().onStatusChange.listen((status) {
+      isOnline.value = status == InternetStatus.connected;
+    });
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,20 +67,33 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
             width: 110,
             height: 28,
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildStatusBadge(),
-              const SizedBox(width: 12),
-              _buildAuthButton(context),
-            ],
+          AnimatedBuilder(
+            animation: Listenable.merge([
+              sigmusApi.token,
+              sigmusApi.userData,
+              isOnline,
+            ]),
+            builder: (context, _) {
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  buildStatusBadge(isOnline: isOnline.value),
+                  const SizedBox(width: 12),
+                  buildAuthButton(
+                    context: context,
+                    isLoggedIn: sigmusApi.userData.value != null,
+                    userName: sigmusApi.userData.value?.nome,
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStatusBadge() {
+  Widget buildStatusBadge({required bool isOnline}) {
     final Color badgeColor = isOnline
         ? const Color(0xFF16A34A)
         : AppColors.destructive;
@@ -106,7 +146,11 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  Widget _buildAuthButton(BuildContext context) {
+  Widget buildAuthButton({
+    required BuildContext context,
+    required bool isLoggedIn,
+    String? userName,
+  }) {
     if (isLoggedIn) {
       return PopupMenuButton<String>(
         offset: const Offset(0, 40),
@@ -115,13 +159,9 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
           side: const BorderSide(color: AppColors.border),
         ),
         color: AppColors.popover,
-        onSelected: (value) {
-          if (value == 'logout') {
-            onLogout?.call();
-          }
-        },
         itemBuilder: (context) => [
           PopupMenuItem(
+            onTap: _handleLogout,
             value: 'logout',
             child: Row(
               children: const [
@@ -168,7 +208,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       );
     } else {
       return TextButton.icon(
-        onPressed: () => LoginDialog.show(context, onLogin: onLogin),
+        onPressed: () => LoginDialog.show(context, onLogin: _handleLogin),
         icon: const Icon(Icons.login, size: 18),
         label: const Text('Entrar'),
         style: TextButton.styleFrom(

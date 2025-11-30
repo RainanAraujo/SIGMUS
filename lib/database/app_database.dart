@@ -67,7 +67,7 @@ class Pacientes extends Table {
 
 class Medicos extends Table {
   IntColumn get id => integer()();
-  IntColumn get mutiraoId => integer()();
+  IntColumn get mutiraoId => integer().references(Mutiroes, #id)();
   TextColumn get nome => text()();
   TextColumn get crm => text()();
   IntColumn get atualizadoEm => integer().named('atualizado_em')();
