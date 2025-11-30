@@ -6,37 +6,35 @@ part of 'sigmus_api.models.swagger.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-EntitysColaboradorUpdate _$EntitysColaboradorUpdateFromJson(
-  Map<String, dynamic> json,
-) => EntitysColaboradorUpdate(
-  atualizadoEm: (json['atualizado_em'] as num?)?.toInt(),
-  funcao: json['funcao'] as String?,
-  nome: json['nome'] as String?,
-  status: (json['status'] as num?)?.toInt(),
-);
+ColaboradorUpdate _$ColaboradorUpdateFromJson(Map<String, dynamic> json) =>
+    ColaboradorUpdate(
+      atualizadoEm: (json['atualizado_em'] as num).toInt(),
+      funcao: json['funcao'] as String,
+      nome: json['nome'] as String,
+      status: (json['status'] as num).toInt(),
+    );
 
-Map<String, dynamic> _$EntitysColaboradorUpdateToJson(
-  EntitysColaboradorUpdate instance,
-) => <String, dynamic>{
-  'atualizado_em': instance.atualizadoEm,
-  'funcao': instance.funcao,
-  'nome': instance.nome,
-  'status': instance.status,
-};
+Map<String, dynamic> _$ColaboradorUpdateToJson(ColaboradorUpdate instance) =>
+    <String, dynamic>{
+      'atualizado_em': instance.atualizadoEm,
+      'funcao': instance.funcao,
+      'nome': instance.nome,
+      'status': instance.status,
+    };
 
-EntitysCondutaGenericaUpdate _$EntitysCondutaGenericaUpdateFromJson(
+CondutaGenericaUpdate _$CondutaGenericaUpdateFromJson(
   Map<String, dynamic> json,
-) => EntitysCondutaGenericaUpdate(
-  atualizadoEm: (json['atualizado_em'] as num?)?.toInt(),
+) => CondutaGenericaUpdate(
+  atualizadoEm: (json['atualizado_em'] as num).toInt(),
   conduta: json['conduta'] as String?,
   data: json['data'] as String?,
   medicoId: (json['medicoId'] as num?)?.toInt(),
-  pacienteId: (json['pacienteId'] as num?)?.toInt(),
-  status: (json['status'] as num?)?.toInt(),
+  pacienteId: (json['pacienteId'] as num).toInt(),
+  status: (json['status'] as num).toInt(),
 );
 
-Map<String, dynamic> _$EntitysCondutaGenericaUpdateToJson(
-  EntitysCondutaGenericaUpdate instance,
+Map<String, dynamic> _$CondutaGenericaUpdateToJson(
+  CondutaGenericaUpdate instance,
 ) => <String, dynamic>{
   'atualizado_em': instance.atualizadoEm,
   'conduta': instance.conduta,
@@ -46,74 +44,129 @@ Map<String, dynamic> _$EntitysCondutaGenericaUpdateToJson(
   'status': instance.status,
 };
 
-EntitysCondutaUpdate _$EntitysCondutaUpdateFromJson(
-  Map<String, dynamic> json,
-) => EntitysCondutaUpdate(
-  atualizadoEm: (json['atualizado_em'] as num?)?.toInt(),
-  dados: json['dados'] as Map<String, dynamic>?,
-  data: json['data'] as String?,
-  medicoId: (json['medicoId'] as num?)?.toInt(),
-  pacienteId: (json['pacienteId'] as num?)?.toInt(),
-  status: (json['status'] as num?)?.toInt(),
-  tipo: json['tipo'] as String?,
-);
-
-Map<String, dynamic> _$EntitysCondutaUpdateToJson(
-  EntitysCondutaUpdate instance,
-) => <String, dynamic>{
-  'atualizado_em': instance.atualizadoEm,
-  'dados': instance.dados,
-  'data': instance.data,
-  'medicoId': instance.medicoId,
-  'pacienteId': instance.pacienteId,
-  'status': instance.status,
-  'tipo': instance.tipo,
-};
-
-EntitysErrorMessage _$EntitysErrorMessageFromJson(Map<String, dynamic> json) =>
-    EntitysErrorMessage(
-      error: json['error'] as String?,
-      messagem: json['messagem'] as String?,
-    );
-
-Map<String, dynamic> _$EntitysErrorMessageToJson(
-  EntitysErrorMessage instance,
-) => <String, dynamic>{'error': instance.error, 'messagem': instance.messagem};
-
-EntitysMedicoUpdate _$EntitysMedicoUpdateFromJson(Map<String, dynamic> json) =>
-    EntitysMedicoUpdate(
-      atualizadoEm: (json['atualizado_em'] as num?)?.toInt(),
-      crm: json['crm'] as String?,
-      nome: json['nome'] as String?,
-      status: (json['status'] as num?)?.toInt(),
-    );
-
-Map<String, dynamic> _$EntitysMedicoUpdateToJson(
-  EntitysMedicoUpdate instance,
-) => <String, dynamic>{
-  'atualizado_em': instance.atualizadoEm,
-  'crm': instance.crm,
-  'nome': instance.nome,
-  'status': instance.status,
-};
-
-EntitysMutiraoData _$EntitysMutiraoDataFromJson(Map<String, dynamic> json) =>
-    EntitysMutiraoData(
-      atualizadoEm: (json['atualizado_em'] as num?)?.toInt(),
-      contratante: json['contratante'] as String?,
-      dataFinal: json['data_final'] as String?,
-      dataInicio: json['data_inicio'] as String?,
-      demandante: json['demandante'] as String?,
-      estado: json['estado'] as String?,
-      id: (json['id'] as num?)?.toInt(),
-      local: json['local'] as String?,
-      municipio: json['municipio'] as String?,
-      permissoes: json['permissoes'] as Map<String, dynamic>?,
-      status: (json['status'] as num?)?.toInt(),
+CondutaUpdate _$CondutaUpdateFromJson(Map<String, dynamic> json) =>
+    CondutaUpdate(
+      atualizadoEm: (json['atualizado_em'] as num).toInt(),
+      dados: json['dados'] as Map<String, dynamic>?,
+      data: json['data'] as String?,
+      medicoId: (json['medicoId'] as num?)?.toInt(),
+      pacienteId: (json['pacienteId'] as num).toInt(),
+      status: (json['status'] as num).toInt(),
       tipo: json['tipo'] as String?,
     );
 
-Map<String, dynamic> _$EntitysMutiraoDataToJson(EntitysMutiraoData instance) =>
+Map<String, dynamic> _$CondutaUpdateToJson(CondutaUpdate instance) =>
+    <String, dynamic>{
+      'atualizado_em': instance.atualizadoEm,
+      'dados': instance.dados,
+      'data': instance.data,
+      'medicoId': instance.medicoId,
+      'pacienteId': instance.pacienteId,
+      'status': instance.status,
+      'tipo': instance.tipo,
+    };
+
+DelUserRes _$DelUserResFromJson(Map<String, dynamic> json) =>
+    DelUserRes(messagem: json['messagem'] as String);
+
+Map<String, dynamic> _$DelUserResToJson(DelUserRes instance) =>
+    <String, dynamic>{'messagem': instance.messagem};
+
+ErrorMessage _$ErrorMessageFromJson(Map<String, dynamic> json) => ErrorMessage(
+  error: json['error'] as String,
+  messagem: json['messagem'] as String,
+);
+
+Map<String, dynamic> _$ErrorMessageToJson(ErrorMessage instance) =>
+    <String, dynamic>{'error': instance.error, 'messagem': instance.messagem};
+
+GetAtualizarTokenRes _$GetAtualizarTokenResFromJson(
+  Map<String, dynamic> json,
+) => GetAtualizarTokenRes(
+  expiresIn: (json['expires_in'] as num).toInt(),
+  messagem: json['messagem'] as String,
+  token: json['token'] as String,
+);
+
+Map<String, dynamic> _$GetAtualizarTokenResToJson(
+  GetAtualizarTokenRes instance,
+) => <String, dynamic>{
+  'expires_in': instance.expiresIn,
+  'messagem': instance.messagem,
+  'token': instance.token,
+};
+
+GetMutiraoMudancasRes _$GetMutiraoMudancasResFromJson(
+  Map<String, dynamic> json,
+) => GetMutiraoMudancasRes(
+  messagem: json['messagem'] as String,
+  mudancas: json['mudancas'] == null
+      ? null
+      : MutiraoMudancas.fromJson(json['mudancas'] as Map<String, dynamic>),
+  mutirao: json['mutirao'] == null
+      ? null
+      : MutiraoData.fromJson(json['mutirao'] as Map<String, dynamic>),
+  timestamp: (json['timestamp'] as num).toInt(),
+);
+
+Map<String, dynamic> _$GetMutiraoMudancasResToJson(
+  GetMutiraoMudancasRes instance,
+) => <String, dynamic>{
+  'messagem': instance.messagem,
+  'mudancas': instance.mudancas?.toJson(),
+  'mutirao': instance.mutirao?.toJson(),
+  'timestamp': instance.timestamp,
+};
+
+GetUsuarioMutiroesRes _$GetUsuarioMutiroesResFromJson(
+  Map<String, dynamic> json,
+) => GetUsuarioMutiroesRes(
+  messagem: json['messagem'] as String,
+  mutiroes:
+      (json['mutiroes'] as List<dynamic>?)
+          ?.map((e) => MutiraoInfo.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
+);
+
+Map<String, dynamic> _$GetUsuarioMutiroesResToJson(
+  GetUsuarioMutiroesRes instance,
+) => <String, dynamic>{
+  'messagem': instance.messagem,
+  'mutiroes': instance.mutiroes.map((e) => e.toJson()).toList(),
+};
+
+MedicoUpdate _$MedicoUpdateFromJson(Map<String, dynamic> json) => MedicoUpdate(
+  atualizadoEm: (json['atualizado_em'] as num).toInt(),
+  crm: json['crm'] as String,
+  nome: json['nome'] as String,
+  status: (json['status'] as num).toInt(),
+);
+
+Map<String, dynamic> _$MedicoUpdateToJson(MedicoUpdate instance) =>
+    <String, dynamic>{
+      'atualizado_em': instance.atualizadoEm,
+      'crm': instance.crm,
+      'nome': instance.nome,
+      'status': instance.status,
+    };
+
+MutiraoData _$MutiraoDataFromJson(Map<String, dynamic> json) => MutiraoData(
+  atualizadoEm: (json['atualizado_em'] as num).toInt(),
+  contratante: json['contratante'] as String,
+  dataFinal: json['data_final'] as String,
+  dataInicio: json['data_inicio'] as String,
+  demandante: json['demandante'] as String,
+  estado: json['estado'] as String,
+  id: (json['id'] as num).toInt(),
+  local: json['local'] as String,
+  municipio: json['municipio'] as String,
+  permissoes: json['permissoes'] as Map<String, dynamic>,
+  status: (json['status'] as num).toInt(),
+  tipo: json['tipo'] as String,
+);
+
+Map<String, dynamic> _$MutiraoDataToJson(MutiraoData instance) =>
     <String, dynamic>{
       'atualizado_em': instance.atualizadoEm,
       'contratante': instance.contratante,
@@ -129,78 +182,106 @@ Map<String, dynamic> _$EntitysMutiraoDataToJson(EntitysMutiraoData instance) =>
       'tipo': instance.tipo,
     };
 
-EntitysMutiraoMudancas _$EntitysMutiraoMudancasFromJson(
-  Map<String, dynamic> json,
-) => EntitysMutiraoMudancas(
-  colaboradores: json['colaboradores'] as Map<String, dynamic>?,
-  condutas: json['condutas'] as Map<String, dynamic>?,
-  condutasGenericas: json['condutasGenericas'] as Map<String, dynamic>?,
-  medicos: json['medicos'] as Map<String, dynamic>?,
-  mutiraoCondutas:
-      (json['mutiraoCondutas'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList() ??
-      [],
-  pacientes: json['pacientes'] as Map<String, dynamic>?,
-  procedimentos: json['procedimentos'] as Map<String, dynamic>?,
+MutiraoInfo _$MutiraoInfoFromJson(Map<String, dynamic> json) => MutiraoInfo(
+  atualizadoEm: (json['atualizado_em'] as num).toInt(),
+  contratante: json['contratante'] as String,
+  dataFinal: json['data_final'] as String,
+  dataInicio: json['data_inicio'] as String,
+  demandante: json['demandante'] as String,
+  estado: json['estado'] as String,
+  id: (json['id'] as num).toInt(),
+  local: json['local'] as String,
+  municipio: json['municipio'] as String,
+  permissoes: json['permissoes'] as Map<String, dynamic>,
+  status: (json['status'] as num).toInt(),
+  tipo: json['tipo'] as String,
+  ultimaMudanca: (json['ultima_mudanca'] as num).toInt(),
 );
 
-Map<String, dynamic> _$EntitysMutiraoMudancasToJson(
-  EntitysMutiraoMudancas instance,
-) => <String, dynamic>{
-  'colaboradores': instance.colaboradores,
-  'condutas': instance.condutas,
-  'condutasGenericas': instance.condutasGenericas,
-  'medicos': instance.medicos,
-  'mutiraoCondutas': instance.mutiraoCondutas,
-  'pacientes': instance.pacientes,
-  'procedimentos': instance.procedimentos,
-};
+Map<String, dynamic> _$MutiraoInfoToJson(MutiraoInfo instance) =>
+    <String, dynamic>{
+      'atualizado_em': instance.atualizadoEm,
+      'contratante': instance.contratante,
+      'data_final': instance.dataFinal,
+      'data_inicio': instance.dataInicio,
+      'demandante': instance.demandante,
+      'estado': instance.estado,
+      'id': instance.id,
+      'local': instance.local,
+      'municipio': instance.municipio,
+      'permissoes': instance.permissoes,
+      'status': instance.status,
+      'tipo': instance.tipo,
+      'ultima_mudanca': instance.ultimaMudanca,
+    };
 
-EntitysPacienteUpdate _$EntitysPacienteUpdateFromJson(
-  Map<String, dynamic> json,
-) => EntitysPacienteUpdate(
-  atualizadoEm: (json['atualizado_em'] as num?)?.toInt(),
-  cns: json['cns'] as String?,
-  cpf: json['cpf'] as String?,
-  dataNascimento: json['dataNascimento'] as String?,
-  endereco: json['endereco'] as String?,
-  municipio: json['municipio'] as String?,
-  nome: json['nome'] as String?,
-  nomeDaMae: json['nomeDaMae'] as String?,
-  status: (json['status'] as num?)?.toInt(),
-  tel: json['tel'] as String?,
-  uf: json['uf'] as String?,
-);
+MutiraoMudancas _$MutiraoMudancasFromJson(Map<String, dynamic> json) =>
+    MutiraoMudancas(
+      colaboradores: json['colaboradores'] as Map<String, dynamic>,
+      condutas: json['condutas'] as Map<String, dynamic>,
+      condutasGenericas: json['condutasGenericas'] as Map<String, dynamic>,
+      medicos: json['medicos'] as Map<String, dynamic>,
+      mutiraoCondutas:
+          (json['mutiraoCondutas'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      pacientes: json['pacientes'] as Map<String, dynamic>,
+      procedimentos: json['procedimentos'] as Map<String, dynamic>,
+    );
 
-Map<String, dynamic> _$EntitysPacienteUpdateToJson(
-  EntitysPacienteUpdate instance,
-) => <String, dynamic>{
-  'atualizado_em': instance.atualizadoEm,
-  'cns': instance.cns,
-  'cpf': instance.cpf,
-  'dataNascimento': instance.dataNascimento,
-  'endereco': instance.endereco,
-  'municipio': instance.municipio,
-  'nome': instance.nome,
-  'nomeDaMae': instance.nomeDaMae,
-  'status': instance.status,
-  'tel': instance.tel,
-  'uf': instance.uf,
-};
+Map<String, dynamic> _$MutiraoMudancasToJson(MutiraoMudancas instance) =>
+    <String, dynamic>{
+      'colaboradores': instance.colaboradores,
+      'condutas': instance.condutas,
+      'condutasGenericas': instance.condutasGenericas,
+      'medicos': instance.medicos,
+      'mutiraoCondutas': instance.mutiraoCondutas,
+      'pacientes': instance.pacientes,
+      'procedimentos': instance.procedimentos,
+    };
 
-EntitysPersonData _$EntitysPersonDataFromJson(Map<String, dynamic> json) =>
-    EntitysPersonData(
+PacienteUpdate _$PacienteUpdateFromJson(Map<String, dynamic> json) =>
+    PacienteUpdate(
+      atualizadoEm: (json['atualizado_em'] as num).toInt(),
       cns: json['cns'] as String?,
       cpf: json['cpf'] as String?,
       dataNascimento: json['dataNascimento'] as String?,
       endereco: json['endereco'] as String?,
+      municipio: json['municipio'] as String?,
       nome: json['nome'] as String?,
-      nomeMae: json['nomeMae'] as String?,
+      nomeDaMae: json['nomeDaMae'] as String?,
+      status: (json['status'] as num).toInt(),
       tel: json['tel'] as String?,
+      uf: json['uf'] as String?,
     );
 
-Map<String, dynamic> _$EntitysPersonDataToJson(EntitysPersonData instance) =>
+Map<String, dynamic> _$PacienteUpdateToJson(PacienteUpdate instance) =>
+    <String, dynamic>{
+      'atualizado_em': instance.atualizadoEm,
+      'cns': instance.cns,
+      'cpf': instance.cpf,
+      'dataNascimento': instance.dataNascimento,
+      'endereco': instance.endereco,
+      'municipio': instance.municipio,
+      'nome': instance.nome,
+      'nomeDaMae': instance.nomeDaMae,
+      'status': instance.status,
+      'tel': instance.tel,
+      'uf': instance.uf,
+    };
+
+PersonData _$PersonDataFromJson(Map<String, dynamic> json) => PersonData(
+  cns: json['cns'] as String,
+  cpf: json['cpf'] as String,
+  dataNascimento: json['dataNascimento'] as String,
+  endereco: json['endereco'] as String,
+  nome: json['nome'] as String,
+  nomeMae: json['nomeMae'] as String,
+  tel: json['tel'] as String,
+);
+
+Map<String, dynamic> _$PersonDataToJson(PersonData instance) =>
     <String, dynamic>{
       'cns': instance.cns,
       'cpf': instance.cpf,
@@ -211,183 +292,50 @@ Map<String, dynamic> _$EntitysPersonDataToJson(EntitysPersonData instance) =>
       'tel': instance.tel,
     };
 
-EntitysProcedimentoUpdate _$EntitysProcedimentoUpdateFromJson(
-  Map<String, dynamic> json,
-) => EntitysProcedimentoUpdate(
-  atualizadoEm: (json['atualizado_em'] as num?)?.toInt(),
-  data: json['data'] as String?,
-  dioptriaLente: json['dioptriaLente'] as String?,
-  intercorrencia: json['intercorrencia'] as String?,
-  medicoId: (json['medicoId'] as num?)?.toInt(),
-  observacao: json['observacao'] as String?,
-  olho: json['olho'] as String?,
-  pacienteId: (json['pacienteId'] as num?)?.toInt(),
-  status: (json['status'] as num?)?.toInt(),
-  tipo: json['tipo'] as String?,
-);
-
-Map<String, dynamic> _$EntitysProcedimentoUpdateToJson(
-  EntitysProcedimentoUpdate instance,
-) => <String, dynamic>{
-  'atualizado_em': instance.atualizadoEm,
-  'data': instance.data,
-  'dioptriaLente': instance.dioptriaLente,
-  'intercorrencia': instance.intercorrencia,
-  'medicoId': instance.medicoId,
-  'observacao': instance.observacao,
-  'olho': instance.olho,
-  'pacienteId': instance.pacienteId,
-  'status': instance.status,
-  'tipo': instance.tipo,
-};
-
-HandlersDelUserRes _$HandlersDelUserResFromJson(Map<String, dynamic> json) =>
-    HandlersDelUserRes(messagem: json['messagem'] as String?);
-
-Map<String, dynamic> _$HandlersDelUserResToJson(HandlersDelUserRes instance) =>
-    <String, dynamic>{'messagem': instance.messagem};
-
-HandlersGetAtualizarTokenRes _$HandlersGetAtualizarTokenResFromJson(
-  Map<String, dynamic> json,
-) => HandlersGetAtualizarTokenRes(
-  expiresIn: (json['expires_in'] as num?)?.toInt(),
-  messagem: json['messagem'] as String?,
-  token: json['token'] as String?,
-);
-
-Map<String, dynamic> _$HandlersGetAtualizarTokenResToJson(
-  HandlersGetAtualizarTokenRes instance,
-) => <String, dynamic>{
-  'expires_in': instance.expiresIn,
-  'messagem': instance.messagem,
-  'token': instance.token,
-};
-
-HandlersGetMutiraoMudancasRes _$HandlersGetMutiraoMudancasResFromJson(
-  Map<String, dynamic> json,
-) => HandlersGetMutiraoMudancasRes(
-  messagem: json['messagem'] as String?,
-  mudancas: json['mudancas'] == null
-      ? null
-      : EntitysMutiraoMudancas.fromJson(
-          json['mudancas'] as Map<String, dynamic>,
-        ),
-  mutirao: json['mutirao'] == null
-      ? null
-      : EntitysMutiraoData.fromJson(json['mutirao'] as Map<String, dynamic>),
-  timestamp: (json['timestamp'] as num?)?.toInt(),
-);
-
-Map<String, dynamic> _$HandlersGetMutiraoMudancasResToJson(
-  HandlersGetMutiraoMudancasRes instance,
-) => <String, dynamic>{
-  'messagem': instance.messagem,
-  'mudancas': instance.mudancas?.toJson(),
-  'mutirao': instance.mutirao?.toJson(),
-  'timestamp': instance.timestamp,
-};
-
-HandlersGetUsuarioMutiroesRes _$HandlersGetUsuarioMutiroesResFromJson(
-  Map<String, dynamic> json,
-) => HandlersGetUsuarioMutiroesRes(
-  messagem: json['messagem'] as String?,
-  mutiroes:
-      (json['mutiroes'] as List<dynamic>?)
-          ?.map((e) => HandlersMutiraoInfo.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      [],
-);
-
-Map<String, dynamic> _$HandlersGetUsuarioMutiroesResToJson(
-  HandlersGetUsuarioMutiroesRes instance,
-) => <String, dynamic>{
-  'messagem': instance.messagem,
-  'mutiroes': instance.mutiroes?.map((e) => e.toJson()).toList(),
-};
-
-HandlersMutiraoInfo _$HandlersMutiraoInfoFromJson(Map<String, dynamic> json) =>
-    HandlersMutiraoInfo(
-      atualizadoEm: (json['atualizado_em'] as num?)?.toInt(),
-      contratante: json['contratante'] as String?,
-      dataFinal: json['data_final'] as String?,
-      dataInicio: json['data_inicio'] as String?,
-      demandante: json['demandante'] as String?,
-      estado: json['estado'] as String?,
-      id: (json['id'] as num?)?.toInt(),
-      local: json['local'] as String?,
-      municipio: json['municipio'] as String?,
-      permissoes: json['permissoes'] as Map<String, dynamic>?,
-      status: (json['status'] as num?)?.toInt(),
-      tipo: json['tipo'] as String?,
-      ultimaMudanca: (json['ultima_mudanca'] as num?)?.toInt(),
+PostEntrarReq _$PostEntrarReqFromJson(Map<String, dynamic> json) =>
+    PostEntrarReq(
+      email: json['email'] as String,
+      senha: json['senha'] as String,
     );
 
-Map<String, dynamic> _$HandlersMutiraoInfoToJson(
-  HandlersMutiraoInfo instance,
-) => <String, dynamic>{
-  'atualizado_em': instance.atualizadoEm,
-  'contratante': instance.contratante,
-  'data_final': instance.dataFinal,
-  'data_inicio': instance.dataInicio,
-  'demandante': instance.demandante,
-  'estado': instance.estado,
-  'id': instance.id,
-  'local': instance.local,
-  'municipio': instance.municipio,
-  'permissoes': instance.permissoes,
-  'status': instance.status,
-  'tipo': instance.tipo,
-  'ultima_mudanca': instance.ultimaMudanca,
-};
+Map<String, dynamic> _$PostEntrarReqToJson(PostEntrarReq instance) =>
+    <String, dynamic>{'email': instance.email, 'senha': instance.senha};
 
-HandlersPostEntrarReq _$HandlersPostEntrarReqFromJson(
+PostEntrarRes _$PostEntrarResFromJson(Map<String, dynamic> json) =>
+    PostEntrarRes(
+      expiresIn: (json['expires_in'] as num).toInt(),
+      messagem: json['messagem'] as String,
+      token: json['token'] as String,
+    );
+
+Map<String, dynamic> _$PostEntrarResToJson(PostEntrarRes instance) =>
+    <String, dynamic>{
+      'expires_in': instance.expiresIn,
+      'messagem': instance.messagem,
+      'token': instance.token,
+    };
+
+PostMutiraoMudancasReq _$PostMutiraoMudancasReqFromJson(
   Map<String, dynamic> json,
-) => HandlersPostEntrarReq(
-  email: json['email'] as String?,
-  senha: json['senha'] as String?,
-);
-
-Map<String, dynamic> _$HandlersPostEntrarReqToJson(
-  HandlersPostEntrarReq instance,
-) => <String, dynamic>{'email': instance.email, 'senha': instance.senha};
-
-HandlersPostEntrarRes _$HandlersPostEntrarResFromJson(
-  Map<String, dynamic> json,
-) => HandlersPostEntrarRes(
-  expiresIn: (json['expires_in'] as num?)?.toInt(),
-  messagem: json['messagem'] as String?,
-  token: json['token'] as String?,
-);
-
-Map<String, dynamic> _$HandlersPostEntrarResToJson(
-  HandlersPostEntrarRes instance,
-) => <String, dynamic>{
-  'expires_in': instance.expiresIn,
-  'messagem': instance.messagem,
-  'token': instance.token,
-};
-
-HandlersPostMutiraoMudancasReq _$HandlersPostMutiraoMudancasReqFromJson(
-  Map<String, dynamic> json,
-) => HandlersPostMutiraoMudancasReq(
-  colaboradores: json['colaboradores'] as Map<String, dynamic>?,
-  condutas: json['condutas'] as Map<String, dynamic>?,
-  condutasGenericas: json['condutasGenericas'] as Map<String, dynamic>?,
-  medicos: json['medicos'] as Map<String, dynamic>?,
+) => PostMutiraoMudancasReq(
+  colaboradores: json['colaboradores'] as Map<String, dynamic>,
+  condutas: json['condutas'] as Map<String, dynamic>,
+  condutasGenericas: json['condutasGenericas'] as Map<String, dynamic>,
+  medicos: json['medicos'] as Map<String, dynamic>,
   mutirao: json['mutirao'] == null
       ? null
-      : EntitysMutiraoData.fromJson(json['mutirao'] as Map<String, dynamic>),
+      : MutiraoData.fromJson(json['mutirao'] as Map<String, dynamic>),
   mutiraoCondutas:
       (json['mutiraoCondutas'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList() ??
       [],
-  pacientes: json['pacientes'] as Map<String, dynamic>?,
-  procedimentos: json['procedimentos'] as Map<String, dynamic>?,
+  pacientes: json['pacientes'] as Map<String, dynamic>,
+  procedimentos: json['procedimentos'] as Map<String, dynamic>,
 );
 
-Map<String, dynamic> _$HandlersPostMutiraoMudancasReqToJson(
-  HandlersPostMutiraoMudancasReq instance,
+Map<String, dynamic> _$PostMutiraoMudancasReqToJson(
+  PostMutiraoMudancasReq instance,
 ) => <String, dynamic>{
   'colaboradores': instance.colaboradores,
   'condutas': instance.condutas,
@@ -399,83 +347,105 @@ Map<String, dynamic> _$HandlersPostMutiraoMudancasReqToJson(
   'procedimentos': instance.procedimentos,
 };
 
-HandlersPostMutiraoMudancasRes _$HandlersPostMutiraoMudancasResFromJson(
+PostMutiraoMudancasRes _$PostMutiraoMudancasResFromJson(
   Map<String, dynamic> json,
-) => HandlersPostMutiraoMudancasRes(
-  messagem: json['messagem'] as String?,
-  timestamp: (json['timestamp'] as num?)?.toInt(),
+) => PostMutiraoMudancasRes(
+  messagem: json['messagem'] as String,
+  timestamp: (json['timestamp'] as num).toInt(),
 );
 
-Map<String, dynamic> _$HandlersPostMutiraoMudancasResToJson(
-  HandlersPostMutiraoMudancasRes instance,
+Map<String, dynamic> _$PostMutiraoMudancasResToJson(
+  PostMutiraoMudancasRes instance,
 ) => <String, dynamic>{
   'messagem': instance.messagem,
   'timestamp': instance.timestamp,
 };
 
-HandlersPostRegistarReq _$HandlersPostRegistarReqFromJson(
-  Map<String, dynamic> json,
-) => HandlersPostRegistarReq(
-  email: json['email'] as String?,
-  nome: json['nome'] as String?,
-  senha: json['senha'] as String?,
-);
-
-Map<String, dynamic> _$HandlersPostRegistarReqToJson(
-  HandlersPostRegistarReq instance,
-) => <String, dynamic>{
-  'email': instance.email,
-  'nome': instance.nome,
-  'senha': instance.senha,
-};
-
-HandlersPostRegistarRes _$HandlersPostRegistarResFromJson(
-  Map<String, dynamic> json,
-) => HandlersPostRegistarRes(
-  messagem: json['messagem'] as String?,
-  usuarioID: (json['usuarioID'] as num?)?.toInt(),
-);
-
-Map<String, dynamic> _$HandlersPostRegistarResToJson(
-  HandlersPostRegistarRes instance,
-) => <String, dynamic>{
-  'messagem': instance.messagem,
-  'usuarioID': instance.usuarioID,
-};
-
-HandlersPutMutiraoPermissoesReq _$HandlersPutMutiraoPermissoesReqFromJson(
-  Map<String, dynamic> json,
-) => HandlersPutMutiraoPermissoesReq();
-
-Map<String, dynamic> _$HandlersPutMutiraoPermissoesReqToJson(
-  HandlersPutMutiraoPermissoesReq instance,
-) => <String, dynamic>{};
-
-HandlersPutMutiraoPermissoesRes _$HandlersPutMutiraoPermissoesResFromJson(
-  Map<String, dynamic> json,
-) => HandlersPutMutiraoPermissoesRes(
-  messagem: json['messagem'] as String?,
-  timestamp: (json['timestamp'] as num?)?.toInt(),
-);
-
-Map<String, dynamic> _$HandlersPutMutiraoPermissoesResToJson(
-  HandlersPutMutiraoPermissoesRes instance,
-) => <String, dynamic>{
-  'messagem': instance.messagem,
-  'timestamp': instance.timestamp,
-};
-
-HandlersSafeUsuario _$HandlersSafeUsuarioFromJson(Map<String, dynamic> json) =>
-    HandlersSafeUsuario(
-      email: json['email'] as String?,
-      id: (json['id'] as num?)?.toInt(),
-      nome: json['nome'] as String?,
+PostRegistarReq _$PostRegistarReqFromJson(Map<String, dynamic> json) =>
+    PostRegistarReq(
+      email: json['email'] as String,
+      nome: json['nome'] as String,
+      senha: json['senha'] as String,
     );
 
-Map<String, dynamic> _$HandlersSafeUsuarioToJson(
-  HandlersSafeUsuario instance,
+Map<String, dynamic> _$PostRegistarReqToJson(PostRegistarReq instance) =>
+    <String, dynamic>{
+      'email': instance.email,
+      'nome': instance.nome,
+      'senha': instance.senha,
+    };
+
+PostRegistarRes _$PostRegistarResFromJson(Map<String, dynamic> json) =>
+    PostRegistarRes(
+      messagem: json['messagem'] as String,
+      usuarioID: (json['usuarioID'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$PostRegistarResToJson(PostRegistarRes instance) =>
+    <String, dynamic>{
+      'messagem': instance.messagem,
+      'usuarioID': instance.usuarioID,
+    };
+
+ProcedimentoUpdate _$ProcedimentoUpdateFromJson(Map<String, dynamic> json) =>
+    ProcedimentoUpdate(
+      atualizadoEm: (json['atualizado_em'] as num).toInt(),
+      data: json['data'] as String?,
+      dioptriaLente: json['dioptriaLente'] as String?,
+      intercorrencia: json['intercorrencia'] as String?,
+      medicoId: (json['medicoId'] as num?)?.toInt(),
+      observacao: json['observacao'] as String?,
+      olho: json['olho'] as String?,
+      pacienteId: (json['pacienteId'] as num).toInt(),
+      status: (json['status'] as num).toInt(),
+      tipo: json['tipo'] as String?,
+    );
+
+Map<String, dynamic> _$ProcedimentoUpdateToJson(ProcedimentoUpdate instance) =>
+    <String, dynamic>{
+      'atualizado_em': instance.atualizadoEm,
+      'data': instance.data,
+      'dioptriaLente': instance.dioptriaLente,
+      'intercorrencia': instance.intercorrencia,
+      'medicoId': instance.medicoId,
+      'observacao': instance.observacao,
+      'olho': instance.olho,
+      'pacienteId': instance.pacienteId,
+      'status': instance.status,
+      'tipo': instance.tipo,
+    };
+
+PutMutiraoPermissoesReq _$PutMutiraoPermissoesReqFromJson(
+  Map<String, dynamic> json,
+) => PutMutiraoPermissoesReq();
+
+Map<String, dynamic> _$PutMutiraoPermissoesReqToJson(
+  PutMutiraoPermissoesReq instance,
+) => <String, dynamic>{};
+
+PutMutiraoPermissoesRes _$PutMutiraoPermissoesResFromJson(
+  Map<String, dynamic> json,
+) => PutMutiraoPermissoesRes(
+  messagem: json['messagem'] as String,
+  timestamp: (json['timestamp'] as num).toInt(),
+);
+
+Map<String, dynamic> _$PutMutiraoPermissoesResToJson(
+  PutMutiraoPermissoesRes instance,
 ) => <String, dynamic>{
-  'email': instance.email,
-  'id': instance.id,
-  'nome': instance.nome,
+  'messagem': instance.messagem,
+  'timestamp': instance.timestamp,
 };
+
+SafeUsuario _$SafeUsuarioFromJson(Map<String, dynamic> json) => SafeUsuario(
+  email: json['email'] as String,
+  id: (json['id'] as num).toInt(),
+  nome: json['nome'] as String,
+);
+
+Map<String, dynamic> _$SafeUsuarioToJson(SafeUsuario instance) =>
+    <String, dynamic>{
+      'email': instance.email,
+      'id': instance.id,
+      'nome': instance.nome,
+    };

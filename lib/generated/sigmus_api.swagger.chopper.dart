@@ -19,12 +19,12 @@ final class _$SigmusApi extends SigmusApi {
   final Type definitionType = SigmusApi;
 
   @override
-  Future<Response<HandlersGetAtualizarTokenRes>> _atualizarTokenGet({
+  Future<Response<GetAtualizarTokenRes>> _getAtualizarToken({
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Autentica um usuário e retorna um token JWT atualizado, se bem-sucedido.',
       summary: 'Atualizar token do usuário',
-      operationId: 'GetAtualizarToken',
+      operationId: 'getAtualizarToken',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -39,20 +39,17 @@ final class _$SigmusApi extends SigmusApi {
       client.baseUrl,
       tag: swaggerMetaData,
     );
-    return client
-        .send<HandlersGetAtualizarTokenRes, HandlersGetAtualizarTokenRes>(
-          $request,
-        );
+    return client.send<GetAtualizarTokenRes, GetAtualizarTokenRes>($request);
   }
 
   @override
-  Future<Response<EntitysPersonData>> _buscarCnsCnsGet({
+  Future<Response<PersonData>> _getBuscarCNS({
     required String cns,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Busca os dados de uma pessoa utilizando o CNS (Cartão Nacional de Saúde)',
       summary: 'Buscar dados da pessoa pelo CNS',
-      operationId: 'GetBuscarCNS',
+      operationId: 'getBuscarCNS',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -67,17 +64,17 @@ final class _$SigmusApi extends SigmusApi {
       client.baseUrl,
       tag: swaggerMetaData,
     );
-    return client.send<EntitysPersonData, EntitysPersonData>($request);
+    return client.send<PersonData, PersonData>($request);
   }
 
   @override
-  Future<Response<EntitysPersonData>> _buscarCpfCpfGet({
+  Future<Response<PersonData>> _getBuscarCPF({
     required String cpf,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Busca os dados de uma pessoa utilizando o CPF (Cadastro de Pessoas Físicas)',
       summary: 'Buscar dados da pessoa pelo CPF',
-      operationId: 'GetBuscarCPF',
+      operationId: 'getBuscarCPF',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -92,17 +89,17 @@ final class _$SigmusApi extends SigmusApi {
       client.baseUrl,
       tag: swaggerMetaData,
     );
-    return client.send<EntitysPersonData, EntitysPersonData>($request);
+    return client.send<PersonData, PersonData>($request);
   }
 
   @override
-  Future<Response<HandlersPostEntrarRes>> _entrarPost({
-    required HandlersPostEntrarReq body,
+  Future<Response<PostEntrarRes>> _postEntrar({
+    required PostEntrarReq body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Autentica um usuário e retorna um token JWT se bem-sucedido',
       summary: 'Login de usuário',
-      operationId: 'PostEntrar',
+      operationId: 'postEntrar',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -119,18 +116,18 @@ final class _$SigmusApi extends SigmusApi {
       body: $body,
       tag: swaggerMetaData,
     );
-    return client.send<HandlersPostEntrarRes, HandlersPostEntrarRes>($request);
+    return client.send<PostEntrarRes, PostEntrarRes>($request);
   }
 
   @override
-  Future<Response<HandlersGetMutiraoMudancasRes>> _mutiraoMutiraoIDMudancasGet({
+  Future<Response<GetMutiraoMudancasRes>> _getMutiraoMudancas({
     required int mutiraoID,
     int? depoisDe,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Retorna as edições de um mutirão específico após uma data fornecida.',
       summary: 'Retorna edições de um mutirão',
-      operationId: 'GetMutiraoMudancas',
+      operationId: 'getMutiraoMudancas',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -149,22 +146,18 @@ final class _$SigmusApi extends SigmusApi {
       parameters: $params,
       tag: swaggerMetaData,
     );
-    return client
-        .send<HandlersGetMutiraoMudancasRes, HandlersGetMutiraoMudancasRes>(
-          $request,
-        );
+    return client.send<GetMutiraoMudancasRes, GetMutiraoMudancasRes>($request);
   }
 
   @override
-  Future<Response<HandlersPostMutiraoMudancasRes>>
-  _mutiraoMutiraoIDMudancasPost({
+  Future<Response<PostMutiraoMudancasRes>> _postMutiraoMudancas({
     required int mutiraoID,
-    required HandlersPostMutiraoMudancasReq body,
+    required PostMutiraoMudancasReq body,
     String? authorization,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: 'Salvar mudanças nas Edições do Mutirão pelo ID do Mutirão',
       summary: 'Salvar mudanças nas Edições do Mutirão',
-      operationId: 'PostMutiraoMudancas',
+      operationId: 'postMutiraoMudancas',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: ["BearerAuth"],
@@ -185,23 +178,21 @@ final class _$SigmusApi extends SigmusApi {
       headers: $headers,
       tag: swaggerMetaData,
     );
-    return client
-        .send<HandlersPostMutiraoMudancasRes, HandlersPostMutiraoMudancasRes>(
-          $request,
-        );
+    return client.send<PostMutiraoMudancasRes, PostMutiraoMudancasRes>(
+      $request,
+    );
   }
 
   @override
-  Future<Response<HandlersPutMutiraoPermissoesRes>>
-  _mutiraoMutiraoIDPermissoesPut({
+  Future<Response<PutMutiraoPermissoesRes>> _putMutiraoPermissoes({
     required int mutiraoID,
-    required HandlersPutMutiraoPermissoesReq body,
+    required PutMutiraoPermissoesReq body,
     String? authorization,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Atualiza as permissões associadas a um Mutirão específico pelo seu ID.',
       summary: 'Atualizar permissões de um Mutirão',
-      operationId: 'PutMutiraoPermissoes',
+      operationId: 'putMutiraoPermissoes',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: ["BearerAuth"],
@@ -222,20 +213,19 @@ final class _$SigmusApi extends SigmusApi {
       headers: $headers,
       tag: swaggerMetaData,
     );
-    return client
-        .send<HandlersPutMutiraoPermissoesRes, HandlersPutMutiraoPermissoesRes>(
-          $request,
-        );
+    return client.send<PutMutiraoPermissoesRes, PutMutiraoPermissoesRes>(
+      $request,
+    );
   }
 
   @override
-  Future<Response<HandlersPostRegistarRes>> _registrarPost({
-    required HandlersPostRegistarReq body,
+  Future<Response<PostRegistarRes>> _postRegistrar({
+    required PostRegistarReq body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Cria um novo usuário com email e senha fornecidos ou atualiza se o email já existir',
       summary: 'Criar ou atualizar usuário',
-      operationId: 'PostRegistrar',
+      operationId: 'postRegistrar',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -252,19 +242,17 @@ final class _$SigmusApi extends SigmusApi {
       body: $body,
       tag: swaggerMetaData,
     );
-    return client.send<HandlersPostRegistarRes, HandlersPostRegistarRes>(
-      $request,
-    );
+    return client.send<PostRegistarRes, PostRegistarRes>($request);
   }
 
   @override
-  Future<Response<HandlersGetUsuarioMutiroesRes>> _usuarioUsuarioIDMutiroesGet({
+  Future<Response<GetUsuarioMutiroesRes>> _getUsuarioMutiroes({
     required int usuarioID,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Retorna uma lista de mutirões que o usuário especificado pode ler',
       summary: 'Busca mutirões legíveis por um usuário',
-      operationId: 'GetUsuarioMutiroes',
+      operationId: 'getUsuarioMutiroes',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -279,18 +267,15 @@ final class _$SigmusApi extends SigmusApi {
       client.baseUrl,
       tag: swaggerMetaData,
     );
-    return client
-        .send<HandlersGetUsuarioMutiroesRes, HandlersGetUsuarioMutiroesRes>(
-          $request,
-        );
+    return client.send<GetUsuarioMutiroesRes, GetUsuarioMutiroesRes>($request);
   }
 
   @override
-  Future<Response<List<HandlersSafeUsuario>>> _usuariosGet({
+  Future<Response<List<SafeUsuario>>> _getUsuarios({
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: 'Retorna uma lista de todos os usuários cadastrados',
       summary: 'Obter lista de usuários',
-      operationId: 'GetUsuarios',
+      operationId: 'getUsuarios',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -305,18 +290,16 @@ final class _$SigmusApi extends SigmusApi {
       client.baseUrl,
       tag: swaggerMetaData,
     );
-    return client.send<List<HandlersSafeUsuario>, HandlersSafeUsuario>(
-      $request,
-    );
+    return client.send<List<SafeUsuario>, SafeUsuario>($request);
   }
 
   @override
-  Future<Response<HandlersDelUserRes>> _usuariosIdDelete({
+  Future<Response<DelUserRes>> _deleteUsuario({
     required int id,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: 'Deleta um usuário baseado no ID fornecido na URL',
       summary: 'Deletar usuário',
-      operationId: 'DeleteUsuario',
+      operationId: 'deleteUsuario',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -331,6 +314,6 @@ final class _$SigmusApi extends SigmusApi {
       client.baseUrl,
       tag: swaggerMetaData,
     );
-    return client.send<HandlersDelUserRes, HandlersDelUserRes>($request);
+    return client.send<DelUserRes, DelUserRes>($request);
   }
 }

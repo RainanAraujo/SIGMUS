@@ -7,8 +7,7 @@ import 'package:sigmus/generated/sigmus_api.swagger.dart';
 
 class AuthInterceptor implements Interceptor {
   ValueNotifier<String?> token = ValueNotifier<String?>(null);
-  ValueNotifier<HandlersSafeUsuario?> userData =
-      ValueNotifier<HandlersSafeUsuario?>(null);
+  ValueNotifier<SafeUsuario?> userData = ValueNotifier<SafeUsuario?>(null);
 
   @override
   FutureOr<Response<BodyType>> intercept<BodyType>(
@@ -22,7 +21,7 @@ class AuthInterceptor implements Interceptor {
     this.token.value = token;
     if (token != null) {
       Map<String, dynamic> payload = Jwt.parseJwt(token);
-      userData.value = HandlersSafeUsuario.fromJson(payload);
+      userData.value = SafeUsuario.fromJson(payload);
     } else {
       userData.value = null;
     }
@@ -34,7 +33,7 @@ extension TokenExt on SigmusApi {
     client.interceptors.whereType<AuthInterceptor>().first.setToken(token);
   }
 
-  ValueNotifier<HandlersSafeUsuario?> get userData {
+  ValueNotifier<SafeUsuario?> get userData {
     return client.interceptors.whereType<AuthInterceptor>().first.userData;
   }
 

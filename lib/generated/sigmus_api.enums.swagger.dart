@@ -4,7 +4,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:collection/collection.dart';
 
-enum EntitysPermissao {
+enum Permissao {
   @JsonValue(null)
   swaggerGeneratedUnknown(null),
 
@@ -17,5 +17,5 @@ enum EntitysPermissao {
 
   final String? value;
 
-  const EntitysPermissao(this.value);
+  const Permissao(this.value);
 }

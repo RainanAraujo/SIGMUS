@@ -1,0 +1,1272 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Servidor do projeto SIGMUS",
+        "title": "SIGMUS API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/atualizar-token": {
+            "get": {
+                "description": "Autentica um usuário e retorna um token JWT atualizado, se bem-sucedido.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Atualizar token do usuário",
+                "operationId": "getAtualizarToken",
+                "responses": {
+                    "200": {
+                        "description": "Token atualizado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/GetAtualizarTokenRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados da requisição inválidos",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciais inválidas",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/buscar/cns/{cns}": {
+            "get": {
+                "description": "Busca os dados de uma pessoa utilizando o CNS (Cartão Nacional de Saúde)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Busca"
+                ],
+                "summary": "Buscar dados da pessoa pelo CNS",
+                "operationId": "getBuscarCNS",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CNS da pessoa",
+                        "name": "cns",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dados da pessoa encontrados com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/PersonData"
+                        }
+                    },
+                    "400": {
+                        "description": "CNS inválido",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro ao buscar dados da pessoa",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/buscar/cpf/{cpf}": {
+            "get": {
+                "description": "Busca os dados de uma pessoa utilizando o CPF (Cadastro de Pessoas Físicas)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Busca"
+                ],
+                "summary": "Buscar dados da pessoa pelo CPF",
+                "operationId": "getBuscarCPF",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "CPF da pessoa",
+                        "name": "cpf",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Dados da pessoa encontrados com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/PersonData"
+                        }
+                    },
+                    "400": {
+                        "description": "CPF inválido",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro ao buscar dados da pessoa",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/entrar": {
+            "post": {
+                "description": "Autentica um usuário e retorna um token JWT se bem-sucedido",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Autenticação"
+                ],
+                "summary": "Login de usuário",
+                "operationId": "postEntrar",
+                "parameters": [
+                    {
+                        "description": "Email e senha do usuário",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/PostEntrarReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login efetuado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/PostEntrarRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados da requisição inválidos",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Credenciais inválidas",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/mutirao/{mutiraoID}/mudancas": {
+            "get": {
+                "description": "Retorna as edições de um mutirão específico após uma data fornecida.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sincronização"
+                ],
+                "summary": "Retorna edições de um mutirão",
+                "operationId": "getMutiraoMudancas",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do Mutirão",
+                        "name": "mutiraoID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Timestamp após o qual as edições devem ser retornadas",
+                        "name": "depoisDe",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operações encontradas com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/GetMutiraoMudancasRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Parametros invalidos",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "404": {
+                        "description": "Mutirão não encontrado",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro ao buscar, converter ou mesclar mudanças",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Salvar mudanças nas Edições do Mutirão pelo ID do Mutirão",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sincronização"
+                ],
+                "summary": "Salvar mudanças nas Edições do Mutirão",
+                "operationId": "postMutiraoMudancas",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do Mutirão",
+                        "name": "mutiraoID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Mudanças a serem salvas",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/PostMutiraoMudancasReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Mudanças salvas com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/PostMutiraoMudancasRes"
+                        }
+                    },
+                    "400": {
+                        "description": "MutiraoID inválido ou Dados inválidos",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "404": {
+                        "description": "Não foi possivel salvar as mudanças",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/mutirao/{mutiraoID}/permissoes": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Atualiza as permissões associadas a um Mutirão específico pelo seu ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sincronização"
+                ],
+                "summary": "Atualizar permissões de um Mutirão",
+                "operationId": "putMutiraoPermissoes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do Mutirão",
+                        "name": "mutiraoID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Permissões a serem atualizadas",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/PutMutiraoPermissoesReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Permissões atualizadas com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/PutMutiraoPermissoesRes"
+                        }
+                    },
+                    "400": {
+                        "description": "MutiraoID inválido ou dados inválidos",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "404": {
+                        "description": "Mutirão não encontrado ou não foi possível salvar as alterações",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/registrar": {
+            "post": {
+                "description": "Cria um novo usuário com email e senha fornecidos ou atualiza se o email já existir",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Criar ou atualizar usuário",
+                "operationId": "postRegistrar",
+                "parameters": [
+                    {
+                        "description": "Dados do novo usuário",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/PostRegistarReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário criado ou atualizado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/PostRegistarRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/usuario/{usuarioID}/mutiroes": {
+            "get": {
+                "description": "Retorna uma lista de mutirões que o usuário especificado pode ler",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Sincronização"
+                ],
+                "summary": "Busca mutirões legíveis por um usuário",
+                "operationId": "getUsuarioMutiroes",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do Usuário",
+                        "name": "usuarioID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Mutirões encontrados com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/GetUsuarioMutiroesRes"
+                        }
+                    },
+                    "400": {
+                        "description": "UsuarioID inválido",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro ao buscar mutirões",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/usuarios": {
+            "get": {
+                "description": "Retorna uma lista de todos os usuários cadastrados",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Obter lista de usuários",
+                "operationId": "getUsuarios",
+                "responses": {
+                    "200": {
+                        "description": "Lista de usuários retornada com sucesso",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/SafeUsuario"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/usuarios/{id}": {
+            "delete": {
+                "description": "Deleta um usuário baseado no ID fornecido na URL",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Usuários"
+                ],
+                "summary": "Deletar usuário",
+                "operationId": "deleteUsuario",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "format": "int64",
+                        "description": "ID do usuário a ser deletado",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Usuário deletado com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/DelUserRes"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "404": {
+                        "description": "Usuário não encontrado",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorMessage"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ColaboradorUpdate": {
+            "type": "object",
+            "required": [
+                "atualizado_em",
+                "funcao",
+                "nome",
+                "status"
+            ],
+            "properties": {
+                "atualizado_em": {
+                    "type": "integer"
+                },
+                "funcao": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "CondutaGenericaUpdate": {
+            "type": "object",
+            "required": [
+                "atualizado_em",
+                "pacienteId",
+                "status"
+            ],
+            "properties": {
+                "atualizado_em": {
+                    "type": "integer"
+                },
+                "conduta": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "string"
+                },
+                "medicoId": {
+                    "type": "integer"
+                },
+                "pacienteId": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "CondutaUpdate": {
+            "type": "object",
+            "required": [
+                "atualizado_em",
+                "pacienteId",
+                "status"
+            ],
+            "properties": {
+                "atualizado_em": {
+                    "type": "integer"
+                },
+                "dados": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "data": {
+                    "type": "string"
+                },
+                "medicoId": {
+                    "type": "integer"
+                },
+                "pacienteId": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "tipo": {
+                    "type": "string"
+                }
+            }
+        },
+        "DelUserRes": {
+            "type": "object",
+            "required": [
+                "messagem"
+            ],
+            "properties": {
+                "messagem": {
+                    "type": "string"
+                }
+            }
+        },
+        "ErrorMessage": {
+            "type": "object",
+            "required": [
+                "error",
+                "messagem"
+            ],
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "messagem": {
+                    "type": "string"
+                }
+            }
+        },
+        "GetAtualizarTokenRes": {
+            "type": "object",
+            "required": [
+                "expires_in",
+                "messagem",
+                "token"
+            ],
+            "properties": {
+                "expires_in": {
+                    "type": "integer",
+                    "example": 86400000
+                },
+                "messagem": {
+                    "type": "string",
+                    "example": "Sucesso"
+                },
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                }
+            }
+        },
+        "GetMutiraoMudancasRes": {
+            "type": "object",
+            "required": [
+                "messagem",
+                "timestamp"
+            ],
+            "properties": {
+                "messagem": {
+                    "type": "string"
+                },
+                "mudancas": {
+                    "$ref": "#/definitions/MutiraoMudancas"
+                },
+                "mutirao": {
+                    "$ref": "#/definitions/MutiraoData"
+                },
+                "timestamp": {
+                    "type": "integer"
+                }
+            }
+        },
+        "GetUsuarioMutiroesRes": {
+            "type": "object",
+            "required": [
+                "messagem",
+                "mutiroes"
+            ],
+            "properties": {
+                "messagem": {
+                    "type": "string"
+                },
+                "mutiroes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/MutiraoInfo"
+                    }
+                }
+            }
+        },
+        "MedicoUpdate": {
+            "type": "object",
+            "required": [
+                "atualizado_em",
+                "crm",
+                "nome",
+                "status"
+            ],
+            "properties": {
+                "atualizado_em": {
+                    "type": "integer"
+                },
+                "crm": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "MutiraoData": {
+            "type": "object",
+            "required": [
+                "atualizado_em",
+                "contratante",
+                "data_final",
+                "data_inicio",
+                "demandante",
+                "estado",
+                "id",
+                "local",
+                "municipio",
+                "permissoes",
+                "status",
+                "tipo"
+            ],
+            "properties": {
+                "atualizado_em": {
+                    "type": "integer"
+                },
+                "contratante": {
+                    "type": "string"
+                },
+                "data_final": {
+                    "type": "string"
+                },
+                "data_inicio": {
+                    "type": "string"
+                },
+                "demandante": {
+                    "type": "string"
+                },
+                "estado": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "local": {
+                    "type": "string"
+                },
+                "municipio": {
+                    "type": "string"
+                },
+                "permissoes": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Permissao"
+                        }
+                    }
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "tipo": {
+                    "type": "string"
+                }
+            }
+        },
+        "MutiraoInfo": {
+            "type": "object",
+            "required": [
+                "atualizado_em",
+                "contratante",
+                "data_final",
+                "data_inicio",
+                "demandante",
+                "estado",
+                "id",
+                "local",
+                "municipio",
+                "permissoes",
+                "status",
+                "tipo",
+                "ultima_mudanca"
+            ],
+            "properties": {
+                "atualizado_em": {
+                    "type": "integer"
+                },
+                "contratante": {
+                    "type": "string"
+                },
+                "data_final": {
+                    "type": "string"
+                },
+                "data_inicio": {
+                    "type": "string"
+                },
+                "demandante": {
+                    "type": "string"
+                },
+                "estado": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "local": {
+                    "type": "string"
+                },
+                "municipio": {
+                    "type": "string"
+                },
+                "permissoes": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Permissao"
+                        }
+                    }
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "tipo": {
+                    "type": "string"
+                },
+                "ultima_mudanca": {
+                    "type": "integer"
+                }
+            }
+        },
+        "MutiraoMudancas": {
+            "type": "object",
+            "required": [
+                "colaboradores",
+                "condutas",
+                "condutasGenericas",
+                "medicos",
+                "mutiraoCondutas",
+                "pacientes",
+                "procedimentos"
+            ],
+            "properties": {
+                "colaboradores": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/ColaboradorUpdate"
+                    }
+                },
+                "condutas": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/CondutaUpdate"
+                    }
+                },
+                "condutasGenericas": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/CondutaGenericaUpdate"
+                    }
+                },
+                "medicos": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MedicoUpdate"
+                    }
+                },
+                "mutiraoCondutas": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "pacientes": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/PacienteUpdate"
+                    }
+                },
+                "procedimentos": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/ProcedimentoUpdate"
+                    }
+                }
+            }
+        },
+        "PacienteUpdate": {
+            "type": "object",
+            "required": [
+                "atualizado_em",
+                "status"
+            ],
+            "properties": {
+                "atualizado_em": {
+                    "type": "integer"
+                },
+                "cns": {
+                    "type": "string"
+                },
+                "cpf": {
+                    "type": "string"
+                },
+                "dataNascimento": {
+                    "type": "string"
+                },
+                "endereco": {
+                    "type": "string"
+                },
+                "municipio": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "nomeDaMae": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "tel": {
+                    "type": "string"
+                },
+                "uf": {
+                    "type": "string"
+                }
+            }
+        },
+        "Permissao": {
+            "type": "string",
+            "enum": [
+                "leitura",
+                "escrita",
+                "edicao"
+            ],
+            "x-enum-varnames": [
+                "PermissaoLeitura",
+                "PermissaoEscrita",
+                "PermissaoEdicao"
+            ]
+        },
+        "PersonData": {
+            "type": "object",
+            "required": [
+                "cns",
+                "cpf",
+                "dataNascimento",
+                "endereco",
+                "nome",
+                "nomeMae",
+                "tel"
+            ],
+            "properties": {
+                "cns": {
+                    "type": "string"
+                },
+                "cpf": {
+                    "type": "string"
+                },
+                "dataNascimento": {
+                    "type": "string"
+                },
+                "endereco": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "nomeMae": {
+                    "type": "string"
+                },
+                "tel": {
+                    "type": "string"
+                }
+            }
+        },
+        "PostEntrarReq": {
+            "type": "object",
+            "required": [
+                "email",
+                "senha"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "senha": {
+                    "type": "string"
+                }
+            }
+        },
+        "PostEntrarRes": {
+            "type": "object",
+            "required": [
+                "expires_in",
+                "messagem",
+                "token"
+            ],
+            "properties": {
+                "expires_in": {
+                    "type": "integer",
+                    "example": 86400000
+                },
+                "messagem": {
+                    "type": "string",
+                    "example": "Sucesso"
+                },
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                }
+            }
+        },
+        "PostMutiraoMudancasReq": {
+            "type": "object",
+            "required": [
+                "colaboradores",
+                "condutas",
+                "condutasGenericas",
+                "medicos",
+                "mutiraoCondutas",
+                "pacientes",
+                "procedimentos"
+            ],
+            "properties": {
+                "colaboradores": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/ColaboradorUpdate"
+                    }
+                },
+                "condutas": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/CondutaUpdate"
+                    }
+                },
+                "condutasGenericas": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/CondutaGenericaUpdate"
+                    }
+                },
+                "medicos": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/MedicoUpdate"
+                    }
+                },
+                "mutirao": {
+                    "$ref": "#/definitions/MutiraoData"
+                },
+                "mutiraoCondutas": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "pacientes": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/PacienteUpdate"
+                    }
+                },
+                "procedimentos": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/ProcedimentoUpdate"
+                    }
+                }
+            }
+        },
+        "PostMutiraoMudancasRes": {
+            "type": "object",
+            "required": [
+                "messagem",
+                "timestamp"
+            ],
+            "properties": {
+                "messagem": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "integer"
+                }
+            }
+        },
+        "PostRegistarReq": {
+            "type": "object",
+            "required": [
+                "email",
+                "nome",
+                "senha"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "senha": {
+                    "type": "string"
+                }
+            }
+        },
+        "PostRegistarRes": {
+            "type": "object",
+            "required": [
+                "messagem",
+                "usuarioID"
+            ],
+            "properties": {
+                "messagem": {
+                    "type": "string"
+                },
+                "usuarioID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "ProcedimentoUpdate": {
+            "type": "object",
+            "required": [
+                "atualizado_em",
+                "pacienteId",
+                "status"
+            ],
+            "properties": {
+                "atualizado_em": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "string"
+                },
+                "dioptriaLente": {
+                    "type": "string"
+                },
+                "intercorrencia": {
+                    "type": "string"
+                },
+                "medicoId": {
+                    "type": "integer"
+                },
+                "observacao": {
+                    "type": "string"
+                },
+                "olho": {
+                    "type": "string"
+                },
+                "pacienteId": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "tipo": {
+                    "type": "string"
+                }
+            }
+        },
+        "PutMutiraoPermissoesReq": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/definitions/Permissao"
+                }
+            }
+        },
+        "PutMutiraoPermissoesRes": {
+            "type": "object",
+            "required": [
+                "messagem",
+                "timestamp"
+            ],
+            "properties": {
+                "messagem": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "integer"
+                }
+            }
+        },
+        "SafeUsuario": {
+            "type": "object",
+            "required": [
+                "email",
+                "id",
+                "nome"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

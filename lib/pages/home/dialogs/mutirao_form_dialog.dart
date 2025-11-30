@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sigmus/data/brasil_data.dart';
-import 'package:sigmus/models/mutirao_info.dart';
+import 'package:sigmus/generated/sigmus_api.models.swagger.dart';
 import 'package:sigmus/theme/app_colors.dart';
 import 'package:sigmus/widgets/app_date_range_picker.dart';
 import 'package:sigmus/widgets/app_dialog.dart';
@@ -56,13 +56,13 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
   void _loadMutirao(MutiraoInfo mutirao) {
     setState(() {
       _tipo = mutirao.tipo;
-      _estado = mutirao.estado ?? '';
+      _estado = mutirao.estado;
       _municipio = mutirao.municipio;
       _local = mutirao.local;
       _dataInicio = DateTime.tryParse(mutirao.dataInicio);
       _dataFinal = DateTime.tryParse(mutirao.dataFinal);
-      _demandante = mutirao.demandante ?? '';
-      _contratante = mutirao.contratante ?? '';
+      _demandante = mutirao.demandante;
+      _contratante = mutirao.contratante;
       // TODO: Carregar equipe, condutas e médicos
     });
   }
@@ -92,22 +92,9 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
         _isLoading = true;
       });
 
-      final mutirao = MutiraoInfo(
-        id: widget.mutirao?.id ?? '',
-        tipo: _tipo,
-        estado: _estado,
-        municipio: _municipio,
-        local: _local,
-        dataInicio: _dateFormat.format(_dataInicio!),
-        dataFinal: _dateFormat.format(_dataFinal!),
-        demandante: _demandante,
-        contratante: _contratante,
-        permissions: widget.mutirao?.permissions ?? [],
-        createdAt: widget.mutirao?.createdAt ?? DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
+      final mutirao = widget.mutirao;
 
-      widget.onSubmit?.call(mutirao);
+      widget.onSubmit?.call(mutirao!);
 
       setState(() {
         _isLoading = false;

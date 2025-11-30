@@ -54,24 +54,24 @@ abstract class SigmusApi extends ChopperService {
   }
 
   ///Atualizar token do usuário
-  Future<chopper.Response<HandlersGetAtualizarTokenRes>> atualizarTokenGet() {
+  Future<chopper.Response<GetAtualizarTokenRes>> getAtualizarToken() {
     generatedMapping.putIfAbsent(
-      HandlersGetAtualizarTokenRes,
-      () => HandlersGetAtualizarTokenRes.fromJsonFactory,
+      GetAtualizarTokenRes,
+      () => GetAtualizarTokenRes.fromJsonFactory,
     );
 
-    return _atualizarTokenGet();
+    return _getAtualizarToken();
   }
 
   ///Atualizar token do usuário
   @GET(path: '/atualizar-token')
-  Future<chopper.Response<HandlersGetAtualizarTokenRes>> _atualizarTokenGet({
+  Future<chopper.Response<GetAtualizarTokenRes>> _getAtualizarToken({
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Autentica um usuário e retorna um token JWT atualizado, se bem-sucedido.',
       summary: 'Atualizar token do usuário',
-      operationId: 'GetAtualizarToken',
+      operationId: 'getAtualizarToken',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -82,28 +82,23 @@ abstract class SigmusApi extends ChopperService {
 
   ///Buscar dados da pessoa pelo CNS
   ///@param cns CNS da pessoa
-  Future<chopper.Response<EntitysPersonData>> buscarCnsCnsGet({
-    required String cns,
-  }) {
-    generatedMapping.putIfAbsent(
-      EntitysPersonData,
-      () => EntitysPersonData.fromJsonFactory,
-    );
+  Future<chopper.Response<PersonData>> getBuscarCNS({required String cns}) {
+    generatedMapping.putIfAbsent(PersonData, () => PersonData.fromJsonFactory);
 
-    return _buscarCnsCnsGet(cns: cns);
+    return _getBuscarCNS(cns: cns);
   }
 
   ///Buscar dados da pessoa pelo CNS
   ///@param cns CNS da pessoa
   @GET(path: '/buscar/cns/{cns}')
-  Future<chopper.Response<EntitysPersonData>> _buscarCnsCnsGet({
+  Future<chopper.Response<PersonData>> _getBuscarCNS({
     @Path('cns') required String cns,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Busca os dados de uma pessoa utilizando o CNS (Cartão Nacional de Saúde)',
       summary: 'Buscar dados da pessoa pelo CNS',
-      operationId: 'GetBuscarCNS',
+      operationId: 'getBuscarCNS',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -114,28 +109,23 @@ abstract class SigmusApi extends ChopperService {
 
   ///Buscar dados da pessoa pelo CPF
   ///@param cpf CPF da pessoa
-  Future<chopper.Response<EntitysPersonData>> buscarCpfCpfGet({
-    required String cpf,
-  }) {
-    generatedMapping.putIfAbsent(
-      EntitysPersonData,
-      () => EntitysPersonData.fromJsonFactory,
-    );
+  Future<chopper.Response<PersonData>> getBuscarCPF({required String cpf}) {
+    generatedMapping.putIfAbsent(PersonData, () => PersonData.fromJsonFactory);
 
-    return _buscarCpfCpfGet(cpf: cpf);
+    return _getBuscarCPF(cpf: cpf);
   }
 
   ///Buscar dados da pessoa pelo CPF
   ///@param cpf CPF da pessoa
   @GET(path: '/buscar/cpf/{cpf}')
-  Future<chopper.Response<EntitysPersonData>> _buscarCpfCpfGet({
+  Future<chopper.Response<PersonData>> _getBuscarCPF({
     @Path('cpf') required String cpf,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Busca os dados de uma pessoa utilizando o CPF (Cadastro de Pessoas Físicas)',
       summary: 'Buscar dados da pessoa pelo CPF',
-      operationId: 'GetBuscarCPF',
+      operationId: 'getBuscarCPF',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -146,32 +136,32 @@ abstract class SigmusApi extends ChopperService {
 
   ///Login de usuário
   ///@param body Email e senha do usuário
-  Future<chopper.Response<HandlersPostEntrarRes>> entrarPost({
-    required HandlersPostEntrarReq body,
+  Future<chopper.Response<PostEntrarRes>> postEntrar({
+    required PostEntrarReq body,
   }) {
     generatedMapping.putIfAbsent(
-      HandlersPostEntrarReq,
-      () => HandlersPostEntrarReq.fromJsonFactory,
+      PostEntrarReq,
+      () => PostEntrarReq.fromJsonFactory,
     );
     generatedMapping.putIfAbsent(
-      HandlersPostEntrarRes,
-      () => HandlersPostEntrarRes.fromJsonFactory,
+      PostEntrarRes,
+      () => PostEntrarRes.fromJsonFactory,
     );
 
-    return _entrarPost(body: body);
+    return _postEntrar(body: body);
   }
 
   ///Login de usuário
   ///@param body Email e senha do usuário
   @POST(path: '/entrar')
-  Future<chopper.Response<HandlersPostEntrarRes>> _entrarPost({
-    @Body() required HandlersPostEntrarReq body,
+  Future<chopper.Response<PostEntrarRes>> _postEntrar({
+    @Body() required PostEntrarReq body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Autentica um usuário e retorna um token JWT se bem-sucedido',
       summary: 'Login de usuário',
-      operationId: 'PostEntrar',
+      operationId: 'postEntrar',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -183,25 +173,23 @@ abstract class SigmusApi extends ChopperService {
   ///Retorna edições de um mutirão
   ///@param mutiraoID ID do Mutirão
   ///@param depoisDe Timestamp após o qual as edições devem ser retornadas
-  Future<chopper.Response<HandlersGetMutiraoMudancasRes>>
-  mutiraoMutiraoIDMudancasGet({required int mutiraoID, int? depoisDe}) {
+  Future<chopper.Response<GetMutiraoMudancasRes>> getMutiraoMudancas({
+    required int mutiraoID,
+    int? depoisDe,
+  }) {
     generatedMapping.putIfAbsent(
-      HandlersGetMutiraoMudancasRes,
-      () => HandlersGetMutiraoMudancasRes.fromJsonFactory,
+      GetMutiraoMudancasRes,
+      () => GetMutiraoMudancasRes.fromJsonFactory,
     );
 
-    return _mutiraoMutiraoIDMudancasGet(
-      mutiraoID: mutiraoID,
-      depoisDe: depoisDe,
-    );
+    return _getMutiraoMudancas(mutiraoID: mutiraoID, depoisDe: depoisDe);
   }
 
   ///Retorna edições de um mutirão
   ///@param mutiraoID ID do Mutirão
   ///@param depoisDe Timestamp após o qual as edições devem ser retornadas
   @GET(path: '/mutirao/{mutiraoID}/mudancas')
-  Future<chopper.Response<HandlersGetMutiraoMudancasRes>>
-  _mutiraoMutiraoIDMudancasGet({
+  Future<chopper.Response<GetMutiraoMudancasRes>> _getMutiraoMudancas({
     @Path('mutiraoID') required int mutiraoID,
     @Query('depoisDe') int? depoisDe,
     @chopper.Tag()
@@ -209,7 +197,7 @@ abstract class SigmusApi extends ChopperService {
       description:
           'Retorna as edições de um mutirão específico após uma data fornecida.',
       summary: 'Retorna edições de um mutirão',
-      operationId: 'GetMutiraoMudancas',
+      operationId: 'getMutiraoMudancas',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -221,22 +209,21 @@ abstract class SigmusApi extends ChopperService {
   ///Salvar mudanças nas Edições do Mutirão
   ///@param mutiraoID ID do Mutirão
   ///@param body Mudanças a serem salvas
-  Future<chopper.Response<HandlersPostMutiraoMudancasRes>>
-  mutiraoMutiraoIDMudancasPost({
+  Future<chopper.Response<PostMutiraoMudancasRes>> postMutiraoMudancas({
     required int mutiraoID,
-    required HandlersPostMutiraoMudancasReq body,
+    required PostMutiraoMudancasReq body,
     dynamic authorization,
   }) {
     generatedMapping.putIfAbsent(
-      HandlersPostMutiraoMudancasReq,
-      () => HandlersPostMutiraoMudancasReq.fromJsonFactory,
+      PostMutiraoMudancasReq,
+      () => PostMutiraoMudancasReq.fromJsonFactory,
     );
     generatedMapping.putIfAbsent(
-      HandlersPostMutiraoMudancasRes,
-      () => HandlersPostMutiraoMudancasRes.fromJsonFactory,
+      PostMutiraoMudancasRes,
+      () => PostMutiraoMudancasRes.fromJsonFactory,
     );
 
-    return _mutiraoMutiraoIDMudancasPost(
+    return _postMutiraoMudancas(
       mutiraoID: mutiraoID,
       body: body,
       authorization: authorization?.toString(),
@@ -247,16 +234,15 @@ abstract class SigmusApi extends ChopperService {
   ///@param mutiraoID ID do Mutirão
   ///@param body Mudanças a serem salvas
   @POST(path: '/mutirao/{mutiraoID}/mudancas')
-  Future<chopper.Response<HandlersPostMutiraoMudancasRes>>
-  _mutiraoMutiraoIDMudancasPost({
+  Future<chopper.Response<PostMutiraoMudancasRes>> _postMutiraoMudancas({
     @Path('mutiraoID') required int mutiraoID,
-    @Body() required HandlersPostMutiraoMudancasReq body,
+    @Body() required PostMutiraoMudancasReq body,
     @Header('Authorization') String? authorization,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: 'Salvar mudanças nas Edições do Mutirão pelo ID do Mutirão',
       summary: 'Salvar mudanças nas Edições do Mutirão',
-      operationId: 'PostMutiraoMudancas',
+      operationId: 'postMutiraoMudancas',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: ["BearerAuth"],
@@ -268,22 +254,21 @@ abstract class SigmusApi extends ChopperService {
   ///Atualizar permissões de um Mutirão
   ///@param mutiraoID ID do Mutirão
   ///@param body Permissões a serem atualizadas
-  Future<chopper.Response<HandlersPutMutiraoPermissoesRes>>
-  mutiraoMutiraoIDPermissoesPut({
+  Future<chopper.Response<PutMutiraoPermissoesRes>> putMutiraoPermissoes({
     required int mutiraoID,
-    required HandlersPutMutiraoPermissoesReq body,
+    required PutMutiraoPermissoesReq body,
     dynamic authorization,
   }) {
     generatedMapping.putIfAbsent(
-      HandlersPutMutiraoPermissoesReq,
-      () => HandlersPutMutiraoPermissoesReq.fromJsonFactory,
+      PutMutiraoPermissoesReq,
+      () => PutMutiraoPermissoesReq.fromJsonFactory,
     );
     generatedMapping.putIfAbsent(
-      HandlersPutMutiraoPermissoesRes,
-      () => HandlersPutMutiraoPermissoesRes.fromJsonFactory,
+      PutMutiraoPermissoesRes,
+      () => PutMutiraoPermissoesRes.fromJsonFactory,
     );
 
-    return _mutiraoMutiraoIDPermissoesPut(
+    return _putMutiraoPermissoes(
       mutiraoID: mutiraoID,
       body: body,
       authorization: authorization?.toString(),
@@ -294,17 +279,16 @@ abstract class SigmusApi extends ChopperService {
   ///@param mutiraoID ID do Mutirão
   ///@param body Permissões a serem atualizadas
   @PUT(path: '/mutirao/{mutiraoID}/permissoes')
-  Future<chopper.Response<HandlersPutMutiraoPermissoesRes>>
-  _mutiraoMutiraoIDPermissoesPut({
+  Future<chopper.Response<PutMutiraoPermissoesRes>> _putMutiraoPermissoes({
     @Path('mutiraoID') required int mutiraoID,
-    @Body() required HandlersPutMutiraoPermissoesReq body,
+    @Body() required PutMutiraoPermissoesReq body,
     @Header('Authorization') String? authorization,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Atualiza as permissões associadas a um Mutirão específico pelo seu ID.',
       summary: 'Atualizar permissões de um Mutirão',
-      operationId: 'PutMutiraoPermissoes',
+      operationId: 'putMutiraoPermissoes',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: ["BearerAuth"],
@@ -315,32 +299,32 @@ abstract class SigmusApi extends ChopperService {
 
   ///Criar ou atualizar usuário
   ///@param body Dados do novo usuário
-  Future<chopper.Response<HandlersPostRegistarRes>> registrarPost({
-    required HandlersPostRegistarReq body,
+  Future<chopper.Response<PostRegistarRes>> postRegistrar({
+    required PostRegistarReq body,
   }) {
     generatedMapping.putIfAbsent(
-      HandlersPostRegistarReq,
-      () => HandlersPostRegistarReq.fromJsonFactory,
+      PostRegistarReq,
+      () => PostRegistarReq.fromJsonFactory,
     );
     generatedMapping.putIfAbsent(
-      HandlersPostRegistarRes,
-      () => HandlersPostRegistarRes.fromJsonFactory,
+      PostRegistarRes,
+      () => PostRegistarRes.fromJsonFactory,
     );
 
-    return _registrarPost(body: body);
+    return _postRegistrar(body: body);
   }
 
   ///Criar ou atualizar usuário
   ///@param body Dados do novo usuário
   @POST(path: '/registrar')
-  Future<chopper.Response<HandlersPostRegistarRes>> _registrarPost({
-    @Body() required HandlersPostRegistarReq body,
+  Future<chopper.Response<PostRegistarRes>> _postRegistrar({
+    @Body() required PostRegistarReq body,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Cria um novo usuário com email e senha fornecidos ou atualiza se o email já existir',
       summary: 'Criar ou atualizar usuário',
-      operationId: 'PostRegistrar',
+      operationId: 'postRegistrar',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -351,28 +335,28 @@ abstract class SigmusApi extends ChopperService {
 
   ///Busca mutirões legíveis por um usuário
   ///@param usuarioID ID do Usuário
-  Future<chopper.Response<HandlersGetUsuarioMutiroesRes>>
-  usuarioUsuarioIDMutiroesGet({required int usuarioID}) {
+  Future<chopper.Response<GetUsuarioMutiroesRes>> getUsuarioMutiroes({
+    required int usuarioID,
+  }) {
     generatedMapping.putIfAbsent(
-      HandlersGetUsuarioMutiroesRes,
-      () => HandlersGetUsuarioMutiroesRes.fromJsonFactory,
+      GetUsuarioMutiroesRes,
+      () => GetUsuarioMutiroesRes.fromJsonFactory,
     );
 
-    return _usuarioUsuarioIDMutiroesGet(usuarioID: usuarioID);
+    return _getUsuarioMutiroes(usuarioID: usuarioID);
   }
 
   ///Busca mutirões legíveis por um usuário
   ///@param usuarioID ID do Usuário
   @GET(path: '/usuario/{usuarioID}/mutiroes')
-  Future<chopper.Response<HandlersGetUsuarioMutiroesRes>>
-  _usuarioUsuarioIDMutiroesGet({
+  Future<chopper.Response<GetUsuarioMutiroesRes>> _getUsuarioMutiroes({
     @Path('usuarioID') required int usuarioID,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Retorna uma lista de mutirões que o usuário especificado pode ler',
       summary: 'Busca mutirões legíveis por um usuário',
-      operationId: 'GetUsuarioMutiroes',
+      operationId: 'getUsuarioMutiroes',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -382,23 +366,23 @@ abstract class SigmusApi extends ChopperService {
   });
 
   ///Obter lista de usuários
-  Future<chopper.Response<List<HandlersSafeUsuario>>> usuariosGet() {
+  Future<chopper.Response<List<SafeUsuario>>> getUsuarios() {
     generatedMapping.putIfAbsent(
-      HandlersSafeUsuario,
-      () => HandlersSafeUsuario.fromJsonFactory,
+      SafeUsuario,
+      () => SafeUsuario.fromJsonFactory,
     );
 
-    return _usuariosGet();
+    return _getUsuarios();
   }
 
   ///Obter lista de usuários
   @GET(path: '/usuarios')
-  Future<chopper.Response<List<HandlersSafeUsuario>>> _usuariosGet({
+  Future<chopper.Response<List<SafeUsuario>>> _getUsuarios({
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: 'Retorna uma lista de todos os usuários cadastrados',
       summary: 'Obter lista de usuários',
-      operationId: 'GetUsuarios',
+      operationId: 'getUsuarios',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],
@@ -409,27 +393,22 @@ abstract class SigmusApi extends ChopperService {
 
   ///Deletar usuário
   ///@param id ID do usuário a ser deletado
-  Future<chopper.Response<HandlersDelUserRes>> usuariosIdDelete({
-    required int id,
-  }) {
-    generatedMapping.putIfAbsent(
-      HandlersDelUserRes,
-      () => HandlersDelUserRes.fromJsonFactory,
-    );
+  Future<chopper.Response<DelUserRes>> deleteUsuario({required int id}) {
+    generatedMapping.putIfAbsent(DelUserRes, () => DelUserRes.fromJsonFactory);
 
-    return _usuariosIdDelete(id: id);
+    return _deleteUsuario(id: id);
   }
 
   ///Deletar usuário
   ///@param id ID do usuário a ser deletado
   @DELETE(path: '/usuarios/{id}')
-  Future<chopper.Response<HandlersDelUserRes>> _usuariosIdDelete({
+  Future<chopper.Response<DelUserRes>> _deleteUsuario({
     @Path('id') required int id,
     @chopper.Tag()
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: 'Deleta um usuário baseado no ID fornecido na URL',
       summary: 'Deletar usuário',
-      operationId: 'DeleteUsuario',
+      operationId: 'deleteUsuario',
       consumes: ["application/json"],
       produces: ["application/json"],
       security: [],

@@ -3,6 +3,10 @@ targets:
     builders:
       swagger_dart_code_generator:
         options:
+          input_urls:
+            - url: "http://145.223.26.57:8080/docs/swagger.json"
+              file_name: "sigmus_api.json"
           input_folder: "lib/api/"
           output_folder: "lib/generated/"
           separate_models: true
+          use_path_for_request_names: false

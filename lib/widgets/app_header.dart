@@ -23,8 +23,8 @@ class _AppHeaderState extends State<AppHeader> {
   ValueNotifier<bool> isOnline = ValueNotifier<bool>(false);
 
   Future<void> _handleLogin(String email, String password) async {
-    final res = await sigmusApi.entrarPost(
-      body: HandlersPostEntrarReq(email: email, senha: password),
+    final res = await sigmusApi.postEntrar(
+      body: PostEntrarReq(email: email, senha: password),
     );
     if (res.isSuccessful && res.body != null) {
       sigmusApi.setToken(res.body?.token);

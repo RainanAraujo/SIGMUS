@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:sigmus/models/mutirao_info.dart';
+import 'package:sigmus/generated/sigmus_api.swagger.dart';
+import 'package:sigmus/pages/home/dialogs/mutirao_form_dialog.dart';
 import 'package:sigmus/theme/app_typography.dart';
 import 'package:sigmus/widgets/app_alert.dart';
 import 'package:sigmus/widgets/app_data_table.dart';
 import 'package:sigmus/widgets/stat_card.dart';
-import 'package:sigmus/pages/home/dialogs/mutirao_form_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,22 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<MutiraoInfo> mutiroes = [
-    MutiraoInfo(
-      id: 1,
-      dataInicio: '2024-06-10',
-      dataFinal: '2024-06-15',
-      tipo: 'cirurgia',
-      estado: 'SP',
-      municipio: 'São Paulo',
-      local: 'Clínica Central',
-      demandante: 'Secretaria de Saúde',
-      contratante: 'Prefeitura de São Paulo',
-      permissions: [],
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    ),
-  ];
+  List<MutiraoInfo> mutiroes = [];
   bool isLoading = false;
   bool isOnline = true;
   int pacientesCount = 0;
@@ -52,9 +37,20 @@ class _HomePageState extends State<HomePage> {
       isLoading = true;
     });
 
-    // Carregar dados dos mutirões
-    // TODO: Implementar carregamento real dos dados
-
+    // sigmusApi
+    //     .getUsuarioMutiroes(usuarioID: sigmusApi.userData.id)
+    //     .then((data) {
+    //       setState(() {
+    //         mutiroes = data.body?.mutiroes ?? [];
+    //       });
+    //     })
+    //     .catchError((error) {
+    //       AppToast.show(
+    //         context,
+    //         message: 'Erro ao carregar mutirões: $error',
+    //         isError: false,
+    //       );
+    //     });
     setState(() {
       isLoading = false;
     });
@@ -168,20 +164,22 @@ class _HomePageState extends State<HomePage> {
               columns: [
                 TableColumnConfig(
                   label: 'Data',
-                  getValue: (mutirao) =>
-                      _formatDateRange(mutirao.dataInicio, mutirao.dataFinal),
+                  getValue: (mutirao) => _formatDateRange(
+                    mutirao.dataInicio ?? '',
+                    mutirao.dataFinal ?? '',
+                  ),
                 ),
                 TableColumnConfig(
                   label: 'Tipo',
-                  getValue: (mutirao) => _capitalize(mutirao.tipo),
+                  getValue: (mutirao) => _capitalize(mutirao.tipo ?? ''),
                 ),
                 TableColumnConfig(
                   label: 'Município',
-                  getValue: (mutirao) => mutirao.municipio,
+                  getValue: (mutirao) => mutirao.municipio ?? '',
                 ),
                 TableColumnConfig(
                   label: 'Local',
-                  getValue: (mutirao) => mutirao.local,
+                  getValue: (mutirao) => mutirao.local ?? '',
                 ),
               ],
               getSearchText: (mutirao) =>
