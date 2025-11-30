@@ -184,6 +184,7 @@ class _AppSearchableSelectState<T> extends State<AppSearchableSelect<T>> {
                           if (_controller.text.isNotEmpty && widget.enabled)
                             IconButton(
                               icon: const Icon(Icons.close, size: 18),
+                              focusNode: FocusNode(skipTraversal: true),
                               onPressed: () {
                                 _controller.clear();
                                 setState(() => _selectedValue = null);

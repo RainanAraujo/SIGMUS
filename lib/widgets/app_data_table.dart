@@ -161,6 +161,7 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
                   ),
                   suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(
+                          focusNode: FocusNode(skipTraversal: true),
                           icon: const Icon(
                             Icons.close,
                             size: 16,

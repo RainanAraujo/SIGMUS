@@ -2,8 +2,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sigmus/data/brasil_data.dart';
-import 'package:sigmus/pages/home/home_page.dart';
+import 'package:sigmus/routes/app_router.dart';
 import 'package:sigmus/theme/app_theme.dart';
+import 'package:sigmus/widgets/app_header.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,8 +39,14 @@ class MyApp extends StatelessWidget {
       ],
       supportedLocales: const [Locale('pt', 'BR')],
       locale: const Locale('pt', 'BR'),
-
-      home: const HomePage(),
+      home: Scaffold(
+        appBar: const AppHeader(),
+        body: Navigator(
+          key: AppRouter.navigatorKey,
+          initialRoute: AppRoutes.home,
+          onGenerateRoute: AppRouter.generateRoute,
+        ),
+      ),
     );
   }
 }

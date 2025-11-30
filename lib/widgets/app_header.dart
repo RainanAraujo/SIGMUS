@@ -34,14 +34,12 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Logo
           SvgPicture.asset(
             'assets/sigmus.svg',
             semanticsLabel: 'SIGMUS Logo',
             width: 110,
             height: 28,
           ),
-          // Status e Login/Usuário
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -76,7 +74,6 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Indicador de status (dot pulsante)
           Container(
             width: 8,
             height: 8,
@@ -111,7 +108,6 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
 
   Widget _buildAuthButton(BuildContext context) {
     if (isLoggedIn) {
-      // Usuário logado - mostra menu com nome e opção de logout
       return PopupMenuButton<String>(
         offset: const Offset(0, 40),
         shape: RoundedRectangleBorder(
@@ -171,7 +167,6 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
         ),
       );
     } else {
-      // Usuário deslogado - mostra botão de login
       return TextButton.icon(
         onPressed: () => LoginDialog.show(context, onLogin: onLogin),
         icon: const Icon(Icons.login, size: 18),

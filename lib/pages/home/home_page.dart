@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sigmus/layouts/main_layout.dart';
 import 'package:sigmus/models/mutirao_info.dart';
 import 'package:sigmus/theme/app_typography.dart';
 import 'package:sigmus/widgets/app_alert.dart';
@@ -139,9 +138,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MainLayout(
-      isOnline: isOnline,
-      child: SingleChildScrollView(
+    return Scaffold(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
