@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sigmus/theme/app_colors.dart';
 import 'package:sigmus/theme/app_typography.dart';
 
-/// Dialog padrão da aplicação com header e footer customizáveis
 class AppDialog extends StatelessWidget {
   final String title;
   final String? description;
@@ -19,7 +18,7 @@ class AppDialog extends StatelessWidget {
     this.description,
     required this.child,
     this.actions,
-    this.maxWidth = 800,
+    this.maxWidth = 1000,
     this.maxHeight,
     this.showCloseButton = true,
     this.onClose,
@@ -43,10 +42,8 @@ class AppDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Header
             _buildHeader(context),
 
-            // Content
             Expanded(
               child: SingleChildScrollView(
                 physics: const ClampingScrollPhysics(),
@@ -55,7 +52,6 @@ class AppDialog extends StatelessWidget {
               ),
             ),
 
-            // Footer (se houver ações)
             if (actions != null && actions!.isNotEmpty) _buildFooter(context),
           ],
         ),

@@ -5,10 +5,26 @@ import 'package:sigmus/data/brasil_data.dart';
 import 'package:sigmus/routes/app_router.dart';
 import 'package:sigmus/theme/app_theme.dart';
 import 'package:sigmus/widgets/app_header.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await BrasilData.init();
+
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = WindowOptions(
+    center: true,
+    size: const Size(1000, 800),
+    minimumSize: const Size(1000, 600),
+
+    title: 'SIGMUS',
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+
   runApp(const MyApp());
 }
 

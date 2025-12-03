@@ -22,9 +22,7 @@ class MutiraoFormDialog extends StatefulWidget {
 
 class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _dateFormat = DateFormat('yyyy-MM-dd');
 
-  // Form fields
   String _tipo = 'cirurgia';
   String _estado = '';
   String _municipio = '';
@@ -37,7 +35,6 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
   final List<String> _condutas = [];
   final List<Medico> _medicos = [];
 
-  // Temporary fields for adding items
   final _colaboradorNomeController = TextEditingController();
   final _colaboradorFuncaoController = TextEditingController();
   final _condutaController = TextEditingController();
@@ -194,7 +191,7 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
       description: widget.mutirao != null
           ? 'Edite as informações do mutirão'
           : 'Preencha as informações do novo mutirão',
-      maxHeight: 600,
+
       actions: [
         OutlinedButton(
           onPressed: _isLoading ? null : () => Navigator.of(context).pop(),

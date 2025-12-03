@@ -287,7 +287,7 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -401,9 +401,8 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
   }
 
   Widget _buildPageHeader() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
           IconButton(
