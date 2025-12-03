@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:sigmus/extensions/response_ext.dart';
 import 'package:sigmus/generated/sigmus_api.swagger.dart';
 import 'package:sigmus/pages/home/dialogs/mutirao_form_dialog.dart';
+import 'package:sigmus/services/sigmus_api.dart';
 import 'package:sigmus/theme/app_typography.dart';
 import 'package:sigmus/widgets/app_alert.dart';
 import 'package:sigmus/widgets/app_data_table.dart';
+import 'package:sigmus/widgets/app_toast.dart';
 import 'package:sigmus/widgets/stat_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,7 +16,6 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-/// Estado reativo da tabela de mutirões
 class TableState {
   final List<MutiraoInfo> mutiroes;
   final bool isLoading;
@@ -29,29 +31,20 @@ class TableState {
 }
 
 class _HomePageState extends State<HomePage> {
-  // ===== ValueNotifiers que disparam _loadData =====
-  final _usuarioId = ValueNotifier<int?>(null);
-  final _mutiraoSelecionado = ValueNotifier<int?>(null);
-
-  // Listener combinado
   late final Listenable _dataListener;
 
-  // ===== Estado da tabela (só a tabela reconstrói) =====
   final _tableState = ValueNotifier<TableState>(const TableState());
 
-  // ===== Estado do header (stats) =====
-  int _pacientesCount = 0;
-  int _cirurgiasCount = 0;
-  int _prescricoesOculosCount = 0;
+  final int _pacientesCount = 0;
+  final int _cirurgiasCount = 0;
+  final int _prescricoesOculosCount = 0;
 
   @override
   void initState() {
     super.initState();
 
-    // Merge de todos os notifiers que disparam _loadData
-    _dataListener = Listenable.merge([_usuarioId, _mutiraoSelecionado]);
+    _dataListener = Listenable.merge([sigmusApi.userData]);
 
-    // Escuta mudanças - chama _loadData sem rebuild da página
     _dataListener.addListener(_loadData);
 
     _loadData();
@@ -60,38 +53,39 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     _dataListener.removeListener(_loadData);
-    _usuarioId.dispose();
-    _mutiraoSelecionado.dispose();
     _tableState.dispose();
     super.dispose();
   }
 
   Future<void> _loadData() async {
-    // Atualiza apenas a tabela (loading)
     _tableState.value = _tableState.value.copyWith(isLoading: true);
 
-    // Valores disponíveis dos notifiers (usados na chamada da API)
-    // ignore: unused_local_variable
-    final usuarioId = _usuarioId.value;
-    // ignore: unused_local_variable
-    final mutiraoId = _mutiraoSelecionado.value;
+    final usuarioId = sigmusApi.userData.value?.id;
 
-    // TODO: Carregar dados da API usando usuarioId e mutiraoId
-    // sigmusApi
-    //     .getUsuarioMutiroes(usuarioID: usuarioId ?? sigmusApi.userData.id)
-    //     .then((data) {
-    //       _tableState.value = _tableState.value.copyWith(
-    //         mutiroes: data.body?.mutiroes ?? [],
-    //         isLoading: false,
-    //       );
-    //     })
-    //     .catchError((error) {
-    //       _tableState.value = _tableState.value.copyWith(isLoading: false);
-    //       AppToast.show(context, message: 'Erro: $error', isError: true);
-    //     });
+    print(usuarioId);
 
-    // Simula delay
-    await Future.delayed(const Duration(milliseconds: 300));
+    if (usuarioId == null) {
+      _tableState.value = _tableState.value.copyWith(
+        mutiroes: [],
+        isLoading: false,
+      );
+      return;
+    }
+
+    try {
+      final res = await sigmusApi.getUsuarioMutiroes(usuarioID: usuarioId);
+      if (!res.isSuccessful) {
+        throw res.errorMessage?.messagem ?? 'Erro Desconhecido';
+      }
+      _tableState.value = _tableState.value.copyWith(
+        mutiroes: res.body?.mutiroes ?? [],
+        isLoading: false,
+      );
+      AppToast.show(context, message: 'Carregado com sucesso');
+    } catch (e) {
+      _tableState.value = _tableState.value.copyWith(isLoading: false);
+      AppToast.show(context, message: 'Erro: $e', isError: true);
+    }
 
     _tableState.value = _tableState.value.copyWith(isLoading: false);
   }

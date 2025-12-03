@@ -13,7 +13,9 @@ class AuthInterceptor implements Interceptor {
   FutureOr<Response<BodyType>> intercept<BodyType>(
     Chain<BodyType> chain,
   ) async {
-    chain.request.headers['Authorization'] = 'Bearer $token';
+    if (token.value != null) {
+      chain.request.headers['Authorization'] = 'Bearer ${token.value}';
+    }
     return chain.proceed(chain.request);
   }
 
