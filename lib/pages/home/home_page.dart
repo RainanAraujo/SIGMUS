@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sigmus/extensions/response_ext.dart';
 import 'package:sigmus/generated/sigmus_api.swagger.dart';
 import 'package:sigmus/pages/home/dialogs/mutirao_form_dialog.dart';
+import 'package:sigmus/routes/app_router.dart';
 import 'package:sigmus/services/sigmus_api.dart';
 import 'package:sigmus/theme/app_typography.dart';
 import 'package:sigmus/widgets/app_alert.dart';
@@ -155,10 +157,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   String _formatDateRange(String inicio, String fim) {
+    final inicioParsed = DateTime.tryParse(inicio);
+    final fimParsed = DateTime.tryParse(fim);
+    final dateInicio = DateFormat('dd/MM/yyyy', 'pt_BR').format(inicioParsed!);
+    final dateFim = DateFormat('dd/MM/yyyy', 'pt_BR').format(fimParsed!);
+
     if (inicio == fim) {
-      return inicio;
+      return dateInicio.toString();
     }
-    return '$inicio - $fim';
+
+    return '$dateInicio - $dateFim';
   }
 
   String _capitalize(String text) {
@@ -199,6 +207,11 @@ class _HomePageState extends State<HomePage> {
                       label: const Text('Criar mutirão'),
                     ),
                   ],
+                  onRowTap: (item) {
+                    if (item.tipo == "cirurgia") {
+                      AppRouter.goToMutiraoCirurgia(mutiraoId: item.id);
+                    }
+                  },
                   columns: [
                     TableColumnConfig(
                       label: 'Data',

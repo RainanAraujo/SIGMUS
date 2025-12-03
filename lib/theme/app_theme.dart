@@ -368,6 +368,35 @@ class AppTheme {
       space: 1,
     ),
 
+    // DataTable
+    dataTableTheme: DataTableThemeData(
+      headingRowColor: WidgetStateProperty.all(AppColors.muted),
+      dataRowColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.hovered)) {
+          return AppColors.accent;
+        }
+        return AppColors.card;
+      }),
+
+      headingTextStyle: const TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        color: AppColors.mutedForeground,
+        letterSpacing: 0.02,
+      ),
+      dataTextStyle: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        color: AppColors.foreground,
+      ),
+      dividerThickness: 1,
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+    ),
+
     // Dialog
     dialogTheme: DialogThemeData(
       backgroundColor: AppColors.card,
@@ -554,30 +583,6 @@ class AppTheme {
       thumbColor: WidgetStateProperty.all(AppColors.border),
       radius: const Radius.circular(radiusFull),
       thickness: WidgetStateProperty.all(8),
-    ),
-
-    // Data Table
-    dataTableTheme: DataTableThemeData(
-      headingRowColor: WidgetStateProperty.all(AppColors.muted),
-      dataRowColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.hovered)) {
-          return AppColors.accent;
-        }
-        return AppColors.card;
-      }),
-      headingTextStyle: const TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        color: AppColors.mutedForeground,
-      ),
-      dataTextStyle: const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: AppColors.foreground,
-      ),
-      dividerThickness: 1,
-      horizontalMargin: 16,
-      columnSpacing: 24,
     ),
 
     // List Tile

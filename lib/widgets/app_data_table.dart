@@ -45,6 +45,7 @@ class AppDataTable<T> extends StatefulWidget {
   final List<T> items;
   final List<TableColumnConfig<T>> columns;
   final List<TableRowAction<T>>? rowActions;
+  final void Function(T item)? onRowTap;
   final List<TableRowMenuAction<T>>? menuActions;
   final bool isLoading;
   final String? searchHint;
@@ -61,6 +62,7 @@ class AppDataTable<T> extends StatefulWidget {
     required this.items,
     required this.columns,
     this.rowActions,
+    this.onRowTap,
     this.menuActions,
     this.isLoading = false,
     this.searchHint,
@@ -217,68 +219,31 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
 
     return SizedBox(
       width: double.infinity,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.card,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Theme(
-            data: Theme.of(context).copyWith(
-              cardTheme: const CardThemeData(
-                elevation: 0,
-                margin: EdgeInsets.zero,
-                color: Colors.transparent,
-              ),
-              dataTableTheme: DataTableThemeData(
-                headingRowColor: WidgetStateProperty.all(AppColors.muted),
-                dataRowColor: WidgetStateProperty.resolveWith((states) {
-                  if (states.contains(WidgetState.hovered)) {
-                    return AppColors.accent;
-                  }
-                  return AppColors.card;
-                }),
-                headingTextStyle: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.mutedForeground,
-                  letterSpacing: 0.02,
-                ),
-                dataTextStyle: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.foreground,
-                ),
-                dividerThickness: 1,
-              ),
-              dividerColor: AppColors.border,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: PaginatedDataTable(
+          header: null,
+          showCheckboxColumn: false,
+          rowsPerPage: _rowsPerPage,
+          availableRowsPerPage: const [5, 10, 20, 50],
+          onRowsPerPageChanged: (value) {
+            setState(() {
+              _rowsPerPage = value ?? 10;
+            });
+          },
+          columns: [
+            ...widget.columns.map(
+              (column) => DataColumn(label: Text(column.label.toUpperCase())),
             ),
-            child: PaginatedDataTable(
-              header: null,
-              rowsPerPage: _rowsPerPage,
-              availableRowsPerPage: const [5, 10, 20, 50],
-              onRowsPerPageChanged: (value) {
-                setState(() {
-                  _rowsPerPage = value ?? 10;
-                });
-              },
-              columns: [
-                ...widget.columns.map(
-                  (column) =>
-                      DataColumn(label: Text(column.label.toUpperCase())),
-                ),
-                if (widget.rowActions != null || widget.menuActions != null)
-                  const DataColumn(label: SizedBox.shrink(), numeric: true),
-              ],
-              source: _DataTableSourceAdapter<T>(
-                items: _filteredItems,
-                columns: widget.columns,
-                rowActions: widget.rowActions,
-                menuActions: widget.menuActions,
-              ),
-            ),
+            if (widget.rowActions != null || widget.menuActions != null)
+              const DataColumn(label: SizedBox.shrink(), numeric: true),
+          ],
+          source: _DataTableSourceAdapter<T>(
+            items: _filteredItems,
+            columns: widget.columns,
+            rowActions: widget.rowActions,
+            menuActions: widget.menuActions,
+            onRowTap: widget.onRowTap,
           ),
         ),
       ),
@@ -366,12 +331,14 @@ class _DataTableSourceAdapter<T> extends DataTableSource {
   final List<TableColumnConfig<T>> columns;
   final List<TableRowAction<T>>? rowActions;
   final List<TableRowMenuAction<T>>? menuActions;
+  final void Function(T item)? onRowTap;
 
   _DataTableSourceAdapter({
     required this.items,
     required this.columns,
     this.rowActions,
     this.menuActions,
+    this.onRowTap,
   });
 
   @override
@@ -380,6 +347,13 @@ class _DataTableSourceAdapter<T> extends DataTableSource {
     final item = items[index];
 
     return DataRow(
+      onSelectChanged: onRowTap != null ? (_) => onRowTap!(item) : null,
+      color: WidgetStateProperty.resolveWith<Color?>((states) {
+        if (states.contains(WidgetState.hovered)) {
+          return AppColors.accent;
+        }
+        return null;
+      }),
       cells: [
         ...columns.map(
           (column) => DataCell(
