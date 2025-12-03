@@ -568,7 +568,7 @@
         }
     },
     "definitions": {
-        "ColaboradorUpdate": {
+        "Colaborador": {
             "type": "object",
             "required": [
                 "atualizado_em",
@@ -591,35 +591,7 @@
                 }
             }
         },
-        "CondutaGenericaUpdate": {
-            "type": "object",
-            "required": [
-                "atualizado_em",
-                "pacienteId",
-                "status"
-            ],
-            "properties": {
-                "atualizado_em": {
-                    "type": "integer"
-                },
-                "conduta": {
-                    "type": "string"
-                },
-                "data": {
-                    "type": "string"
-                },
-                "medicoId": {
-                    "type": "integer"
-                },
-                "pacienteId": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "integer"
-                }
-            }
-        },
-        "CondutaUpdate": {
+        "Conduta": {
             "type": "object",
             "required": [
                 "atualizado_em",
@@ -648,6 +620,34 @@
                 },
                 "tipo": {
                     "type": "string"
+                }
+            }
+        },
+        "CondutaGenerica": {
+            "type": "object",
+            "required": [
+                "atualizado_em",
+                "pacienteId",
+                "status"
+            ],
+            "properties": {
+                "atualizado_em": {
+                    "type": "integer"
+                },
+                "conduta": {
+                    "type": "string"
+                },
+                "data": {
+                    "type": "string"
+                },
+                "medicoId": {
+                    "type": "integer"
+                },
+                "pacienteId": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
                 }
             }
         },
@@ -738,7 +738,7 @@
                 }
             }
         },
-        "MedicoUpdate": {
+        "Medico": {
             "type": "object",
             "required": [
                 "atualizado_em",
@@ -889,38 +889,29 @@
         },
         "MutiraoMudancas": {
             "type": "object",
-            "required": [
-                "colaboradores",
-                "condutas",
-                "condutasGenericas",
-                "medicos",
-                "mutiraoCondutas",
-                "pacientes",
-                "procedimentos"
-            ],
             "properties": {
                 "colaboradores": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/ColaboradorUpdate"
+                        "$ref": "#/definitions/Colaborador"
                     }
                 },
                 "condutas": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/CondutaUpdate"
+                        "$ref": "#/definitions/Conduta"
                     }
                 },
                 "condutasGenericas": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/CondutaGenericaUpdate"
+                        "$ref": "#/definitions/CondutaGenerica"
                     }
                 },
                 "medicos": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/MedicoUpdate"
+                        "$ref": "#/definitions/Medico"
                     }
                 },
                 "mutiraoCondutas": {
@@ -932,18 +923,18 @@
                 "pacientes": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/PacienteUpdate"
+                        "$ref": "#/definitions/Paciente"
                     }
                 },
                 "procedimentos": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/ProcedimentoUpdate"
+                        "$ref": "#/definitions/Procedimento"
                     }
                 }
             }
         },
-        "PacienteUpdate": {
+        "Paciente": {
             "type": "object",
             "required": [
                 "atualizado_em",
@@ -1072,38 +1063,29 @@
         },
         "PostMutiraoMudancasReq": {
             "type": "object",
-            "required": [
-                "colaboradores",
-                "condutas",
-                "condutasGenericas",
-                "medicos",
-                "mutiraoCondutas",
-                "pacientes",
-                "procedimentos"
-            ],
             "properties": {
                 "colaboradores": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/ColaboradorUpdate"
+                        "$ref": "#/definitions/Colaborador"
                     }
                 },
                 "condutas": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/CondutaUpdate"
+                        "$ref": "#/definitions/Conduta"
                     }
                 },
                 "condutasGenericas": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/CondutaGenericaUpdate"
+                        "$ref": "#/definitions/CondutaGenerica"
                     }
                 },
                 "medicos": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/MedicoUpdate"
+                        "$ref": "#/definitions/Medico"
                     }
                 },
                 "mutirao": {
@@ -1118,13 +1100,13 @@
                 "pacientes": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/PacienteUpdate"
+                        "$ref": "#/definitions/Paciente"
                     }
                 },
                 "procedimentos": {
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/ProcedimentoUpdate"
+                        "$ref": "#/definitions/Procedimento"
                     }
                 }
             }
@@ -1178,7 +1160,7 @@
                 }
             }
         },
-        "ProcedimentoUpdate": {
+        "Procedimento": {
             "type": "object",
             "required": [
                 "atualizado_em",

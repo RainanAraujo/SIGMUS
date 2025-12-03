@@ -52,9 +52,9 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
   final _tableState = ValueNotifier<TableState>(const TableState());
 
   // ===== Cache dos dados brutos da API =====
-  Map<String, PacienteUpdate> _pacientesMap = {};
-  Map<String, ProcedimentoUpdate> _procedimentosMap = {};
-  Map<String, MedicoUpdate> _medicosMap = {};
+  Map<String, Paciente> _pacientesMap = {};
+  Map<String, Procedimento> _procedimentosMap = {};
+  Map<String, Medico> _medicosMap = {};
 
   // ===== Contadores do header =====
   int get _pacientesCount => _tableState.value.procedimentos.length;
@@ -112,19 +112,19 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
       });
 
       _pacientesMap = {};
-      body.mudancas?.pacientes.forEach((key, value) {
-        _pacientesMap[key] = PacienteUpdate.fromJson(value);
+      body.mudancas?.pacientes?.forEach((key, value) {
+        _pacientesMap[key] = Paciente.fromJson(value);
       });
 
       _procedimentosMap = {};
-      body.mudancas?.procedimentos.forEach((key, value) {
-        _procedimentosMap[key] = ProcedimentoUpdate.fromJson(value);
+      body.mudancas?.procedimentos?.forEach((key, value) {
+        _procedimentosMap[key] = Procedimento.fromJson(value);
       });
 
       // Parseia médicos
       _medicosMap = {};
-      body.mudancas?.medicos.forEach((key, value) {
-        _medicosMap[key] = MedicoUpdate.fromJson(value);
+      body.mudancas?.medicos?.forEach((key, value) {
+        _medicosMap[key] = Medico.fromJson(value);
       });
 
       _filterData();
@@ -165,7 +165,7 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
       return ProcedimentoItem(
         paciente:
             paciente ??
-            PacienteUpdate(
+            Paciente(
               atualizadoEm: 0,
               status: 0,
               nome: 'Paciente não encontrado',
@@ -197,7 +197,7 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
     return datas;
   }
 
-  List<MedicoUpdate> _getMedicosDisponiveis() {
+  List<Medico> _getMedicosDisponiveis() {
     return _medicosMap.values.where((m) => m.status == 1).toList();
   }
 

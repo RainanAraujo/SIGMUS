@@ -1,7 +1,7 @@
 import 'package:sigmus/generated/sigmus_api.swagger.dart';
 
 class ProcedimentoItem {
-  final PacienteUpdate paciente;
-  final ProcedimentoUpdate procedimento;
+  final Paciente paciente;
+  final Procedimento procedimento;
   ProcedimentoItem({required this.paciente, required this.procedimento});
 }

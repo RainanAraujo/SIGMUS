@@ -28,6 +28,7 @@ dependencies:
   jwt_decode: ^0.3.1
   internet_connection_checker_plus: ^2.9.1
   window_manager: ^0.5.1
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:sigmus/extensions/response_ext.dart';
 import 'package:sigmus/generated/sigmus_api.swagger.dart';
 import 'package:sigmus/pages/home/dialogs/mutirao_form_dialog.dart';
@@ -46,7 +45,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _dataListener = Listenable.merge([sigmusApi.userData]);
+    _dataListener = Listenable.merge([sigmusApi.authService.userData]);
 
     _dataListener.addListener(_loadData);
 
@@ -63,9 +62,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _loadData() async {
     _tableState.value = _tableState.value.copyWith(isLoading: true);
 
-    final usuarioId = sigmusApi.userData.value?.id;
-
-    print(usuarioId);
+    final usuarioId = sigmusApi.authService.userData.value?.id;
 
     if (usuarioId == null) {
       _tableState.value = _tableState.value.copyWith(
@@ -172,7 +169,6 @@ class _HomePageState extends State<HomePage> {
           children: [
             _buildHeaderSection(),
             const SizedBox(height: 32),
-            // Apenas a tabela reconstrói quando _tableState muda
             ValueListenableBuilder<TableState>(
               valueListenable: _tableState,
               builder: (context, state, _) {

@@ -6,15 +6,14 @@ part of 'sigmus_api.models.swagger.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ColaboradorUpdate _$ColaboradorUpdateFromJson(Map<String, dynamic> json) =>
-    ColaboradorUpdate(
-      atualizadoEm: (json['atualizado_em'] as num).toInt(),
-      funcao: json['funcao'] as String,
-      nome: json['nome'] as String,
-      status: (json['status'] as num).toInt(),
-    );
+Colaborador _$ColaboradorFromJson(Map<String, dynamic> json) => Colaborador(
+  atualizadoEm: (json['atualizado_em'] as num).toInt(),
+  funcao: json['funcao'] as String,
+  nome: json['nome'] as String,
+  status: (json['status'] as num).toInt(),
+);
 
-Map<String, dynamic> _$ColaboradorUpdateToJson(ColaboradorUpdate instance) =>
+Map<String, dynamic> _$ColaboradorToJson(Colaborador instance) =>
     <String, dynamic>{
       'atualizado_em': instance.atualizadoEm,
       'funcao': instance.funcao,
@@ -22,48 +21,44 @@ Map<String, dynamic> _$ColaboradorUpdateToJson(ColaboradorUpdate instance) =>
       'status': instance.status,
     };
 
-CondutaGenericaUpdate _$CondutaGenericaUpdateFromJson(
-  Map<String, dynamic> json,
-) => CondutaGenericaUpdate(
+Conduta _$CondutaFromJson(Map<String, dynamic> json) => Conduta(
   atualizadoEm: (json['atualizado_em'] as num).toInt(),
-  conduta: json['conduta'] as String?,
+  dados: json['dados'] as Map<String, dynamic>?,
   data: json['data'] as String?,
   medicoId: (json['medicoId'] as num?)?.toInt(),
   pacienteId: (json['pacienteId'] as num).toInt(),
   status: (json['status'] as num).toInt(),
+  tipo: json['tipo'] as String?,
 );
 
-Map<String, dynamic> _$CondutaGenericaUpdateToJson(
-  CondutaGenericaUpdate instance,
-) => <String, dynamic>{
+Map<String, dynamic> _$CondutaToJson(Conduta instance) => <String, dynamic>{
   'atualizado_em': instance.atualizadoEm,
-  'conduta': instance.conduta,
+  'dados': instance.dados,
   'data': instance.data,
   'medicoId': instance.medicoId,
   'pacienteId': instance.pacienteId,
   'status': instance.status,
+  'tipo': instance.tipo,
 };
 
-CondutaUpdate _$CondutaUpdateFromJson(Map<String, dynamic> json) =>
-    CondutaUpdate(
+CondutaGenerica _$CondutaGenericaFromJson(Map<String, dynamic> json) =>
+    CondutaGenerica(
       atualizadoEm: (json['atualizado_em'] as num).toInt(),
-      dados: json['dados'] as Map<String, dynamic>?,
+      conduta: json['conduta'] as String?,
       data: json['data'] as String?,
       medicoId: (json['medicoId'] as num?)?.toInt(),
       pacienteId: (json['pacienteId'] as num).toInt(),
       status: (json['status'] as num).toInt(),
-      tipo: json['tipo'] as String?,
     );
 
-Map<String, dynamic> _$CondutaUpdateToJson(CondutaUpdate instance) =>
+Map<String, dynamic> _$CondutaGenericaToJson(CondutaGenerica instance) =>
     <String, dynamic>{
       'atualizado_em': instance.atualizadoEm,
-      'dados': instance.dados,
+      'conduta': instance.conduta,
       'data': instance.data,
       'medicoId': instance.medicoId,
       'pacienteId': instance.pacienteId,
       'status': instance.status,
-      'tipo': instance.tipo,
     };
 
 DelUserRes _$DelUserResFromJson(Map<String, dynamic> json) =>
@@ -136,20 +131,19 @@ Map<String, dynamic> _$GetUsuarioMutiroesResToJson(
   'mutiroes': instance.mutiroes.map((e) => e.toJson()).toList(),
 };
 
-MedicoUpdate _$MedicoUpdateFromJson(Map<String, dynamic> json) => MedicoUpdate(
+Medico _$MedicoFromJson(Map<String, dynamic> json) => Medico(
   atualizadoEm: (json['atualizado_em'] as num).toInt(),
   crm: json['crm'] as String,
   nome: json['nome'] as String,
   status: (json['status'] as num).toInt(),
 );
 
-Map<String, dynamic> _$MedicoUpdateToJson(MedicoUpdate instance) =>
-    <String, dynamic>{
-      'atualizado_em': instance.atualizadoEm,
-      'crm': instance.crm,
-      'nome': instance.nome,
-      'status': instance.status,
-    };
+Map<String, dynamic> _$MedicoToJson(Medico instance) => <String, dynamic>{
+  'atualizado_em': instance.atualizadoEm,
+  'crm': instance.crm,
+  'nome': instance.nome,
+  'status': instance.status,
+};
 
 MutiraoData _$MutiraoDataFromJson(Map<String, dynamic> json) => MutiraoData(
   atualizadoEm: (json['atualizado_em'] as num).toInt(),
@@ -217,17 +211,17 @@ Map<String, dynamic> _$MutiraoInfoToJson(MutiraoInfo instance) =>
 
 MutiraoMudancas _$MutiraoMudancasFromJson(Map<String, dynamic> json) =>
     MutiraoMudancas(
-      colaboradores: json['colaboradores'] as Map<String, dynamic>,
-      condutas: json['condutas'] as Map<String, dynamic>,
-      condutasGenericas: json['condutasGenericas'] as Map<String, dynamic>,
-      medicos: json['medicos'] as Map<String, dynamic>,
+      colaboradores: json['colaboradores'] as Map<String, dynamic>?,
+      condutas: json['condutas'] as Map<String, dynamic>?,
+      condutasGenericas: json['condutasGenericas'] as Map<String, dynamic>?,
+      medicos: json['medicos'] as Map<String, dynamic>?,
       mutiraoCondutas:
           (json['mutiraoCondutas'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
-      pacientes: json['pacientes'] as Map<String, dynamic>,
-      procedimentos: json['procedimentos'] as Map<String, dynamic>,
+      pacientes: json['pacientes'] as Map<String, dynamic>?,
+      procedimentos: json['procedimentos'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$MutiraoMudancasToJson(MutiraoMudancas instance) =>
@@ -241,35 +235,33 @@ Map<String, dynamic> _$MutiraoMudancasToJson(MutiraoMudancas instance) =>
       'procedimentos': instance.procedimentos,
     };
 
-PacienteUpdate _$PacienteUpdateFromJson(Map<String, dynamic> json) =>
-    PacienteUpdate(
-      atualizadoEm: (json['atualizado_em'] as num).toInt(),
-      cns: json['cns'] as String?,
-      cpf: json['cpf'] as String?,
-      dataNascimento: json['dataNascimento'] as String?,
-      endereco: json['endereco'] as String?,
-      municipio: json['municipio'] as String?,
-      nome: json['nome'] as String?,
-      nomeDaMae: json['nomeDaMae'] as String?,
-      status: (json['status'] as num).toInt(),
-      tel: json['tel'] as String?,
-      uf: json['uf'] as String?,
-    );
+Paciente _$PacienteFromJson(Map<String, dynamic> json) => Paciente(
+  atualizadoEm: (json['atualizado_em'] as num).toInt(),
+  cns: json['cns'] as String?,
+  cpf: json['cpf'] as String?,
+  dataNascimento: json['dataNascimento'] as String?,
+  endereco: json['endereco'] as String?,
+  municipio: json['municipio'] as String?,
+  nome: json['nome'] as String?,
+  nomeDaMae: json['nomeDaMae'] as String?,
+  status: (json['status'] as num).toInt(),
+  tel: json['tel'] as String?,
+  uf: json['uf'] as String?,
+);
 
-Map<String, dynamic> _$PacienteUpdateToJson(PacienteUpdate instance) =>
-    <String, dynamic>{
-      'atualizado_em': instance.atualizadoEm,
-      'cns': instance.cns,
-      'cpf': instance.cpf,
-      'dataNascimento': instance.dataNascimento,
-      'endereco': instance.endereco,
-      'municipio': instance.municipio,
-      'nome': instance.nome,
-      'nomeDaMae': instance.nomeDaMae,
-      'status': instance.status,
-      'tel': instance.tel,
-      'uf': instance.uf,
-    };
+Map<String, dynamic> _$PacienteToJson(Paciente instance) => <String, dynamic>{
+  'atualizado_em': instance.atualizadoEm,
+  'cns': instance.cns,
+  'cpf': instance.cpf,
+  'dataNascimento': instance.dataNascimento,
+  'endereco': instance.endereco,
+  'municipio': instance.municipio,
+  'nome': instance.nome,
+  'nomeDaMae': instance.nomeDaMae,
+  'status': instance.status,
+  'tel': instance.tel,
+  'uf': instance.uf,
+};
 
 PersonData _$PersonDataFromJson(Map<String, dynamic> json) => PersonData(
   cns: json['cns'] as String,
@@ -318,10 +310,10 @@ Map<String, dynamic> _$PostEntrarResToJson(PostEntrarRes instance) =>
 PostMutiraoMudancasReq _$PostMutiraoMudancasReqFromJson(
   Map<String, dynamic> json,
 ) => PostMutiraoMudancasReq(
-  colaboradores: json['colaboradores'] as Map<String, dynamic>,
-  condutas: json['condutas'] as Map<String, dynamic>,
-  condutasGenericas: json['condutasGenericas'] as Map<String, dynamic>,
-  medicos: json['medicos'] as Map<String, dynamic>,
+  colaboradores: json['colaboradores'] as Map<String, dynamic>?,
+  condutas: json['condutas'] as Map<String, dynamic>?,
+  condutasGenericas: json['condutasGenericas'] as Map<String, dynamic>?,
+  medicos: json['medicos'] as Map<String, dynamic>?,
   mutirao: json['mutirao'] == null
       ? null
       : MutiraoData.fromJson(json['mutirao'] as Map<String, dynamic>),
@@ -330,8 +322,8 @@ PostMutiraoMudancasReq _$PostMutiraoMudancasReqFromJson(
           ?.map((e) => e as String)
           .toList() ??
       [],
-  pacientes: json['pacientes'] as Map<String, dynamic>,
-  procedimentos: json['procedimentos'] as Map<String, dynamic>,
+  pacientes: json['pacientes'] as Map<String, dynamic>?,
+  procedimentos: json['procedimentos'] as Map<String, dynamic>?,
 );
 
 Map<String, dynamic> _$PostMutiraoMudancasReqToJson(
@@ -387,21 +379,20 @@ Map<String, dynamic> _$PostRegistarResToJson(PostRegistarRes instance) =>
       'usuarioID': instance.usuarioID,
     };
 
-ProcedimentoUpdate _$ProcedimentoUpdateFromJson(Map<String, dynamic> json) =>
-    ProcedimentoUpdate(
-      atualizadoEm: (json['atualizado_em'] as num).toInt(),
-      data: json['data'] as String?,
-      dioptriaLente: json['dioptriaLente'] as String?,
-      intercorrencia: json['intercorrencia'] as String?,
-      medicoId: (json['medicoId'] as num?)?.toInt(),
-      observacao: json['observacao'] as String?,
-      olho: json['olho'] as String?,
-      pacienteId: (json['pacienteId'] as num).toInt(),
-      status: (json['status'] as num).toInt(),
-      tipo: json['tipo'] as String?,
-    );
+Procedimento _$ProcedimentoFromJson(Map<String, dynamic> json) => Procedimento(
+  atualizadoEm: (json['atualizado_em'] as num).toInt(),
+  data: json['data'] as String?,
+  dioptriaLente: json['dioptriaLente'] as String?,
+  intercorrencia: json['intercorrencia'] as String?,
+  medicoId: (json['medicoId'] as num?)?.toInt(),
+  observacao: json['observacao'] as String?,
+  olho: json['olho'] as String?,
+  pacienteId: (json['pacienteId'] as num).toInt(),
+  status: (json['status'] as num).toInt(),
+  tipo: json['tipo'] as String?,
+);
 
-Map<String, dynamic> _$ProcedimentoUpdateToJson(ProcedimentoUpdate instance) =>
+Map<String, dynamic> _$ProcedimentoToJson(Procedimento instance) =>
     <String, dynamic>{
       'atualizado_em': instance.atualizadoEm,
       'data': instance.data,

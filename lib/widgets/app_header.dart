@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
-import 'package:sigmus/extensions/response_ext.dart';
 import 'package:sigmus/generated/sigmus_api.models.swagger.dart';
 import 'package:sigmus/services/sigmus_api.dart';
 import 'package:sigmus/theme/app_colors.dart';
@@ -26,14 +25,9 @@ class _AppHeaderState extends State<AppHeader> {
 
   Future<void> _handleLogin(String email, String password) async {
     try {
-      final res = await sigmusApi.postEntrar(
+      await sigmusApi.postEntrar(
         body: PostEntrarReq(email: email, senha: password),
       );
-      if (res.isSuccessful && res.body != null) {
-        sigmusApi.setToken(res.body?.token);
-      } else {
-        throw res.errorMessage?.messagem ?? 'Erro deconhecido';
-      }
       Navigator.of(context).pop();
     } catch (e) {
       AppToast.show(context, message: 'Erro ao entrar: $e', isError: true);
@@ -41,12 +35,13 @@ class _AppHeaderState extends State<AppHeader> {
   }
 
   Future<void> _handleLogout() async {
-    sigmusApi.setToken(null);
+    sigmusApi.authService.setToken(null);
   }
 
   @override
   void initState() {
     super.initState();
+    sigmusApi.authService.autoLogin();
     _subscription = InternetConnection().onStatusChange.listen((status) {
       isOnline.value = status == InternetStatus.connected;
     });
@@ -78,8 +73,8 @@ class _AppHeaderState extends State<AppHeader> {
           ),
           AnimatedBuilder(
             animation: Listenable.merge([
-              sigmusApi.token,
-              sigmusApi.userData,
+              sigmusApi.authService.token,
+              sigmusApi.authService.userData,
               isOnline,
             ]),
             builder: (context, _) {
@@ -90,8 +85,8 @@ class _AppHeaderState extends State<AppHeader> {
                   const SizedBox(width: 12),
                   buildAuthButton(
                     context: context,
-                    isLoggedIn: sigmusApi.userData.value != null,
-                    userName: sigmusApi.userData.value?.nome,
+                    isLoggedIn: sigmusApi.authService.userData.value != null,
+                    userName: sigmusApi.authService.userData.value?.nome,
                   ),
                 ],
               );

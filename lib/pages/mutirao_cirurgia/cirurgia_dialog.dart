@@ -12,7 +12,7 @@ import 'package:sigmus/widgets/paciente_form_section.dart';
 class CirurgiaFormDialog extends StatefulWidget {
   final ProcedimentoItem? procedimento;
   final List<String> datasDisponiveis;
-  final List<MedicoUpdate> medicosDisponiveis;
+  final List<Medico> medicosDisponiveis;
   final Function(ProcedimentoItem)? onSubmit;
 
   const CirurgiaFormDialog({
@@ -119,7 +119,7 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
     try {
       final now = DateTime.now().millisecondsSinceEpoch;
 
-      final paciente = PacienteUpdate(
+      final paciente = Paciente(
         atualizadoEm: now,
         status: 1,
         cpf: _pacienteController.cpf.isEmpty ? null : _pacienteController.cpf,
@@ -141,7 +141,7 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
             : _pacienteController.municipio,
       );
 
-      final procedimento = ProcedimentoUpdate(
+      final procedimento = Procedimento(
         atualizadoEm: now,
         status: 1,
         pacienteId: widget.procedimento?.procedimento.pacienteId ?? 0,

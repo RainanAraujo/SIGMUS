@@ -10,19 +10,19 @@ import 'sigmus_api.enums.swagger.dart' as enums;
 part 'sigmus_api.models.swagger.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class ColaboradorUpdate {
-  const ColaboradorUpdate({
+class Colaborador {
+  const Colaborador({
     required this.atualizadoEm,
     required this.funcao,
     required this.nome,
     required this.status,
   });
 
-  factory ColaboradorUpdate.fromJson(Map<String, dynamic> json) =>
-      _$ColaboradorUpdateFromJson(json);
+  factory Colaborador.fromJson(Map<String, dynamic> json) =>
+      _$ColaboradorFromJson(json);
 
-  static const toJsonFactory = _$ColaboradorUpdateToJson;
-  Map<String, dynamic> toJson() => _$ColaboradorUpdateToJson(this);
+  static const toJsonFactory = _$ColaboradorToJson;
+  Map<String, dynamic> toJson() => _$ColaboradorToJson(this);
 
   @JsonKey(name: 'atualizado_em')
   final int atualizadoEm;
@@ -32,12 +32,12 @@ class ColaboradorUpdate {
   final String nome;
   @JsonKey(name: 'status')
   final int status;
-  static const fromJsonFactory = _$ColaboradorUpdateFromJson;
+  static const fromJsonFactory = _$ColaboradorFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is ColaboradorUpdate &&
+        (other is Colaborador &&
             (identical(other.atualizadoEm, atualizadoEm) ||
                 const DeepCollectionEquality().equals(
                   other.atualizadoEm,
@@ -63,14 +63,14 @@ class ColaboradorUpdate {
       runtimeType.hashCode;
 }
 
-extension $ColaboradorUpdateExtension on ColaboradorUpdate {
-  ColaboradorUpdate copyWith({
+extension $ColaboradorExtension on Colaborador {
+  Colaborador copyWith({
     int? atualizadoEm,
     String? funcao,
     String? nome,
     int? status,
   }) {
-    return ColaboradorUpdate(
+    return Colaborador(
       atualizadoEm: atualizadoEm ?? this.atualizadoEm,
       funcao: funcao ?? this.funcao,
       nome: nome ?? this.nome,
@@ -78,13 +78,13 @@ extension $ColaboradorUpdateExtension on ColaboradorUpdate {
     );
   }
 
-  ColaboradorUpdate copyWithWrapped({
+  Colaborador copyWithWrapped({
     Wrapped<int>? atualizadoEm,
     Wrapped<String>? funcao,
     Wrapped<String>? nome,
     Wrapped<int>? status,
   }) {
-    return ColaboradorUpdate(
+    return Colaborador(
       atualizadoEm: (atualizadoEm != null
           ? atualizadoEm.value
           : this.atualizadoEm),
@@ -96,123 +96,8 @@ extension $ColaboradorUpdateExtension on ColaboradorUpdate {
 }
 
 @JsonSerializable(explicitToJson: true)
-class CondutaGenericaUpdate {
-  const CondutaGenericaUpdate({
-    required this.atualizadoEm,
-    this.conduta,
-    this.data,
-    this.medicoId,
-    required this.pacienteId,
-    required this.status,
-  });
-
-  factory CondutaGenericaUpdate.fromJson(Map<String, dynamic> json) =>
-      _$CondutaGenericaUpdateFromJson(json);
-
-  static const toJsonFactory = _$CondutaGenericaUpdateToJson;
-  Map<String, dynamic> toJson() => _$CondutaGenericaUpdateToJson(this);
-
-  @JsonKey(name: 'atualizado_em')
-  final int atualizadoEm;
-  @JsonKey(name: 'conduta')
-  final String? conduta;
-  @JsonKey(name: 'data')
-  final String? data;
-  @JsonKey(name: 'medicoId')
-  final int? medicoId;
-  @JsonKey(name: 'pacienteId')
-  final int pacienteId;
-  @JsonKey(name: 'status')
-  final int status;
-  static const fromJsonFactory = _$CondutaGenericaUpdateFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is CondutaGenericaUpdate &&
-            (identical(other.atualizadoEm, atualizadoEm) ||
-                const DeepCollectionEquality().equals(
-                  other.atualizadoEm,
-                  atualizadoEm,
-                )) &&
-            (identical(other.conduta, conduta) ||
-                const DeepCollectionEquality().equals(
-                  other.conduta,
-                  conduta,
-                )) &&
-            (identical(other.data, data) ||
-                const DeepCollectionEquality().equals(other.data, data)) &&
-            (identical(other.medicoId, medicoId) ||
-                const DeepCollectionEquality().equals(
-                  other.medicoId,
-                  medicoId,
-                )) &&
-            (identical(other.pacienteId, pacienteId) ||
-                const DeepCollectionEquality().equals(
-                  other.pacienteId,
-                  pacienteId,
-                )) &&
-            (identical(other.status, status) ||
-                const DeepCollectionEquality().equals(other.status, status)));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(atualizadoEm) ^
-      const DeepCollectionEquality().hash(conduta) ^
-      const DeepCollectionEquality().hash(data) ^
-      const DeepCollectionEquality().hash(medicoId) ^
-      const DeepCollectionEquality().hash(pacienteId) ^
-      const DeepCollectionEquality().hash(status) ^
-      runtimeType.hashCode;
-}
-
-extension $CondutaGenericaUpdateExtension on CondutaGenericaUpdate {
-  CondutaGenericaUpdate copyWith({
-    int? atualizadoEm,
-    String? conduta,
-    String? data,
-    int? medicoId,
-    int? pacienteId,
-    int? status,
-  }) {
-    return CondutaGenericaUpdate(
-      atualizadoEm: atualizadoEm ?? this.atualizadoEm,
-      conduta: conduta ?? this.conduta,
-      data: data ?? this.data,
-      medicoId: medicoId ?? this.medicoId,
-      pacienteId: pacienteId ?? this.pacienteId,
-      status: status ?? this.status,
-    );
-  }
-
-  CondutaGenericaUpdate copyWithWrapped({
-    Wrapped<int>? atualizadoEm,
-    Wrapped<String?>? conduta,
-    Wrapped<String?>? data,
-    Wrapped<int?>? medicoId,
-    Wrapped<int>? pacienteId,
-    Wrapped<int>? status,
-  }) {
-    return CondutaGenericaUpdate(
-      atualizadoEm: (atualizadoEm != null
-          ? atualizadoEm.value
-          : this.atualizadoEm),
-      conduta: (conduta != null ? conduta.value : this.conduta),
-      data: (data != null ? data.value : this.data),
-      medicoId: (medicoId != null ? medicoId.value : this.medicoId),
-      pacienteId: (pacienteId != null ? pacienteId.value : this.pacienteId),
-      status: (status != null ? status.value : this.status),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class CondutaUpdate {
-  const CondutaUpdate({
+class Conduta {
+  const Conduta({
     required this.atualizadoEm,
     this.dados,
     this.data,
@@ -222,11 +107,11 @@ class CondutaUpdate {
     this.tipo,
   });
 
-  factory CondutaUpdate.fromJson(Map<String, dynamic> json) =>
-      _$CondutaUpdateFromJson(json);
+  factory Conduta.fromJson(Map<String, dynamic> json) =>
+      _$CondutaFromJson(json);
 
-  static const toJsonFactory = _$CondutaUpdateToJson;
-  Map<String, dynamic> toJson() => _$CondutaUpdateToJson(this);
+  static const toJsonFactory = _$CondutaToJson;
+  Map<String, dynamic> toJson() => _$CondutaToJson(this);
 
   @JsonKey(name: 'atualizado_em')
   final int atualizadoEm;
@@ -242,12 +127,12 @@ class CondutaUpdate {
   final int status;
   @JsonKey(name: 'tipo')
   final String? tipo;
-  static const fromJsonFactory = _$CondutaUpdateFromJson;
+  static const fromJsonFactory = _$CondutaFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is CondutaUpdate &&
+        (other is Conduta &&
             (identical(other.atualizadoEm, atualizadoEm) ||
                 const DeepCollectionEquality().equals(
                   other.atualizadoEm,
@@ -288,8 +173,8 @@ class CondutaUpdate {
       runtimeType.hashCode;
 }
 
-extension $CondutaUpdateExtension on CondutaUpdate {
-  CondutaUpdate copyWith({
+extension $CondutaExtension on Conduta {
+  Conduta copyWith({
     int? atualizadoEm,
     Map<String, dynamic>? dados,
     String? data,
@@ -298,7 +183,7 @@ extension $CondutaUpdateExtension on CondutaUpdate {
     int? status,
     String? tipo,
   }) {
-    return CondutaUpdate(
+    return Conduta(
       atualizadoEm: atualizadoEm ?? this.atualizadoEm,
       dados: dados ?? this.dados,
       data: data ?? this.data,
@@ -309,7 +194,7 @@ extension $CondutaUpdateExtension on CondutaUpdate {
     );
   }
 
-  CondutaUpdate copyWithWrapped({
+  Conduta copyWithWrapped({
     Wrapped<int>? atualizadoEm,
     Wrapped<Map<String, dynamic>?>? dados,
     Wrapped<String?>? data,
@@ -318,7 +203,7 @@ extension $CondutaUpdateExtension on CondutaUpdate {
     Wrapped<int>? status,
     Wrapped<String?>? tipo,
   }) {
-    return CondutaUpdate(
+    return Conduta(
       atualizadoEm: (atualizadoEm != null
           ? atualizadoEm.value
           : this.atualizadoEm),
@@ -328,6 +213,121 @@ extension $CondutaUpdateExtension on CondutaUpdate {
       pacienteId: (pacienteId != null ? pacienteId.value : this.pacienteId),
       status: (status != null ? status.value : this.status),
       tipo: (tipo != null ? tipo.value : this.tipo),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class CondutaGenerica {
+  const CondutaGenerica({
+    required this.atualizadoEm,
+    this.conduta,
+    this.data,
+    this.medicoId,
+    required this.pacienteId,
+    required this.status,
+  });
+
+  factory CondutaGenerica.fromJson(Map<String, dynamic> json) =>
+      _$CondutaGenericaFromJson(json);
+
+  static const toJsonFactory = _$CondutaGenericaToJson;
+  Map<String, dynamic> toJson() => _$CondutaGenericaToJson(this);
+
+  @JsonKey(name: 'atualizado_em')
+  final int atualizadoEm;
+  @JsonKey(name: 'conduta')
+  final String? conduta;
+  @JsonKey(name: 'data')
+  final String? data;
+  @JsonKey(name: 'medicoId')
+  final int? medicoId;
+  @JsonKey(name: 'pacienteId')
+  final int pacienteId;
+  @JsonKey(name: 'status')
+  final int status;
+  static const fromJsonFactory = _$CondutaGenericaFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is CondutaGenerica &&
+            (identical(other.atualizadoEm, atualizadoEm) ||
+                const DeepCollectionEquality().equals(
+                  other.atualizadoEm,
+                  atualizadoEm,
+                )) &&
+            (identical(other.conduta, conduta) ||
+                const DeepCollectionEquality().equals(
+                  other.conduta,
+                  conduta,
+                )) &&
+            (identical(other.data, data) ||
+                const DeepCollectionEquality().equals(other.data, data)) &&
+            (identical(other.medicoId, medicoId) ||
+                const DeepCollectionEquality().equals(
+                  other.medicoId,
+                  medicoId,
+                )) &&
+            (identical(other.pacienteId, pacienteId) ||
+                const DeepCollectionEquality().equals(
+                  other.pacienteId,
+                  pacienteId,
+                )) &&
+            (identical(other.status, status) ||
+                const DeepCollectionEquality().equals(other.status, status)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(atualizadoEm) ^
+      const DeepCollectionEquality().hash(conduta) ^
+      const DeepCollectionEquality().hash(data) ^
+      const DeepCollectionEquality().hash(medicoId) ^
+      const DeepCollectionEquality().hash(pacienteId) ^
+      const DeepCollectionEquality().hash(status) ^
+      runtimeType.hashCode;
+}
+
+extension $CondutaGenericaExtension on CondutaGenerica {
+  CondutaGenerica copyWith({
+    int? atualizadoEm,
+    String? conduta,
+    String? data,
+    int? medicoId,
+    int? pacienteId,
+    int? status,
+  }) {
+    return CondutaGenerica(
+      atualizadoEm: atualizadoEm ?? this.atualizadoEm,
+      conduta: conduta ?? this.conduta,
+      data: data ?? this.data,
+      medicoId: medicoId ?? this.medicoId,
+      pacienteId: pacienteId ?? this.pacienteId,
+      status: status ?? this.status,
+    );
+  }
+
+  CondutaGenerica copyWithWrapped({
+    Wrapped<int>? atualizadoEm,
+    Wrapped<String?>? conduta,
+    Wrapped<String?>? data,
+    Wrapped<int?>? medicoId,
+    Wrapped<int>? pacienteId,
+    Wrapped<int>? status,
+  }) {
+    return CondutaGenerica(
+      atualizadoEm: (atualizadoEm != null
+          ? atualizadoEm.value
+          : this.atualizadoEm),
+      conduta: (conduta != null ? conduta.value : this.conduta),
+      data: (data != null ? data.value : this.data),
+      medicoId: (medicoId != null ? medicoId.value : this.medicoId),
+      pacienteId: (pacienteId != null ? pacienteId.value : this.pacienteId),
+      status: (status != null ? status.value : this.status),
     );
   }
 }
@@ -670,19 +670,18 @@ extension $GetUsuarioMutiroesResExtension on GetUsuarioMutiroesRes {
 }
 
 @JsonSerializable(explicitToJson: true)
-class MedicoUpdate {
-  const MedicoUpdate({
+class Medico {
+  const Medico({
     required this.atualizadoEm,
     required this.crm,
     required this.nome,
     required this.status,
   });
 
-  factory MedicoUpdate.fromJson(Map<String, dynamic> json) =>
-      _$MedicoUpdateFromJson(json);
+  factory Medico.fromJson(Map<String, dynamic> json) => _$MedicoFromJson(json);
 
-  static const toJsonFactory = _$MedicoUpdateToJson;
-  Map<String, dynamic> toJson() => _$MedicoUpdateToJson(this);
+  static const toJsonFactory = _$MedicoToJson;
+  Map<String, dynamic> toJson() => _$MedicoToJson(this);
 
   @JsonKey(name: 'atualizado_em')
   final int atualizadoEm;
@@ -692,12 +691,12 @@ class MedicoUpdate {
   final String nome;
   @JsonKey(name: 'status')
   final int status;
-  static const fromJsonFactory = _$MedicoUpdateFromJson;
+  static const fromJsonFactory = _$MedicoFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is MedicoUpdate &&
+        (other is Medico &&
             (identical(other.atualizadoEm, atualizadoEm) ||
                 const DeepCollectionEquality().equals(
                   other.atualizadoEm,
@@ -723,14 +722,9 @@ class MedicoUpdate {
       runtimeType.hashCode;
 }
 
-extension $MedicoUpdateExtension on MedicoUpdate {
-  MedicoUpdate copyWith({
-    int? atualizadoEm,
-    String? crm,
-    String? nome,
-    int? status,
-  }) {
-    return MedicoUpdate(
+extension $MedicoExtension on Medico {
+  Medico copyWith({int? atualizadoEm, String? crm, String? nome, int? status}) {
+    return Medico(
       atualizadoEm: atualizadoEm ?? this.atualizadoEm,
       crm: crm ?? this.crm,
       nome: nome ?? this.nome,
@@ -738,13 +732,13 @@ extension $MedicoUpdateExtension on MedicoUpdate {
     );
   }
 
-  MedicoUpdate copyWithWrapped({
+  Medico copyWithWrapped({
     Wrapped<int>? atualizadoEm,
     Wrapped<String>? crm,
     Wrapped<String>? nome,
     Wrapped<int>? status,
   }) {
-    return MedicoUpdate(
+    return Medico(
       atualizadoEm: (atualizadoEm != null
           ? atualizadoEm.value
           : this.atualizadoEm),
@@ -1141,13 +1135,13 @@ extension $MutiraoInfoExtension on MutiraoInfo {
 @JsonSerializable(explicitToJson: true)
 class MutiraoMudancas {
   const MutiraoMudancas({
-    required this.colaboradores,
-    required this.condutas,
-    required this.condutasGenericas,
-    required this.medicos,
-    required this.mutiraoCondutas,
-    required this.pacientes,
-    required this.procedimentos,
+    this.colaboradores,
+    this.condutas,
+    this.condutasGenericas,
+    this.medicos,
+    this.mutiraoCondutas,
+    this.pacientes,
+    this.procedimentos,
   });
 
   factory MutiraoMudancas.fromJson(Map<String, dynamic> json) =>
@@ -1157,19 +1151,19 @@ class MutiraoMudancas {
   Map<String, dynamic> toJson() => _$MutiraoMudancasToJson(this);
 
   @JsonKey(name: 'colaboradores')
-  final Map<String, dynamic> colaboradores;
+  final Map<String, dynamic>? colaboradores;
   @JsonKey(name: 'condutas')
-  final Map<String, dynamic> condutas;
+  final Map<String, dynamic>? condutas;
   @JsonKey(name: 'condutasGenericas')
-  final Map<String, dynamic> condutasGenericas;
+  final Map<String, dynamic>? condutasGenericas;
   @JsonKey(name: 'medicos')
-  final Map<String, dynamic> medicos;
+  final Map<String, dynamic>? medicos;
   @JsonKey(name: 'mutiraoCondutas', defaultValue: <String>[])
-  final List<String> mutiraoCondutas;
+  final List<String>? mutiraoCondutas;
   @JsonKey(name: 'pacientes')
-  final Map<String, dynamic> pacientes;
+  final Map<String, dynamic>? pacientes;
   @JsonKey(name: 'procedimentos')
-  final Map<String, dynamic> procedimentos;
+  final Map<String, dynamic>? procedimentos;
   static const fromJsonFactory = _$MutiraoMudancasFromJson;
 
   @override
@@ -1250,13 +1244,13 @@ extension $MutiraoMudancasExtension on MutiraoMudancas {
   }
 
   MutiraoMudancas copyWithWrapped({
-    Wrapped<Map<String, dynamic>>? colaboradores,
-    Wrapped<Map<String, dynamic>>? condutas,
-    Wrapped<Map<String, dynamic>>? condutasGenericas,
-    Wrapped<Map<String, dynamic>>? medicos,
-    Wrapped<List<String>>? mutiraoCondutas,
-    Wrapped<Map<String, dynamic>>? pacientes,
-    Wrapped<Map<String, dynamic>>? procedimentos,
+    Wrapped<Map<String, dynamic>?>? colaboradores,
+    Wrapped<Map<String, dynamic>?>? condutas,
+    Wrapped<Map<String, dynamic>?>? condutasGenericas,
+    Wrapped<Map<String, dynamic>?>? medicos,
+    Wrapped<List<String>?>? mutiraoCondutas,
+    Wrapped<Map<String, dynamic>?>? pacientes,
+    Wrapped<Map<String, dynamic>?>? procedimentos,
   }) {
     return MutiraoMudancas(
       colaboradores: (colaboradores != null
@@ -1279,8 +1273,8 @@ extension $MutiraoMudancasExtension on MutiraoMudancas {
 }
 
 @JsonSerializable(explicitToJson: true)
-class PacienteUpdate {
-  const PacienteUpdate({
+class Paciente {
+  const Paciente({
     required this.atualizadoEm,
     this.cns,
     this.cpf,
@@ -1294,11 +1288,11 @@ class PacienteUpdate {
     this.uf,
   });
 
-  factory PacienteUpdate.fromJson(Map<String, dynamic> json) =>
-      _$PacienteUpdateFromJson(json);
+  factory Paciente.fromJson(Map<String, dynamic> json) =>
+      _$PacienteFromJson(json);
 
-  static const toJsonFactory = _$PacienteUpdateToJson;
-  Map<String, dynamic> toJson() => _$PacienteUpdateToJson(this);
+  static const toJsonFactory = _$PacienteToJson;
+  Map<String, dynamic> toJson() => _$PacienteToJson(this);
 
   @JsonKey(name: 'atualizado_em')
   final int atualizadoEm;
@@ -1322,12 +1316,12 @@ class PacienteUpdate {
   final String? tel;
   @JsonKey(name: 'uf')
   final String? uf;
-  static const fromJsonFactory = _$PacienteUpdateFromJson;
+  static const fromJsonFactory = _$PacienteFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is PacienteUpdate &&
+        (other is Paciente &&
             (identical(other.atualizadoEm, atualizadoEm) ||
                 const DeepCollectionEquality().equals(
                   other.atualizadoEm,
@@ -1386,8 +1380,8 @@ class PacienteUpdate {
       runtimeType.hashCode;
 }
 
-extension $PacienteUpdateExtension on PacienteUpdate {
-  PacienteUpdate copyWith({
+extension $PacienteExtension on Paciente {
+  Paciente copyWith({
     int? atualizadoEm,
     String? cns,
     String? cpf,
@@ -1400,7 +1394,7 @@ extension $PacienteUpdateExtension on PacienteUpdate {
     String? tel,
     String? uf,
   }) {
-    return PacienteUpdate(
+    return Paciente(
       atualizadoEm: atualizadoEm ?? this.atualizadoEm,
       cns: cns ?? this.cns,
       cpf: cpf ?? this.cpf,
@@ -1415,7 +1409,7 @@ extension $PacienteUpdateExtension on PacienteUpdate {
     );
   }
 
-  PacienteUpdate copyWithWrapped({
+  Paciente copyWithWrapped({
     Wrapped<int>? atualizadoEm,
     Wrapped<String?>? cns,
     Wrapped<String?>? cpf,
@@ -1428,7 +1422,7 @@ extension $PacienteUpdateExtension on PacienteUpdate {
     Wrapped<String?>? tel,
     Wrapped<String?>? uf,
   }) {
-    return PacienteUpdate(
+    return Paciente(
       atualizadoEm: (atualizadoEm != null
           ? atualizadoEm.value
           : this.atualizadoEm),
@@ -1701,14 +1695,14 @@ extension $PostEntrarResExtension on PostEntrarRes {
 @JsonSerializable(explicitToJson: true)
 class PostMutiraoMudancasReq {
   const PostMutiraoMudancasReq({
-    required this.colaboradores,
-    required this.condutas,
-    required this.condutasGenericas,
-    required this.medicos,
+    this.colaboradores,
+    this.condutas,
+    this.condutasGenericas,
+    this.medicos,
     this.mutirao,
-    required this.mutiraoCondutas,
-    required this.pacientes,
-    required this.procedimentos,
+    this.mutiraoCondutas,
+    this.pacientes,
+    this.procedimentos,
   });
 
   factory PostMutiraoMudancasReq.fromJson(Map<String, dynamic> json) =>
@@ -1718,21 +1712,21 @@ class PostMutiraoMudancasReq {
   Map<String, dynamic> toJson() => _$PostMutiraoMudancasReqToJson(this);
 
   @JsonKey(name: 'colaboradores')
-  final Map<String, dynamic> colaboradores;
+  final Map<String, dynamic>? colaboradores;
   @JsonKey(name: 'condutas')
-  final Map<String, dynamic> condutas;
+  final Map<String, dynamic>? condutas;
   @JsonKey(name: 'condutasGenericas')
-  final Map<String, dynamic> condutasGenericas;
+  final Map<String, dynamic>? condutasGenericas;
   @JsonKey(name: 'medicos')
-  final Map<String, dynamic> medicos;
+  final Map<String, dynamic>? medicos;
   @JsonKey(name: 'mutirao')
   final MutiraoData? mutirao;
   @JsonKey(name: 'mutiraoCondutas', defaultValue: <String>[])
-  final List<String> mutiraoCondutas;
+  final List<String>? mutiraoCondutas;
   @JsonKey(name: 'pacientes')
-  final Map<String, dynamic> pacientes;
+  final Map<String, dynamic>? pacientes;
   @JsonKey(name: 'procedimentos')
-  final Map<String, dynamic> procedimentos;
+  final Map<String, dynamic>? procedimentos;
   static const fromJsonFactory = _$PostMutiraoMudancasReqFromJson;
 
   @override
@@ -1821,14 +1815,14 @@ extension $PostMutiraoMudancasReqExtension on PostMutiraoMudancasReq {
   }
 
   PostMutiraoMudancasReq copyWithWrapped({
-    Wrapped<Map<String, dynamic>>? colaboradores,
-    Wrapped<Map<String, dynamic>>? condutas,
-    Wrapped<Map<String, dynamic>>? condutasGenericas,
-    Wrapped<Map<String, dynamic>>? medicos,
+    Wrapped<Map<String, dynamic>?>? colaboradores,
+    Wrapped<Map<String, dynamic>?>? condutas,
+    Wrapped<Map<String, dynamic>?>? condutasGenericas,
+    Wrapped<Map<String, dynamic>?>? medicos,
     Wrapped<MutiraoData?>? mutirao,
-    Wrapped<List<String>>? mutiraoCondutas,
-    Wrapped<Map<String, dynamic>>? pacientes,
-    Wrapped<Map<String, dynamic>>? procedimentos,
+    Wrapped<List<String>?>? mutiraoCondutas,
+    Wrapped<Map<String, dynamic>?>? pacientes,
+    Wrapped<Map<String, dynamic>?>? procedimentos,
   }) {
     return PostMutiraoMudancasReq(
       colaboradores: (colaboradores != null
@@ -2044,8 +2038,8 @@ extension $PostRegistarResExtension on PostRegistarRes {
 }
 
 @JsonSerializable(explicitToJson: true)
-class ProcedimentoUpdate {
-  const ProcedimentoUpdate({
+class Procedimento {
+  const Procedimento({
     required this.atualizadoEm,
     this.data,
     this.dioptriaLente,
@@ -2058,11 +2052,11 @@ class ProcedimentoUpdate {
     this.tipo,
   });
 
-  factory ProcedimentoUpdate.fromJson(Map<String, dynamic> json) =>
-      _$ProcedimentoUpdateFromJson(json);
+  factory Procedimento.fromJson(Map<String, dynamic> json) =>
+      _$ProcedimentoFromJson(json);
 
-  static const toJsonFactory = _$ProcedimentoUpdateToJson;
-  Map<String, dynamic> toJson() => _$ProcedimentoUpdateToJson(this);
+  static const toJsonFactory = _$ProcedimentoToJson;
+  Map<String, dynamic> toJson() => _$ProcedimentoToJson(this);
 
   @JsonKey(name: 'atualizado_em')
   final int atualizadoEm;
@@ -2084,12 +2078,12 @@ class ProcedimentoUpdate {
   final int status;
   @JsonKey(name: 'tipo')
   final String? tipo;
-  static const fromJsonFactory = _$ProcedimentoUpdateFromJson;
+  static const fromJsonFactory = _$ProcedimentoFromJson;
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other is ProcedimentoUpdate &&
+        (other is Procedimento &&
             (identical(other.atualizadoEm, atualizadoEm) ||
                 const DeepCollectionEquality().equals(
                   other.atualizadoEm,
@@ -2148,8 +2142,8 @@ class ProcedimentoUpdate {
       runtimeType.hashCode;
 }
 
-extension $ProcedimentoUpdateExtension on ProcedimentoUpdate {
-  ProcedimentoUpdate copyWith({
+extension $ProcedimentoExtension on Procedimento {
+  Procedimento copyWith({
     int? atualizadoEm,
     String? data,
     String? dioptriaLente,
@@ -2161,7 +2155,7 @@ extension $ProcedimentoUpdateExtension on ProcedimentoUpdate {
     int? status,
     String? tipo,
   }) {
-    return ProcedimentoUpdate(
+    return Procedimento(
       atualizadoEm: atualizadoEm ?? this.atualizadoEm,
       data: data ?? this.data,
       dioptriaLente: dioptriaLente ?? this.dioptriaLente,
@@ -2175,7 +2169,7 @@ extension $ProcedimentoUpdateExtension on ProcedimentoUpdate {
     );
   }
 
-  ProcedimentoUpdate copyWithWrapped({
+  Procedimento copyWithWrapped({
     Wrapped<int>? atualizadoEm,
     Wrapped<String?>? data,
     Wrapped<String?>? dioptriaLente,
@@ -2187,7 +2181,7 @@ extension $ProcedimentoUpdateExtension on ProcedimentoUpdate {
     Wrapped<int>? status,
     Wrapped<String?>? tipo,
   }) {
-    return ProcedimentoUpdate(
+    return Procedimento(
       atualizadoEm: (atualizadoEm != null
           ? atualizadoEm.value
           : this.atualizadoEm),
