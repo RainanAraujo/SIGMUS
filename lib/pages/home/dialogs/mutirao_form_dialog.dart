@@ -8,6 +8,7 @@ import 'package:sigmus/widgets/app_dialog.dart';
 import 'package:sigmus/widgets/app_dropdown.dart';
 import 'package:sigmus/widgets/app_searchable_select.dart';
 import 'package:sigmus/widgets/app_toast.dart';
+import 'package:sigmus/widgets/form_row.dart';
 
 class MutiraoFormDialog extends StatefulWidget {
   final MutiraoInfo? mutirao;
@@ -219,49 +220,44 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Tipo e Data
-            Row(
+            FormRow(
               children: [
-                Expanded(
-                  child: AppDropdown<String>(
-                    value: _tipo,
-                    label: 'Tipo de Mutirão',
-                    isRequired: true,
-                    enabled: widget.mutirao == null,
-                    items: const [
-                      DropdownMenuItem(
-                        value: 'cirurgia',
-                        child: Text('Cirurgia'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'refracao',
-                        child: Text('Refração'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'generico',
-                        child: Text('Genérico'),
-                      ),
-                    ],
-                    onChanged: (value) => setState(() => _tipo = value!),
-                  ),
+                AppDropdown<String>(
+                  value: _tipo,
+                  label: 'Tipo de Mutirão',
+                  isRequired: true,
+                  enabled: widget.mutirao == null,
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'cirurgia',
+                      child: Text('Cirurgia'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'refracao',
+                      child: Text('Refração'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'generico',
+                      child: Text('Genérico'),
+                    ),
+                  ],
+                  onChanged: (value) => setState(() => _tipo = value!),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: AppDateRangePicker(
-                    label: 'Data',
-                    isRequired: true,
-                    startDate: _dataInicio,
-                    endDate: _dataFinal,
-                    firstDate: DateTime(2025),
-                    lastDate: DateTime(2030),
-                    onChanged: (range) {
-                      if (range != null) {
-                        setState(() {
-                          _dataInicio = range.start;
-                          _dataFinal = range.end;
-                        });
-                      }
-                    },
-                  ),
+                AppDateRangePicker(
+                  label: 'Data',
+                  isRequired: true,
+                  startDate: _dataInicio,
+                  endDate: _dataFinal,
+                  firstDate: DateTime(2025),
+                  lastDate: DateTime(2030),
+                  onChanged: (range) {
+                    if (range != null) {
+                      setState(() {
+                        _dataInicio = range.start;
+                        _dataFinal = range.end;
+                      });
+                    }
+                  },
                 ),
               ],
             ),
@@ -290,41 +286,35 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
             const SizedBox(height: 16),
 
             // Município e Local
-            Row(
+            FormRow(
               children: [
-                Expanded(
-                  child: AppSearchableSelect<String>(
-                    key: const ValueKey('municipio'),
-                    label: 'Município',
-                    isRequired: true,
-                    value: _municipio.isEmpty ? null : _municipio,
-                    options: _getMunicipiosOptions(),
-                    enabled: _estado.isNotEmpty,
-                    searchHint: 'Buscar município...',
-                    onChanged: (value) =>
-                        setState(() => _municipio = value ?? ''),
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Selecione um município';
-                      return null;
-                    },
-                  ),
+                AppSearchableSelect<String>(
+                  key: const ValueKey('municipio'),
+                  label: 'Município',
+                  isRequired: true,
+                  value: _municipio.isEmpty ? null : _municipio,
+                  options: _getMunicipiosOptions(),
+                  enabled: _estado.isNotEmpty,
+                  searchHint: 'Buscar município...',
+                  onChanged: (value) =>
+                      setState(() => _municipio = value ?? ''),
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return 'Selecione um município';
+                    return null;
+                  },
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: TextFormField(
-                    initialValue: _local,
-                    decoration: const InputDecoration(
-                      labelText: 'Local *',
-                      hintText: 'Digite o local',
-                    ),
-                    onChanged: (value) => _local = value,
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Digite o local';
-                      return null;
-                    },
+                TextFormField(
+                  initialValue: _local,
+                  decoration: const InputDecoration(
+                    labelText: 'Local *',
+                    hintText: 'Digite o local',
                   ),
+                  onChanged: (value) => _local = value,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Digite o local';
+                    return null;
+                  },
                 ),
               ],
             ),
@@ -332,40 +322,35 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
             const SizedBox(height: 16),
 
             // Demandante e Contratante
-            Row(
+            FormRow(
               children: [
-                Expanded(
-                  child: TextFormField(
-                    initialValue: _demandante,
-                    decoration: const InputDecoration(
-                      labelText: 'Demandante *',
-                      hintText: 'Digite o demandante',
-                      helperText: 'Pessoa ou entidade que solicitou o mutirão',
-                    ),
-                    onChanged: (value) => _demandante = value,
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Digite o demandante';
-                      return null;
-                    },
+                TextFormField(
+                  initialValue: _demandante,
+                  decoration: const InputDecoration(
+                    labelText: 'Demandante *',
+                    hintText: 'Digite o demandante',
+                    helperText: 'Pessoa ou entidade que solicitou o mutirão',
                   ),
+                  onChanged: (value) => _demandante = value,
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return 'Digite o demandante';
+                    return null;
+                  },
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: TextFormField(
-                    initialValue: _contratante,
-                    decoration: const InputDecoration(
-                      labelText: 'Contratante *',
-                      hintText: 'Digite o contratante',
-                      helperText: 'Pessoa ou entidade que contratou o mutirão',
-                    ),
-                    onChanged: (value) => _contratante = value,
-                    validator: (value) {
-                      if (value == null || value.isEmpty)
-                        return 'Digite o contratante';
-                      return null;
-                    },
+                TextFormField(
+                  initialValue: _contratante,
+                  decoration: const InputDecoration(
+                    labelText: 'Contratante *',
+                    hintText: 'Digite o contratante',
+                    helperText: 'Pessoa ou entidade que contratou o mutirão',
                   ),
+                  onChanged: (value) => _contratante = value,
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return 'Digite o contratante';
+                    return null;
+                  },
                 ),
               ],
             ),
@@ -387,21 +372,18 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
                 ),
               ),
               const SizedBox(height: 16),
-              Row(
+              FormRow(
+                suffix: ElevatedButton(
+                  onPressed: _addConduta,
+                  child: const Text('Adicionar'),
+                ),
                 children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _condutaController,
-                      decoration: const InputDecoration(
-                        labelText: 'Nome da conduta',
-                        hintText: 'Digite a conduta',
-                      ),
+                  TextField(
+                    controller: _condutaController,
+                    decoration: const InputDecoration(
+                      labelText: 'Nome da conduta',
+                      hintText: 'Digite a conduta',
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: _addConduta,
-                    child: const Text('Adicionar'),
                   ),
                 ],
               ),
@@ -427,31 +409,25 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
               ),
             ),
             const SizedBox(height: 16),
-            Row(
+            FormRow(
+              suffix: ElevatedButton(
+                onPressed: _addColaborador,
+                child: const Text('Adicionar'),
+              ),
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _colaboradorNomeController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nome',
-                      hintText: 'Digite o nome',
-                    ),
+                TextField(
+                  controller: _colaboradorNomeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nome',
+                    hintText: 'Digite o nome',
                   ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: _colaboradorFuncaoController,
-                    decoration: const InputDecoration(
-                      labelText: 'Função',
-                      hintText: 'Digite a função',
-                    ),
+                TextField(
+                  controller: _colaboradorFuncaoController,
+                  decoration: const InputDecoration(
+                    labelText: 'Função',
+                    hintText: 'Digite a função',
                   ),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: _addColaborador,
-                  child: const Text('Adicionar'),
                 ),
               ],
             ),
@@ -476,31 +452,25 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
               ),
             ),
             const SizedBox(height: 16),
-            Row(
+            FormRow(
+              suffix: ElevatedButton(
+                onPressed: _addMedico,
+                child: const Text('Adicionar'),
+              ),
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _medicoNomeController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nome',
-                      hintText: 'Digite o nome',
-                    ),
+                TextField(
+                  controller: _medicoNomeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nome',
+                    hintText: 'Digite o nome',
                   ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: _medicoCRMController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nº Registro',
-                      hintText: 'Digite o número de registro',
-                    ),
+                TextField(
+                  controller: _medicoCRMController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nº Registro',
+                    hintText: 'Digite o número de registro',
                   ),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: _addMedico,
-                  child: const Text('Adicionar'),
                 ),
               ],
             ),

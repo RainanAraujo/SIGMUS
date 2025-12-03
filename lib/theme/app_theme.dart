@@ -116,13 +116,18 @@ class AppTheme {
     // Input Decoration
     inputDecorationTheme: InputDecorationTheme(
       filled: false,
+      fillColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return AppColors.muted.withOpacity(0.5);
+        }
+        return Colors.transparent;
+      }),
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
       isDense: false,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(radiusMd),
         borderSide: const BorderSide(color: AppColors.input, width: 1),
       ),
-
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(radiusMd),
         borderSide: const BorderSide(color: AppColors.ring, width: 2),
@@ -147,11 +152,34 @@ class AppTheme {
         fontSize: 14,
         fontWeight: FontWeight.w400,
       ),
-      labelStyle: const TextStyle(
-        color: AppColors.foreground,
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-      ),
+      labelStyle: WidgetStateTextStyle.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return const TextStyle(
+            color: AppColors.mutedForeground,
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          );
+        }
+        return const TextStyle(
+          color: AppColors.foreground,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        );
+      }),
+      floatingLabelStyle: WidgetStateTextStyle.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return const TextStyle(
+            color: AppColors.mutedForeground,
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          );
+        }
+        return const TextStyle(
+          color: AppColors.foreground,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        );
+      }),
       errorStyle: const TextStyle(
         color: AppColors.destructive,
         fontSize: 12,

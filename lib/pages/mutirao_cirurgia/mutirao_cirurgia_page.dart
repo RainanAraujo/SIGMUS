@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sigmus/extensions/response_ext.dart';
 import 'package:sigmus/generated/sigmus_api.swagger.dart';
 import 'package:sigmus/models/procedimento_item.dart';
+import 'package:sigmus/pages/mutirao_cirurgia/cirurgia_dialog.dart';
 import 'package:sigmus/services/sigmus_api.dart';
 import 'package:sigmus/theme/app_colors.dart';
 import 'package:sigmus/theme/app_typography.dart';
@@ -53,6 +54,7 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
   // ===== Cache dos dados brutos da API =====
   Map<String, PacienteUpdate> _pacientesMap = {};
   Map<String, ProcedimentoUpdate> _procedimentosMap = {};
+  Map<String, MedicoUpdate> _medicosMap = {};
 
   // ===== Contadores do header =====
   int get _pacientesCount => _tableState.value.procedimentos.length;
@@ -119,6 +121,12 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
         _procedimentosMap[key] = ProcedimentoUpdate.fromJson(value);
       });
 
+      // Parseia médicos
+      _medicosMap = {};
+      body.mudancas?.medicos.forEach((key, value) {
+        _medicosMap[key] = MedicoUpdate.fromJson(value);
+      });
+
       _filterData();
 
       AppToast.show(context, message: 'Dados carregados com sucesso');
@@ -172,15 +180,73 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
     );
   }
 
-  void _createPaciente() {
-    // TODO: Abrir dialog de criação de paciente
+  List<String> _getDatasDisponiveis() {
+    if (_mutiraoData == null) return [];
+
+    final dataInicio = DateTime.tryParse(_mutiraoData!.dataInicio);
+    final dataFinal = DateTime.tryParse(_mutiraoData!.dataFinal);
+
+    if (dataInicio == null || dataFinal == null) return [];
+
+    final datas = <String>[];
+    var current = dataInicio;
+    while (!current.isAfter(dataFinal)) {
+      datas.add(current.toIso8601String().split('T').first);
+      current = current.add(const Duration(days: 1));
+    }
+    return datas;
   }
 
-  void _editPaciente(ProcedimentoItem item) {
-    // TODO: Abrir dialog de edição
+  List<MedicoUpdate> _getMedicosDisponiveis() {
+    return _medicosMap.values.where((m) => m.status == 1).toList();
   }
 
-  void _deletePaciente(ProcedimentoItem item) async {
+  void _createProcedimento() {
+    showDialog(
+      context: context,
+      builder: (context) => CirurgiaFormDialog(
+        datasDisponiveis: _getDatasDisponiveis(),
+        medicosDisponiveis: _getMedicosDisponiveis(),
+        onSubmit: (item) {
+          // TODO: Salvar via API
+          _tableState.value = _tableState.value.copyWith(
+            procedimentos: [..._tableState.value.procedimentos, item],
+          );
+          AppToast.show(context, message: 'Procedimento criado com sucesso');
+        },
+      ),
+    );
+  }
+
+  void _editProcedimento(ProcedimentoItem item) {
+    showDialog(
+      context: context,
+      builder: (context) => CirurgiaFormDialog(
+        procedimento: item,
+        datasDisponiveis: _getDatasDisponiveis(),
+        medicosDisponiveis: _getMedicosDisponiveis(),
+        onSubmit: (updatedItem) {
+          // TODO: Salvar via API
+          final procedimentos = [..._tableState.value.procedimentos];
+          final index = procedimentos.indexWhere(
+            (p) => p.procedimento.pacienteId == item.procedimento.pacienteId,
+          );
+          if (index != -1) {
+            procedimentos[index] = updatedItem;
+            _tableState.value = _tableState.value.copyWith(
+              procedimentos: procedimentos,
+            );
+          }
+          AppToast.show(
+            context,
+            message: 'Procedimento atualizado com sucesso',
+          );
+        },
+      ),
+    );
+  }
+
+  void _deleteProcedimento(ProcedimentoItem item) async {
     final confirmed = await AppAlert.show(
       context: context,
       title: 'Confirmar exclusão',
@@ -275,7 +341,9 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
                           ),
                           const SizedBox(width: 8),
                           ElevatedButton.icon(
-                            onPressed: state.isLoading ? null : _createPaciente,
+                            onPressed: state.isLoading
+                                ? null
+                                : _createProcedimento,
                             icon: const Icon(Icons.add, size: 16),
                             label: const Text('Novo paciente'),
                           ),
@@ -312,12 +380,12 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
                           TableRowMenuAction(
                             label: 'Editar paciente',
                             icon: Icons.edit,
-                            onPressed: _editPaciente,
+                            onPressed: _editProcedimento,
                           ),
                           TableRowMenuAction(
                             label: 'Apagar paciente',
                             icon: Icons.delete,
-                            onPressed: _deletePaciente,
+                            onPressed: _deleteProcedimento,
                           ),
                         ],
                       );

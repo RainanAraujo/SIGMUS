@@ -6,6 +6,7 @@ import 'package:sigmus/pages/home/dialogs/mutirao_form_dialog.dart';
 import 'package:sigmus/routes/app_router.dart';
 import 'package:sigmus/services/sigmus_api.dart';
 import 'package:sigmus/theme/app_typography.dart';
+import 'package:sigmus/utils/date_utils.dart';
 import 'package:sigmus/widgets/app_alert.dart';
 import 'package:sigmus/widgets/app_data_table.dart';
 import 'package:sigmus/widgets/app_toast.dart';
@@ -156,19 +157,6 @@ class _HomePageState extends State<HomePage> {
     // TODO: Implementar sincronização
   }
 
-  String _formatDateRange(String inicio, String fim) {
-    final inicioParsed = DateTime.tryParse(inicio);
-    final fimParsed = DateTime.tryParse(fim);
-    final dateInicio = DateFormat('dd/MM/yyyy', 'pt_BR').format(inicioParsed!);
-    final dateFim = DateFormat('dd/MM/yyyy', 'pt_BR').format(fimParsed!);
-
-    if (inicio == fim) {
-      return dateInicio.toString();
-    }
-
-    return '$dateInicio - $dateFim';
-  }
-
   String _capitalize(String text) {
     if (text.isEmpty) return text;
     return text[0].toUpperCase() + text.substring(1);
@@ -215,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                   columns: [
                     TableColumnConfig(
                       label: 'Data',
-                      getValue: (mutirao) => _formatDateRange(
+                      getValue: (mutirao) => formatDateRangeFromString(
                         mutirao.dataInicio,
                         mutirao.dataFinal,
                       ),
