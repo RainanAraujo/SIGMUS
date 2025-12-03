@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sigmus/pages/home/home_page.dart';
+import 'package:sigmus/pages/mutiroes/mutiroes_page.dart';
 import 'package:sigmus/pages/mutirao_cirurgia/mutirao_cirurgia_page.dart';
 
 class AppRoutes {
@@ -19,7 +19,7 @@ class AppRouter {
     switch (settings.name) {
       case AppRoutes.home:
         return MaterialPageRoute(
-          builder: (_) => const HomePage(),
+          builder: (_) => const MutiroesPage(),
           settings: settings,
         );
 

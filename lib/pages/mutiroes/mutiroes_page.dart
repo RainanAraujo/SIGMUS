@@ -11,11 +11,11 @@ import 'package:sigmus/widgets/app_data_table.dart';
 import 'package:sigmus/widgets/app_toast.dart';
 import 'package:sigmus/widgets/stat_card.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class MutiroesPage extends StatefulWidget {
+  const MutiroesPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<MutiroesPage> createState() => _MutiroesPageState();
 }
 
 class TableState {
@@ -32,7 +32,7 @@ class TableState {
   }
 }
 
-class _HomePageState extends State<HomePage> {
+class _MutiroesPageState extends State<MutiroesPage> {
   late final Listenable _dataListener;
 
   final _tableState = ValueNotifier<TableState>(const TableState());
