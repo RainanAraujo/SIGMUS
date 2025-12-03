@@ -171,6 +171,14 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
               nome: 'Paciente não encontrado',
             ),
         procedimento: proc,
+        medico:
+            _medicosMap[proc.medicoId.toString()] ??
+            Medico(
+              atualizadoEm: 0,
+              status: 0,
+              nome: 'Médico não encontrado',
+              crm: '',
+            ),
       );
     }).toList();
 

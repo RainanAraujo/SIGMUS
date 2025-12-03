@@ -159,7 +159,13 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
       );
 
       widget.onSubmit?.call(
-        ProcedimentoItem(paciente: paciente, procedimento: procedimento),
+        ProcedimentoItem(
+          paciente: paciente,
+          procedimento: procedimento,
+          medico: widget.medicosDisponiveis.firstWhere(
+            (medico) => medico.crm.hashCode == _medicoId.value,
+          ),
+        ),
       );
 
       if (mounted) {
