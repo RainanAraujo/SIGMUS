@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sigmus/extensions/response_ext.dart';
 import 'package:sigmus/generated/sigmus_api.swagger.dart';
-import 'package:sigmus/pages/home/dialogs/mutirao_form_dialog.dart';
+import 'package:sigmus/pages/mutiroes/mutirao_form_dialog.dart';
 import 'package:sigmus/routes/app_router.dart';
 import 'package:sigmus/services/sigmus_api.dart';
 import 'package:sigmus/theme/app_typography.dart';
@@ -192,8 +192,20 @@ class _MutiroesPageState extends State<MutiroesPage> {
                     ),
                   ],
                   onRowTap: (item) {
-                    if (item.tipo == "cirurgia") {
+                    if (item.tipo == "refracao") {
+                      AppRouter.goToMutiraoRefracao(mutiraoId: item.id);
+                    } else if (item.tipo == "cirurgia") {
                       AppRouter.goToMutiraoCirurgia(mutiraoId: item.id);
+                    } else {
+                      AppRouter.goToMutiraoGenerico(
+                        mutiraoId: item.id,
+                        nomeMutirao: item.municipio,
+                        tipoMutirao: _capitalize(item.tipo),
+                        periodoMutirao: formatDateRangeFromString(
+                          item.dataInicio,
+                          item.dataFinal,
+                        ),
+                      );
                     }
                   },
                   columns: [

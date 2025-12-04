@@ -190,6 +190,7 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
           ? 'Edite as informações do procedimento'
           : 'Adicione um novo procedimento.',
       maxWidth: 1200,
+      maxHeight: 700,
       actions: [
         OutlinedButton(
           onPressed: _isLoading ? null : () => Navigator.of(context).pop(),

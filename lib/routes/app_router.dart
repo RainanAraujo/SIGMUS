@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:sigmus/pages/mutiroes/mutiroes_page.dart';
 import 'package:sigmus/pages/mutirao_cirurgia/mutirao_cirurgia_page.dart';
+import 'package:sigmus/pages/mutirao_generico/mutirao_generico_page.dart';
+import 'package:sigmus/pages/mutirao_refracao/mutirao_refracao_page.dart';
 
 class AppRoutes {
   AppRoutes._();
 
   static const String home = '/';
   static const String mutiraoCirurgia = '/mutirao-cirurgia';
+  static const String mutiraoRefracao = '/mutirao-refracao';
+  static const String mutiraoGenerico = '/mutirao-generico';
 }
 
 class AppRouter {
@@ -28,6 +32,30 @@ class AppRouter {
         final mutiraoId = args?['mutiraoId'] as int? ?? 0;
         return MaterialPageRoute(
           builder: (_) => MutiraoCirurgiaPage(mutiraoId: mutiraoId),
+          settings: settings,
+        );
+
+      case AppRoutes.mutiraoRefracao:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final mutiraoId = args?['mutiraoId'] as int? ?? 0;
+        return MaterialPageRoute(
+          builder: (_) => MutiraoRefracaoPage(mutiraoId: mutiraoId),
+          settings: settings,
+        );
+
+      case AppRoutes.mutiraoGenerico:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final mutiraoId = args?['mutiraoId'] as int? ?? 0;
+        final nomeMutirao = args?['nomeMutirao'] as String? ?? '';
+        final tipoMutirao = args?['tipoMutirao'] as String? ?? '';
+        final periodoMutirao = args?['periodoMutirao'] as String? ?? '';
+        return MaterialPageRoute(
+          builder: (_) => MutiraoGenericoPage(
+            mutiraoId: mutiraoId,
+            nomeMutirao: nomeMutirao,
+            tipoMutirao: tipoMutirao,
+            periodoMutirao: periodoMutirao,
+          ),
           settings: settings,
         );
 
@@ -68,5 +96,26 @@ class AppRouter {
 
   static void goToMutiraoCirurgia({required int mutiraoId}) {
     push(AppRoutes.mutiraoCirurgia, arguments: {'mutiraoId': mutiraoId});
+  }
+
+  static void goToMutiraoRefracao({required int mutiraoId}) {
+    push(AppRoutes.mutiraoRefracao, arguments: {'mutiraoId': mutiraoId});
+  }
+
+  static void goToMutiraoGenerico({
+    required int mutiraoId,
+    required String nomeMutirao,
+    required String tipoMutirao,
+    required String periodoMutirao,
+  }) {
+    push(
+      AppRoutes.mutiraoGenerico,
+      arguments: {
+        'mutiraoId': mutiraoId,
+        'nomeMutirao': nomeMutirao,
+        'tipoMutirao': tipoMutirao,
+        'periodoMutirao': periodoMutirao,
+      },
+    );
   }
 }

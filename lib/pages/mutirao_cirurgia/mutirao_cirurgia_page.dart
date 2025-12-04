@@ -316,6 +316,7 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
                           // Dropdown de filtro de conduta
                           SizedBox(
                             width: 150,
+                            height: 40,
                             child: AppDropdown<String>(
                               value: _condutaFiltro.value,
                               label: 'Conduta',
@@ -353,7 +354,7 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
                                 ? null
                                 : _createProcedimento,
                             icon: const Icon(Icons.add, size: 16),
-                            label: const Text('Novo paciente'),
+                            label: const Text('Novo atendimento'),
                           ),
                         ],
                         columns: [
