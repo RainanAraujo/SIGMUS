@@ -78,11 +78,7 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
   void _handleSubmit() async {
     if (_formKey.currentState!.validate()) {
       if (_dataInicio == null || _dataFinal == null) {
-        AppToast.show(
-          context,
-          message: 'Selecione a data do mutirão',
-          isError: true,
-        );
+        AppToast.error(context, message: 'Selecione a data do mutirão');
         return;
       }
 
@@ -107,11 +103,7 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
   void _addColaborador() {
     if (_colaboradorNomeController.text.isEmpty ||
         _colaboradorFuncaoController.text.isEmpty) {
-      AppToast.show(
-        context,
-        message: 'Nome e função são obrigatórios',
-        isError: true,
-      );
+      AppToast.error(context, message: 'Nome e função são obrigatórios');
       return;
     }
 
@@ -135,11 +127,7 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
 
   void _addConduta() {
     if (_condutaController.text.isEmpty) {
-      AppToast.show(
-        context,
-        message: 'Nome da conduta é obrigatório',
-        isError: true,
-      );
+      AppToast.error(context, message: 'Nome da conduta é obrigatório');
       return;
     }
 
@@ -158,10 +146,9 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
   void _addMedico() {
     if (_medicoNomeController.text.isEmpty ||
         _medicoCRMController.text.isEmpty) {
-      AppToast.show(
+      AppToast.error(
         context,
         message: 'Nome e número de registro são obrigatórios',
-        isError: true,
       );
       return;
     }

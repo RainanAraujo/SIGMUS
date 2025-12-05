@@ -172,7 +172,7 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
         Navigator.of(context).pop();
       }
     } catch (e) {
-      AppToast.show(context, message: 'Erro: $e', isError: true);
+      AppToast.error(context, message: 'Erro: $e');
     } finally {
       setState(() {
         _isLoading = false;

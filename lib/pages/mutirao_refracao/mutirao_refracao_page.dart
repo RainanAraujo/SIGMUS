@@ -328,7 +328,7 @@ class _MutiraoRefracaoPageState extends State<MutiraoRefracaoPage> {
       ],
       getSearchText: (c) =>
           '${c.paciente.nome ?? ''} ${c.paciente.cpf ?? ''} ${c.paciente.cns ?? ''} ${c.paciente.tel ?? ''} ${c.conduta.tipo ?? ''}',
-      menuActions: [
+      menuActions: (item) => [
         TableRowMenuAction(
           label: 'Editar paciente',
           icon: Icons.edit,

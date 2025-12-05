@@ -1,16 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:sigmus/theme/app_colors.dart';
 
+enum ToastType { info, success, error }
+
 /// Toast/Snackbar customizado que aparece por cima de qualquer widget
 class AppToast {
   static OverlayEntry? _currentEntry;
 
+  /// Exibe um toast informativo (neutro)
   static void show(
     BuildContext context, {
     required String message,
     Duration duration = const Duration(seconds: 3),
-    bool isError = false,
-    bool isSuccess = false,
+  }) {
+    _showToast(
+      context,
+      message: message,
+      type: ToastType.info,
+      duration: duration,
+    );
+  }
+
+  /// Exibe um toast de sucesso (verde)
+  static void success(
+    BuildContext context, {
+    required String message,
+    Duration duration = const Duration(seconds: 3),
+  }) {
+    _showToast(
+      context,
+      message: message,
+      type: ToastType.success,
+      duration: duration,
+    );
+  }
+
+  /// Exibe um toast de erro (vermelho)
+  static void error(
+    BuildContext context, {
+    required String message,
+    Duration duration = const Duration(seconds: 4),
+  }) {
+    _showToast(
+      context,
+      message: message,
+      type: ToastType.error,
+      duration: duration,
+    );
+  }
+
+  static void _showToast(
+    BuildContext context, {
+    required String message,
+    required ToastType type,
+    required Duration duration,
   }) {
     // Remove toast anterior se existir
     _currentEntry?.remove();
@@ -20,8 +63,7 @@ class AppToast {
     _currentEntry = OverlayEntry(
       builder: (context) => _ToastWidget(
         message: message,
-        isError: isError,
-        isSuccess: isSuccess,
+        type: type,
         onDismiss: () {
           _currentEntry?.remove();
           _currentEntry = null;
@@ -41,15 +83,13 @@ class AppToast {
 
 class _ToastWidget extends StatefulWidget {
   final String message;
-  final bool isError;
-  final bool isSuccess;
+  final ToastType type;
   final VoidCallback onDismiss;
   final Duration duration;
 
   const _ToastWidget({
     required this.message,
-    required this.isError,
-    required this.isSuccess,
+    required this.type,
     required this.onDismiss,
     required this.duration,
   });
@@ -105,23 +145,23 @@ class _ToastWidgetState extends State<_ToastWidget>
 
   @override
   Widget build(BuildContext context) {
-    Color backgroundColor;
-    Color foregroundColor;
-    IconData icon;
-
-    if (widget.isError) {
-      backgroundColor = AppColors.destructive;
-      foregroundColor = AppColors.destructiveForeground;
-      icon = Icons.error_outline;
-    } else if (widget.isSuccess) {
-      backgroundColor = const Color(0xFF16A34A); // green-600
-      foregroundColor = Colors.white;
-      icon = Icons.check_circle_outline;
-    } else {
-      backgroundColor = AppColors.foreground;
-      foregroundColor = AppColors.background;
-      icon = Icons.info_outline;
-    }
+    final (backgroundColor, foregroundColor, icon) = switch (widget.type) {
+      ToastType.error => (
+        AppColors.destructive,
+        AppColors.destructiveForeground,
+        Icons.error_outline,
+      ),
+      ToastType.success => (
+        const Color(0xFF16A34A),
+        Colors.white,
+        Icons.check_circle_outline,
+      ),
+      ToastType.info => (
+        AppColors.foreground,
+        AppColors.background,
+        Icons.info_outline,
+      ),
+    };
 
     return Positioned(
       bottom: 24,

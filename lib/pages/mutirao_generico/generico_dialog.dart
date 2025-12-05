@@ -159,7 +159,7 @@ class _GenericoFormDialogState extends State<GenericoFormDialog> {
         Navigator.of(context).pop();
       }
     } catch (e) {
-      AppToast.show(context, message: 'Erro: $e', isError: true);
+      AppToast.error(context, message: 'Erro: $e');
     }
   }
 

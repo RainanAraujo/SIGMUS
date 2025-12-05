@@ -306,18 +306,20 @@ class _MutiraoGenericoPageState extends State<MutiraoGenericoPage> {
       ],
       getSearchText: (c) =>
           '${c.paciente.nome ?? ''} ${c.paciente.cpf ?? ''} ${c.paciente.cns ?? ''} ${c.paciente.tel ?? ''} ${c.conduta.tipo ?? ''}',
-      menuActions: [
-        TableRowMenuAction(
-          label: 'Editar paciente',
-          icon: Icons.edit,
-          onPressed: _editConduta,
-        ),
-        TableRowMenuAction(
-          label: 'Apagar paciente',
-          icon: Icons.delete,
-          onPressed: _deleteConduta,
-        ),
-      ],
+      menuActions: (item) {
+        return [
+          TableRowMenuAction(
+            label: 'Editar paciente',
+            icon: Icons.edit,
+            onPressed: _editConduta,
+          ),
+          TableRowMenuAction(
+            label: 'Apagar paciente',
+            icon: Icons.delete,
+            onPressed: _deleteConduta,
+          ),
+        ];
+      },
     );
   }
 }

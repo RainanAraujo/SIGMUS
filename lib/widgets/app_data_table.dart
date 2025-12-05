@@ -22,31 +22,37 @@ class TableRowAction<T> {
   final String tooltip;
   final void Function(T item) onPressed;
   final Color? color;
+  final bool enabled;
 
   TableRowAction({
     required this.icon,
     required this.tooltip,
     required this.onPressed,
     this.color,
+    this.enabled = true,
   });
 }
 
-/// Widget de menu popup para ações adicionais
 class TableRowMenuAction<T> {
   final String label;
   final IconData? icon;
+  final bool enabled;
   final void Function(T item) onPressed;
 
-  TableRowMenuAction({required this.label, this.icon, required this.onPressed});
+  TableRowMenuAction({
+    required this.label,
+    this.icon,
+    required this.onPressed,
+    this.enabled = true,
+  });
 }
 
-/// DataTable genérico e reutilizável
 class AppDataTable<T> extends StatefulWidget {
   final List<T> items;
   final List<TableColumnConfig<T>> columns;
-  final List<TableRowAction<T>>? rowActions;
+  final List<TableRowAction<T>> Function(T item)? rowActions;
   final void Function(T item)? onRowTap;
-  final List<TableRowMenuAction<T>>? menuActions;
+  final List<TableRowMenuAction<T>> Function(T item)? menuActions;
   final bool isLoading;
   final String? searchHint;
   final bool enableSearch;
@@ -185,7 +191,7 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
           ),
         if (widget.enableSearch && widget.actions != null)
           const SizedBox(width: 12),
-        // Ações customizadas (botões passados como parâmetro)
+
         if (widget.actions != null) ...widget.actions!,
       ],
     );
@@ -241,8 +247,8 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
           source: _DataTableSourceAdapter<T>(
             items: _filteredItems,
             columns: widget.columns,
-            rowActions: widget.rowActions,
-            menuActions: widget.menuActions,
+            rowActions: (item) => widget.rowActions!(item),
+            menuActions: (item) => widget.menuActions!(item),
             onRowTap: widget.onRowTap,
           ),
         ),
@@ -325,12 +331,11 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
   }
 }
 
-/// Adapter para conectar os dados ao PaginatedDataTable
 class _DataTableSourceAdapter<T> extends DataTableSource {
   final List<T> items;
   final List<TableColumnConfig<T>> columns;
-  final List<TableRowAction<T>>? rowActions;
-  final List<TableRowMenuAction<T>>? menuActions;
+  final List<TableRowAction<T>> Function(T item)? rowActions;
+  final List<TableRowMenuAction<T>> Function(T item)? menuActions;
   final void Function(T item)? onRowTap;
 
   _DataTableSourceAdapter({
@@ -368,21 +373,24 @@ class _DataTableSourceAdapter<T> extends DataTableSource {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Ações inline
                 if (rowActions != null)
-                  ...rowActions!.map(
+                  ...rowActions!(item).map(
                     (action) => Container(
                       width: 32,
+
                       height: 32,
                       margin: const EdgeInsets.only(right: 4),
                       child: IconButton(
                         icon: Icon(action.icon, size: 16),
-                        onPressed: () => action.onPressed(item),
+                        onPressed: action.enabled
+                            ? () => action.onPressed(item)
+                            : null,
                         tooltip: action.tooltip,
                         color: action.color ?? AppColors.mutedForeground,
                         hoverColor: AppColors.accent,
                         padding: EdgeInsets.zero,
                         splashRadius: 16,
+
                         style: IconButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
@@ -391,7 +399,7 @@ class _DataTableSourceAdapter<T> extends DataTableSource {
                       ),
                     ),
                   ),
-                // Menu de ações
+
                 if (menuActions != null)
                   PopupMenuButton<int>(
                     icon: const Icon(
@@ -407,12 +415,13 @@ class _DataTableSourceAdapter<T> extends DataTableSource {
                     color: AppColors.popover,
                     elevation: 4,
                     shadowColor: Colors.black.withOpacity(0.1),
-                    itemBuilder: (context) => menuActions!
+                    itemBuilder: (context) => menuActions!(item)
                         .asMap()
                         .entries
                         .map(
                           (entry) => PopupMenuItem<int>(
                             value: entry.key,
+                            enabled: entry.value.enabled,
                             height: 40,
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: Row(
@@ -449,7 +458,7 @@ class _DataTableSourceAdapter<T> extends DataTableSource {
                         )
                         .toList(),
                     onSelected: (index) {
-                      menuActions![index].onPressed(item);
+                      menuActions?.call(item)[index].onPressed(item);
                     },
                   ),
               ],

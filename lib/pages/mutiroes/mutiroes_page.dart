@@ -71,7 +71,7 @@ class _MutiroesPageState extends State<MutiroesPage> {
     } catch (e) {
       isLoading = false;
       setState(() {});
-      AppToast.show(context, message: 'Erro: $e', isError: true);
+      AppToast.error(context, message: 'Erro: $e');
     }
 
     final localMutiroes = await GetIt.I<MutiraoRepository>().getAll();
@@ -254,14 +254,14 @@ class _MutiroesPageState extends State<MutiroesPage> {
               ],
               getSearchText: (mutirao) =>
                   '${mutirao.municipio} ${mutirao.local} ${mutirao.tipo} ${mutirao.dataInicio} ${mutirao.dataFinal}',
-              rowActions: [
+              rowActions: (item) => [
                 TableRowAction(
                   icon: Icons.sync,
                   tooltip: 'Sincronizar (Ctrl+S)',
                   onPressed: _syncMutirao,
                 ),
               ],
-              menuActions: [
+              menuActions: (item) => [
                 TableRowMenuAction(
                   label: 'Gerar relatório',
                   icon: Icons.description,

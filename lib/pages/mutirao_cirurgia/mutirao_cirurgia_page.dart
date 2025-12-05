@@ -129,10 +129,10 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
 
       _filterData();
 
-      AppToast.show(context, message: 'Dados carregados com sucesso');
+      AppToast.success(context, message: 'Dados carregados com sucesso');
     } catch (e) {
       _tableState.value = _tableState.value.copyWith(isLoading: false);
-      AppToast.show(context, message: 'Erro: $e', isError: true);
+      AppToast.error(context, message: 'Erro: $e');
     }
   }
 
@@ -220,7 +220,7 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
           _tableState.value = _tableState.value.copyWith(
             procedimentos: [..._tableState.value.procedimentos, item],
           );
-          AppToast.show(context, message: 'Procedimento criado com sucesso');
+          AppToast.success(context, message: 'Procedimento criado com sucesso');
         },
       ),
     );
@@ -245,7 +245,7 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
               procedimentos: procedimentos,
             );
           }
-          AppToast.show(
+          AppToast.success(
             context,
             message: 'Procedimento atualizado com sucesso',
           );
@@ -385,18 +385,20 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
                         ],
                         getSearchText: (p) =>
                             '${p.paciente.nome ?? ''} ${p.paciente.cpf ?? ''} ${p.paciente.cns ?? ''} ${p.paciente.tel ?? ''} ${p.procedimento.tipo ?? ''}',
-                        menuActions: [
-                          TableRowMenuAction(
-                            label: 'Editar paciente',
-                            icon: Icons.edit,
-                            onPressed: _editProcedimento,
-                          ),
-                          TableRowMenuAction(
-                            label: 'Apagar paciente',
-                            icon: Icons.delete,
-                            onPressed: _deleteProcedimento,
-                          ),
-                        ],
+                        menuActions: (item) {
+                          return [
+                            TableRowMenuAction(
+                              label: 'Editar paciente',
+                              icon: Icons.edit,
+                              onPressed: _editProcedimento,
+                            ),
+                            TableRowMenuAction(
+                              label: 'Apagar paciente',
+                              icon: Icons.delete,
+                              onPressed: _deleteProcedimento,
+                            ),
+                          ];
+                        },
                       );
                     },
                   ),

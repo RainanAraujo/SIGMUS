@@ -30,7 +30,7 @@ class _AppHeaderState extends State<AppHeader> {
       );
       Navigator.of(context).pop();
     } catch (e) {
-      AppToast.show(context, message: 'Erro ao entrar: $e', isError: true);
+      AppToast.error(context, message: 'Erro ao entrar: $e');
     }
   }
 
