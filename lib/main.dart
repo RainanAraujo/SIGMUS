@@ -1,14 +1,40 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:get_it/get_it.dart';
 import 'package:sigmus/data/brasil_data.dart';
+import 'package:sigmus/database/app_database.dart';
+import 'package:sigmus/repositories/colaborador_repository.dart';
+import 'package:sigmus/repositories/conduta_generica_repository.dart';
+import 'package:sigmus/repositories/conduta_repository.dart';
+import 'package:sigmus/repositories/historico_sincronizacao_repository.dart';
+import 'package:sigmus/repositories/medico_repository.dart';
+import 'package:sigmus/repositories/mutirao_repository.dart';
+import 'package:sigmus/repositories/paciente_repository.dart';
+import 'package:sigmus/repositories/procedimento_repository.dart';
 import 'package:sigmus/routes/app_router.dart';
 import 'package:sigmus/theme/app_theme.dart';
 import 'package:sigmus/widgets/app_header.dart';
 import 'package:window_manager/window_manager.dart';
 
+final getIt = GetIt.instance;
+
+void setupGetIt() {
+  getIt.registerSingleton<AppDatabase>(AppDatabase());
+
+  getIt.registerLazySingleton(() => ColaboradorRepository(getIt()));
+  getIt.registerLazySingleton(() => CondutaGenericaRepository(getIt()));
+  getIt.registerLazySingleton(() => CondutaRepository(getIt()));
+  getIt.registerLazySingleton(() => HistoricoSincronizacaoRepository(getIt()));
+  getIt.registerLazySingleton(() => MedicoRepository(getIt()));
+  getIt.registerLazySingleton(() => MutiraoRepository(getIt()));
+  getIt.registerLazySingleton(() => PacienteRepository(getIt()));
+  getIt.registerLazySingleton(() => ProcedimentoRepository(getIt()));
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  setupGetIt();
   await BrasilData.init();
 
   await windowManager.ensureInitialized();

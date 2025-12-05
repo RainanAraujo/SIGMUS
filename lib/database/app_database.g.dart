@@ -3,7 +3,7 @@
 part of 'app_database.dart';
 
 // ignore_for_file: type=lint
-class $MutiroesTable extends Mutiroes with TableInfo<$MutiroesTable, Mutiroe> {
+class $MutiroesTable extends Mutiroes with TableInfo<$MutiroesTable, Mutirao> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -141,7 +141,7 @@ class $MutiroesTable extends Mutiroes with TableInfo<$MutiroesTable, Mutiroe> {
   static const String $name = 'mutiroes';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Mutiroe> instance, {
+    Insertable<Mutirao> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -239,9 +239,9 @@ class $MutiroesTable extends Mutiroes with TableInfo<$MutiroesTable, Mutiroe> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Mutiroe map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Mutirao map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Mutiroe(
+    return Mutirao(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -295,7 +295,7 @@ class $MutiroesTable extends Mutiroes with TableInfo<$MutiroesTable, Mutiroe> {
   }
 }
 
-class Mutiroe extends DataClass implements Insertable<Mutiroe> {
+class Mutirao extends DataClass implements Insertable<Mutirao> {
   final int id;
   final String tipo;
   final String dataInicio;
@@ -307,7 +307,7 @@ class Mutiroe extends DataClass implements Insertable<Mutiroe> {
   final String contratante;
   final int atualizadoEm;
   final int status;
-  const Mutiroe({
+  const Mutirao({
     required this.id,
     required this.tipo,
     required this.dataInicio,
@@ -353,12 +353,12 @@ class Mutiroe extends DataClass implements Insertable<Mutiroe> {
     );
   }
 
-  factory Mutiroe.fromJson(
+  factory Mutirao.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Mutiroe(
+    return Mutirao(
       id: serializer.fromJson<int>(json['id']),
       tipo: serializer.fromJson<String>(json['tipo']),
       dataInicio: serializer.fromJson<String>(json['dataInicio']),
@@ -390,7 +390,7 @@ class Mutiroe extends DataClass implements Insertable<Mutiroe> {
     };
   }
 
-  Mutiroe copyWith({
+  Mutirao copyWith({
     int? id,
     String? tipo,
     String? dataInicio,
@@ -402,7 +402,7 @@ class Mutiroe extends DataClass implements Insertable<Mutiroe> {
     String? contratante,
     int? atualizadoEm,
     int? status,
-  }) => Mutiroe(
+  }) => Mutirao(
     id: id ?? this.id,
     tipo: tipo ?? this.tipo,
     dataInicio: dataInicio ?? this.dataInicio,
@@ -415,8 +415,8 @@ class Mutiroe extends DataClass implements Insertable<Mutiroe> {
     atualizadoEm: atualizadoEm ?? this.atualizadoEm,
     status: status ?? this.status,
   );
-  Mutiroe copyWithCompanion(MutiroesCompanion data) {
-    return Mutiroe(
+  Mutirao copyWithCompanion(MutiroesCompanion data) {
+    return Mutirao(
       id: data.id.present ? data.id.value : this.id,
       tipo: data.tipo.present ? data.tipo.value : this.tipo,
       dataInicio: data.dataInicio.present
@@ -441,7 +441,7 @@ class Mutiroe extends DataClass implements Insertable<Mutiroe> {
 
   @override
   String toString() {
-    return (StringBuffer('Mutiroe(')
+    return (StringBuffer('Mutirao(')
           ..write('id: $id, ')
           ..write('tipo: $tipo, ')
           ..write('dataInicio: $dataInicio, ')
@@ -474,7 +474,7 @@ class Mutiroe extends DataClass implements Insertable<Mutiroe> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Mutiroe &&
+      (other is Mutirao &&
           other.id == this.id &&
           other.tipo == this.tipo &&
           other.dataInicio == this.dataInicio &&
@@ -488,7 +488,7 @@ class Mutiroe extends DataClass implements Insertable<Mutiroe> {
           other.status == this.status);
 }
 
-class MutiroesCompanion extends UpdateCompanion<Mutiroe> {
+class MutiroesCompanion extends UpdateCompanion<Mutirao> {
   final Value<int> id;
   final Value<String> tipo;
   final Value<String> dataInicio;
@@ -534,7 +534,7 @@ class MutiroesCompanion extends UpdateCompanion<Mutiroe> {
        demandante = Value(demandante),
        contratante = Value(contratante),
        atualizadoEm = Value(atualizadoEm);
-  static Insertable<Mutiroe> custom({
+  static Insertable<Mutirao> custom({
     Expression<int>? id,
     Expression<String>? tipo,
     Expression<String>? dataInicio,
@@ -649,7 +649,7 @@ class MutiroesCompanion extends UpdateCompanion<Mutiroe> {
 }
 
 class $PermissoesTable extends Permissoes
-    with TableInfo<$PermissoesTable, Permissoe> {
+    with TableInfo<$PermissoesTable, Permissao> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -695,7 +695,7 @@ class $PermissoesTable extends Permissoes
   static const String $name = 'permissoes';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Permissoe> instance, {
+    Insertable<Permissao> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -730,9 +730,9 @@ class $PermissoesTable extends Permissoes
   @override
   Set<GeneratedColumn> get $primaryKey => {mutiraoId, email};
   @override
-  Permissoe map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Permissao map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Permissoe(
+    return Permissao(
       mutiraoId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}mutirao_id'],
@@ -754,11 +754,11 @@ class $PermissoesTable extends Permissoes
   }
 }
 
-class Permissoe extends DataClass implements Insertable<Permissoe> {
+class Permissao extends DataClass implements Insertable<Permissao> {
   final int mutiraoId;
   final String email;
   final String permissoes;
-  const Permissoe({
+  const Permissao({
     required this.mutiraoId,
     required this.email,
     required this.permissoes,
@@ -780,12 +780,12 @@ class Permissoe extends DataClass implements Insertable<Permissoe> {
     );
   }
 
-  factory Permissoe.fromJson(
+  factory Permissao.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Permissoe(
+    return Permissao(
       mutiraoId: serializer.fromJson<int>(json['mutiraoId']),
       email: serializer.fromJson<String>(json['email']),
       permissoes: serializer.fromJson<String>(json['permissoes']),
@@ -801,14 +801,14 @@ class Permissoe extends DataClass implements Insertable<Permissoe> {
     };
   }
 
-  Permissoe copyWith({int? mutiraoId, String? email, String? permissoes}) =>
-      Permissoe(
+  Permissao copyWith({int? mutiraoId, String? email, String? permissoes}) =>
+      Permissao(
         mutiraoId: mutiraoId ?? this.mutiraoId,
         email: email ?? this.email,
         permissoes: permissoes ?? this.permissoes,
       );
-  Permissoe copyWithCompanion(PermissoesCompanion data) {
-    return Permissoe(
+  Permissao copyWithCompanion(PermissoesCompanion data) {
+    return Permissao(
       mutiraoId: data.mutiraoId.present ? data.mutiraoId.value : this.mutiraoId,
       email: data.email.present ? data.email.value : this.email,
       permissoes: data.permissoes.present
@@ -819,7 +819,7 @@ class Permissoe extends DataClass implements Insertable<Permissoe> {
 
   @override
   String toString() {
-    return (StringBuffer('Permissoe(')
+    return (StringBuffer('Permissao(')
           ..write('mutiraoId: $mutiraoId, ')
           ..write('email: $email, ')
           ..write('permissoes: $permissoes')
@@ -832,13 +832,13 @@ class Permissoe extends DataClass implements Insertable<Permissoe> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Permissoe &&
+      (other is Permissao &&
           other.mutiraoId == this.mutiraoId &&
           other.email == this.email &&
           other.permissoes == this.permissoes);
 }
 
-class PermissoesCompanion extends UpdateCompanion<Permissoe> {
+class PermissoesCompanion extends UpdateCompanion<Permissao> {
   final Value<int> mutiraoId;
   final Value<String> email;
   final Value<String> permissoes;
@@ -857,7 +857,7 @@ class PermissoesCompanion extends UpdateCompanion<Permissoe> {
   }) : mutiraoId = Value(mutiraoId),
        email = Value(email),
        permissoes = Value(permissoes);
-  static Insertable<Permissoe> custom({
+  static Insertable<Permissao> custom({
     Expression<int>? mutiraoId,
     Expression<String>? email,
     Expression<String>? permissoes,
@@ -916,7 +916,7 @@ class PermissoesCompanion extends UpdateCompanion<Permissoe> {
 }
 
 class $ColaboradoresTable extends Colaboradores
-    with TableInfo<$ColaboradoresTable, Colaboradore> {
+    with TableInfo<$ColaboradoresTable, Colaborador> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -996,7 +996,7 @@ class $ColaboradoresTable extends Colaboradores
   static const String $name = 'colaboradores';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Colaboradore> instance, {
+    Insertable<Colaborador> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -1051,9 +1051,9 @@ class $ColaboradoresTable extends Colaboradores
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Colaboradore map(Map<String, dynamic> data, {String? tablePrefix}) {
+  Colaborador map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Colaboradore(
+    return Colaborador(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -1087,14 +1087,14 @@ class $ColaboradoresTable extends Colaboradores
   }
 }
 
-class Colaboradore extends DataClass implements Insertable<Colaboradore> {
+class Colaborador extends DataClass implements Insertable<Colaborador> {
   final int id;
   final int mutiraoId;
   final String nome;
   final String funcao;
   final int atualizadoEm;
   final int status;
-  const Colaboradore({
+  const Colaborador({
     required this.id,
     required this.mutiraoId,
     required this.nome,
@@ -1125,12 +1125,12 @@ class Colaboradore extends DataClass implements Insertable<Colaboradore> {
     );
   }
 
-  factory Colaboradore.fromJson(
+  factory Colaborador.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Colaboradore(
+    return Colaborador(
       id: serializer.fromJson<int>(json['id']),
       mutiraoId: serializer.fromJson<int>(json['mutiraoId']),
       nome: serializer.fromJson<String>(json['nome']),
@@ -1152,14 +1152,14 @@ class Colaboradore extends DataClass implements Insertable<Colaboradore> {
     };
   }
 
-  Colaboradore copyWith({
+  Colaborador copyWith({
     int? id,
     int? mutiraoId,
     String? nome,
     String? funcao,
     int? atualizadoEm,
     int? status,
-  }) => Colaboradore(
+  }) => Colaborador(
     id: id ?? this.id,
     mutiraoId: mutiraoId ?? this.mutiraoId,
     nome: nome ?? this.nome,
@@ -1167,8 +1167,8 @@ class Colaboradore extends DataClass implements Insertable<Colaboradore> {
     atualizadoEm: atualizadoEm ?? this.atualizadoEm,
     status: status ?? this.status,
   );
-  Colaboradore copyWithCompanion(ColaboradoresCompanion data) {
-    return Colaboradore(
+  Colaborador copyWithCompanion(ColaboradoresCompanion data) {
+    return Colaborador(
       id: data.id.present ? data.id.value : this.id,
       mutiraoId: data.mutiraoId.present ? data.mutiraoId.value : this.mutiraoId,
       nome: data.nome.present ? data.nome.value : this.nome,
@@ -1182,7 +1182,7 @@ class Colaboradore extends DataClass implements Insertable<Colaboradore> {
 
   @override
   String toString() {
-    return (StringBuffer('Colaboradore(')
+    return (StringBuffer('Colaborador(')
           ..write('id: $id, ')
           ..write('mutiraoId: $mutiraoId, ')
           ..write('nome: $nome, ')
@@ -1199,7 +1199,7 @@ class Colaboradore extends DataClass implements Insertable<Colaboradore> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Colaboradore &&
+      (other is Colaborador &&
           other.id == this.id &&
           other.mutiraoId == this.mutiraoId &&
           other.nome == this.nome &&
@@ -1208,7 +1208,7 @@ class Colaboradore extends DataClass implements Insertable<Colaboradore> {
           other.status == this.status);
 }
 
-class ColaboradoresCompanion extends UpdateCompanion<Colaboradore> {
+class ColaboradoresCompanion extends UpdateCompanion<Colaborador> {
   final Value<int> id;
   final Value<int> mutiraoId;
   final Value<String> nome;
@@ -1234,7 +1234,7 @@ class ColaboradoresCompanion extends UpdateCompanion<Colaboradore> {
        nome = Value(nome),
        funcao = Value(funcao),
        atualizadoEm = Value(atualizadoEm);
-  static Insertable<Colaboradore> custom({
+  static Insertable<Colaborador> custom({
     Expression<int>? id,
     Expression<int>? mutiraoId,
     Expression<String>? nome,
@@ -3650,7 +3650,7 @@ class ProcedimentosCompanion extends UpdateCompanion<Procedimento> {
 }
 
 class $CondutasGenericasTable extends CondutasGenericas
-    with TableInfo<$CondutasGenericasTable, CondutasGenerica> {
+    with TableInfo<$CondutasGenericasTable, CondutaGenerica> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -3777,7 +3777,7 @@ class $CondutasGenericasTable extends CondutasGenericas
   static const String $name = 'condutas_genericas';
   @override
   VerificationContext validateIntegrity(
-    Insertable<CondutasGenerica> instance, {
+    Insertable<CondutaGenerica> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -3848,9 +3848,9 @@ class $CondutasGenericasTable extends CondutasGenericas
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  CondutasGenerica map(Map<String, dynamic> data, {String? tablePrefix}) {
+  CondutaGenerica map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return CondutasGenerica(
+    return CondutaGenerica(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -3896,8 +3896,7 @@ class $CondutasGenericasTable extends CondutasGenericas
   }
 }
 
-class CondutasGenerica extends DataClass
-    implements Insertable<CondutasGenerica> {
+class CondutaGenerica extends DataClass implements Insertable<CondutaGenerica> {
   final int id;
   final String? data;
   final int mutiraoId;
@@ -3907,7 +3906,7 @@ class CondutasGenerica extends DataClass
   final String? observacao;
   final int atualizadoEm;
   final int status;
-  const CondutasGenerica({
+  const CondutaGenerica({
     required this.id,
     this.data,
     required this.mutiraoId,
@@ -3961,12 +3960,12 @@ class CondutasGenerica extends DataClass
     );
   }
 
-  factory CondutasGenerica.fromJson(
+  factory CondutaGenerica.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return CondutasGenerica(
+    return CondutaGenerica(
       id: serializer.fromJson<int>(json['id']),
       data: serializer.fromJson<String?>(json['data']),
       mutiraoId: serializer.fromJson<int>(json['mutiraoId']),
@@ -3994,7 +3993,7 @@ class CondutasGenerica extends DataClass
     };
   }
 
-  CondutasGenerica copyWith({
+  CondutaGenerica copyWith({
     int? id,
     Value<String?> data = const Value.absent(),
     int? mutiraoId,
@@ -4004,7 +4003,7 @@ class CondutasGenerica extends DataClass
     Value<String?> observacao = const Value.absent(),
     int? atualizadoEm,
     int? status,
-  }) => CondutasGenerica(
+  }) => CondutaGenerica(
     id: id ?? this.id,
     data: data.present ? data.value : this.data,
     mutiraoId: mutiraoId ?? this.mutiraoId,
@@ -4015,8 +4014,8 @@ class CondutasGenerica extends DataClass
     atualizadoEm: atualizadoEm ?? this.atualizadoEm,
     status: status ?? this.status,
   );
-  CondutasGenerica copyWithCompanion(CondutasGenericasCompanion data) {
-    return CondutasGenerica(
+  CondutaGenerica copyWithCompanion(CondutasGenericasCompanion data) {
+    return CondutaGenerica(
       id: data.id.present ? data.id.value : this.id,
       data: data.data.present ? data.data.value : this.data,
       mutiraoId: data.mutiraoId.present ? data.mutiraoId.value : this.mutiraoId,
@@ -4037,7 +4036,7 @@ class CondutasGenerica extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('CondutasGenerica(')
+    return (StringBuffer('CondutaGenerica(')
           ..write('id: $id, ')
           ..write('data: $data, ')
           ..write('mutiraoId: $mutiraoId, ')
@@ -4066,7 +4065,7 @@ class CondutasGenerica extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is CondutasGenerica &&
+      (other is CondutaGenerica &&
           other.id == this.id &&
           other.data == this.data &&
           other.mutiraoId == this.mutiraoId &&
@@ -4078,7 +4077,7 @@ class CondutasGenerica extends DataClass
           other.status == this.status);
 }
 
-class CondutasGenericasCompanion extends UpdateCompanion<CondutasGenerica> {
+class CondutasGenericasCompanion extends UpdateCompanion<CondutaGenerica> {
   final Value<int> id;
   final Value<String?> data;
   final Value<int> mutiraoId;
@@ -4112,7 +4111,7 @@ class CondutasGenericasCompanion extends UpdateCompanion<CondutasGenerica> {
   }) : mutiraoId = Value(mutiraoId),
        pacienteId = Value(pacienteId),
        atualizadoEm = Value(atualizadoEm);
-  static Insertable<CondutasGenerica> custom({
+  static Insertable<CondutaGenerica> custom({
     Expression<int>? id,
     Expression<String>? data,
     Expression<int>? mutiraoId,
@@ -4774,10 +4773,10 @@ typedef $$MutiroesTableUpdateCompanionBuilder =
     });
 
 final class $$MutiroesTableReferences
-    extends BaseReferences<_$AppDatabase, $MutiroesTable, Mutiroe> {
+    extends BaseReferences<_$AppDatabase, $MutiroesTable, Mutirao> {
   $$MutiroesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static MultiTypedResultKey<$PermissoesTable, List<Permissoe>>
+  static MultiTypedResultKey<$PermissoesTable, List<Permissao>>
   _permissoesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.permissoes,
     aliasName: $_aliasNameGenerator(db.mutiroes.id, db.permissoes.mutiraoId),
@@ -4851,7 +4850,7 @@ final class $$MutiroesTableReferences
     );
   }
 
-  static MultiTypedResultKey<$CondutasGenericasTable, List<CondutasGenerica>>
+  static MultiTypedResultKey<$CondutasGenericasTable, List<CondutaGenerica>>
   _condutasGenericasRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
         db.condutasGenericas,
@@ -5466,14 +5465,14 @@ class $$MutiroesTableTableManager
         RootTableManager<
           _$AppDatabase,
           $MutiroesTable,
-          Mutiroe,
+          Mutirao,
           $$MutiroesTableFilterComposer,
           $$MutiroesTableOrderingComposer,
           $$MutiroesTableAnnotationComposer,
           $$MutiroesTableCreateCompanionBuilder,
           $$MutiroesTableUpdateCompanionBuilder,
-          (Mutiroe, $$MutiroesTableReferences),
-          Mutiroe,
+          (Mutirao, $$MutiroesTableReferences),
+          Mutirao,
           PrefetchHooks Function({
             bool permissoesRefs,
             bool medicosRefs,
@@ -5581,9 +5580,9 @@ class $$MutiroesTableTableManager
                     return [
                       if (permissoesRefs)
                         await $_getPrefetchedData<
-                          Mutiroe,
+                          Mutirao,
                           $MutiroesTable,
-                          Permissoe
+                          Permissao
                         >(
                           currentTable: table,
                           referencedTable: $$MutiroesTableReferences
@@ -5602,7 +5601,7 @@ class $$MutiroesTableTableManager
                         ),
                       if (medicosRefs)
                         await $_getPrefetchedData<
-                          Mutiroe,
+                          Mutirao,
                           $MutiroesTable,
                           Medico
                         >(
@@ -5623,7 +5622,7 @@ class $$MutiroesTableTableManager
                         ),
                       if (condutasRefs)
                         await $_getPrefetchedData<
-                          Mutiroe,
+                          Mutirao,
                           $MutiroesTable,
                           Conduta
                         >(
@@ -5644,7 +5643,7 @@ class $$MutiroesTableTableManager
                         ),
                       if (procedimentosRefs)
                         await $_getPrefetchedData<
-                          Mutiroe,
+                          Mutirao,
                           $MutiroesTable,
                           Procedimento
                         >(
@@ -5665,9 +5664,9 @@ class $$MutiroesTableTableManager
                         ),
                       if (condutasGenericasRefs)
                         await $_getPrefetchedData<
-                          Mutiroe,
+                          Mutirao,
                           $MutiroesTable,
-                          CondutasGenerica
+                          CondutaGenerica
                         >(
                           currentTable: table,
                           referencedTable: $$MutiroesTableReferences
@@ -5686,7 +5685,7 @@ class $$MutiroesTableTableManager
                         ),
                       if (mutiraoCondutasRefs)
                         await $_getPrefetchedData<
-                          Mutiroe,
+                          Mutirao,
                           $MutiroesTable,
                           MutiraoConduta
                         >(
@@ -5707,7 +5706,7 @@ class $$MutiroesTableTableManager
                         ),
                       if (historicoSincronizacaoRefs)
                         await $_getPrefetchedData<
-                          Mutiroe,
+                          Mutirao,
                           $MutiroesTable,
                           HistoricoSincronizacaoData
                         >(
@@ -5738,14 +5737,14 @@ typedef $$MutiroesTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $MutiroesTable,
-      Mutiroe,
+      Mutirao,
       $$MutiroesTableFilterComposer,
       $$MutiroesTableOrderingComposer,
       $$MutiroesTableAnnotationComposer,
       $$MutiroesTableCreateCompanionBuilder,
       $$MutiroesTableUpdateCompanionBuilder,
-      (Mutiroe, $$MutiroesTableReferences),
-      Mutiroe,
+      (Mutirao, $$MutiroesTableReferences),
+      Mutirao,
       PrefetchHooks Function({
         bool permissoesRefs,
         bool medicosRefs,
@@ -5772,7 +5771,7 @@ typedef $$PermissoesTableUpdateCompanionBuilder =
     });
 
 final class $$PermissoesTableReferences
-    extends BaseReferences<_$AppDatabase, $PermissoesTable, Permissoe> {
+    extends BaseReferences<_$AppDatabase, $PermissoesTable, Permissao> {
   $$PermissoesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
   static $MutiroesTable _mutiraoIdTable(_$AppDatabase db) =>
@@ -5927,14 +5926,14 @@ class $$PermissoesTableTableManager
         RootTableManager<
           _$AppDatabase,
           $PermissoesTable,
-          Permissoe,
+          Permissao,
           $$PermissoesTableFilterComposer,
           $$PermissoesTableOrderingComposer,
           $$PermissoesTableAnnotationComposer,
           $$PermissoesTableCreateCompanionBuilder,
           $$PermissoesTableUpdateCompanionBuilder,
-          (Permissoe, $$PermissoesTableReferences),
-          Permissoe,
+          (Permissao, $$PermissoesTableReferences),
+          Permissao,
           PrefetchHooks Function({bool mutiraoId})
         > {
   $$PermissoesTableTableManager(_$AppDatabase db, $PermissoesTable table)
@@ -6029,14 +6028,14 @@ typedef $$PermissoesTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $PermissoesTable,
-      Permissoe,
+      Permissao,
       $$PermissoesTableFilterComposer,
       $$PermissoesTableOrderingComposer,
       $$PermissoesTableAnnotationComposer,
       $$PermissoesTableCreateCompanionBuilder,
       $$PermissoesTableUpdateCompanionBuilder,
-      (Permissoe, $$PermissoesTableReferences),
-      Permissoe,
+      (Permissao, $$PermissoesTableReferences),
+      Permissao,
       PrefetchHooks Function({bool mutiraoId})
     >;
 typedef $$ColaboradoresTableCreateCompanionBuilder =
@@ -6173,17 +6172,17 @@ class $$ColaboradoresTableTableManager
         RootTableManager<
           _$AppDatabase,
           $ColaboradoresTable,
-          Colaboradore,
+          Colaborador,
           $$ColaboradoresTableFilterComposer,
           $$ColaboradoresTableOrderingComposer,
           $$ColaboradoresTableAnnotationComposer,
           $$ColaboradoresTableCreateCompanionBuilder,
           $$ColaboradoresTableUpdateCompanionBuilder,
           (
-            Colaboradore,
-            BaseReferences<_$AppDatabase, $ColaboradoresTable, Colaboradore>,
+            Colaborador,
+            BaseReferences<_$AppDatabase, $ColaboradoresTable, Colaborador>,
           ),
-          Colaboradore,
+          Colaborador,
           PrefetchHooks Function()
         > {
   $$ColaboradoresTableTableManager(_$AppDatabase db, $ColaboradoresTable table)
@@ -6241,17 +6240,17 @@ typedef $$ColaboradoresTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $ColaboradoresTable,
-      Colaboradore,
+      Colaborador,
       $$ColaboradoresTableFilterComposer,
       $$ColaboradoresTableOrderingComposer,
       $$ColaboradoresTableAnnotationComposer,
       $$ColaboradoresTableCreateCompanionBuilder,
       $$ColaboradoresTableUpdateCompanionBuilder,
       (
-        Colaboradore,
-        BaseReferences<_$AppDatabase, $ColaboradoresTable, Colaboradore>,
+        Colaborador,
+        BaseReferences<_$AppDatabase, $ColaboradoresTable, Colaborador>,
       ),
-      Colaboradore,
+      Colaborador,
       PrefetchHooks Function()
     >;
 typedef $$PacientesTableCreateCompanionBuilder =
@@ -6329,7 +6328,7 @@ final class $$PacientesTableReferences
     );
   }
 
-  static MultiTypedResultKey<$CondutasGenericasTable, List<CondutasGenerica>>
+  static MultiTypedResultKey<$CondutasGenericasTable, List<CondutaGenerica>>
   _condutasGenericasRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
         db.condutasGenericas,
@@ -6851,7 +6850,7 @@ class $$PacientesTableTableManager
                         await $_getPrefetchedData<
                           Paciente,
                           $PacientesTable,
-                          CondutasGenerica
+                          CondutaGenerica
                         >(
                           currentTable: table,
                           referencedTable: $$PacientesTableReferences
@@ -6952,7 +6951,7 @@ final class $$MedicosTableReferences
     );
   }
 
-  static MultiTypedResultKey<$CondutasGenericasTable, List<CondutasGenerica>>
+  static MultiTypedResultKey<$CondutasGenericasTable, List<CondutaGenerica>>
   _condutasGenericasRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
         db.condutasGenericas,
@@ -7385,7 +7384,7 @@ class $$MedicosTableTableManager
                         await $_getPrefetchedData<
                           Medico,
                           $MedicosTable,
-                          CondutasGenerica
+                          CondutaGenerica
                         >(
                           currentTable: table,
                           referencedTable: $$MedicosTableReferences
@@ -8580,7 +8579,7 @@ final class $$CondutasGenericasTableReferences
         BaseReferences<
           _$AppDatabase,
           $CondutasGenericasTable,
-          CondutasGenerica
+          CondutaGenerica
         > {
   $$CondutasGenericasTableReferences(
     super.$_db,
@@ -8970,14 +8969,14 @@ class $$CondutasGenericasTableTableManager
         RootTableManager<
           _$AppDatabase,
           $CondutasGenericasTable,
-          CondutasGenerica,
+          CondutaGenerica,
           $$CondutasGenericasTableFilterComposer,
           $$CondutasGenericasTableOrderingComposer,
           $$CondutasGenericasTableAnnotationComposer,
           $$CondutasGenericasTableCreateCompanionBuilder,
           $$CondutasGenericasTableUpdateCompanionBuilder,
-          (CondutasGenerica, $$CondutasGenericasTableReferences),
-          CondutasGenerica,
+          (CondutaGenerica, $$CondutasGenericasTableReferences),
+          CondutaGenerica,
           PrefetchHooks Function({
             bool mutiraoId,
             bool pacienteId,
@@ -9134,14 +9133,14 @@ typedef $$CondutasGenericasTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $CondutasGenericasTable,
-      CondutasGenerica,
+      CondutaGenerica,
       $$CondutasGenericasTableFilterComposer,
       $$CondutasGenericasTableOrderingComposer,
       $$CondutasGenericasTableAnnotationComposer,
       $$CondutasGenericasTableCreateCompanionBuilder,
       $$CondutasGenericasTableUpdateCompanionBuilder,
-      (CondutasGenerica, $$CondutasGenericasTableReferences),
-      CondutasGenerica,
+      (CondutaGenerica, $$CondutasGenericasTableReferences),
+      CondutaGenerica,
       PrefetchHooks Function({bool mutiraoId, bool pacienteId, bool medicoId})
     >;
 typedef $$MutiraoCondutasTableCreateCompanionBuilder =

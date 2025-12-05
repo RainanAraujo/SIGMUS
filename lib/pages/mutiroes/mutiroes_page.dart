@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:sigmus/extensions/response_ext.dart';
 import 'package:sigmus/generated/sigmus_api.swagger.dart';
+import 'package:sigmus/models/interfaces/model.dart';
+import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/pages/mutiroes/mutirao_form_dialog.dart';
+import 'package:sigmus/repositories/historico_sincronizacao_repository.dart';
+import 'package:sigmus/repositories/mutirao_repository.dart';
 import 'package:sigmus/routes/app_router.dart';
 import 'package:sigmus/services/sigmus_api.dart';
 import 'package:sigmus/theme/app_typography.dart';
@@ -18,24 +23,11 @@ class MutiroesPage extends StatefulWidget {
   State<MutiroesPage> createState() => _MutiroesPageState();
 }
 
-class TableState {
-  final List<MutiraoInfo> mutiroes;
-  final bool isLoading;
-
-  const TableState({this.mutiroes = const [], this.isLoading = false});
-
-  TableState copyWith({List<MutiraoInfo>? mutiroes, bool? isLoading}) {
-    return TableState(
-      mutiroes: mutiroes ?? this.mutiroes,
-      isLoading: isLoading ?? this.isLoading,
-    );
-  }
-}
-
 class _MutiroesPageState extends State<MutiroesPage> {
   late final Listenable _dataListener;
 
-  final _tableState = ValueNotifier<TableState>(const TableState());
+  List<MutiraoItem> mutiroes = [];
+  bool isLoading = false;
 
   final int _pacientesCount = 0;
   final int _cirurgiasCount = 0;
@@ -55,39 +47,77 @@ class _MutiroesPageState extends State<MutiroesPage> {
   @override
   void dispose() {
     _dataListener.removeListener(_loadData);
-    _tableState.dispose();
     super.dispose();
   }
 
   Future<void> _loadData() async {
-    _tableState.value = _tableState.value.copyWith(isLoading: true);
+    isLoading = true;
 
     final usuarioId = sigmusApi.authService.userData.value?.id;
 
     if (usuarioId == null) {
-      _tableState.value = _tableState.value.copyWith(
-        mutiroes: [],
-        isLoading: false,
-      );
+      mutiroes = [];
+      isLoading = false;
+      setState(() {});
       return;
     }
-
+    List<MutiraoInfo> remoteMutiroes = [];
     try {
       final res = await sigmusApi.getUsuarioMutiroes(usuarioID: usuarioId);
       if (!res.isSuccessful) {
         throw res.errorMessage?.messagem ?? 'Erro Desconhecido';
       }
-      _tableState.value = _tableState.value.copyWith(
-        mutiroes: res.body?.mutiroes ?? [],
-        isLoading: false,
-      );
-      AppToast.show(context, message: 'Carregado com sucesso');
+      remoteMutiroes = res.body?.mutiroes ?? [];
     } catch (e) {
-      _tableState.value = _tableState.value.copyWith(isLoading: false);
+      isLoading = false;
+      setState(() {});
       AppToast.show(context, message: 'Erro: $e', isError: true);
     }
 
-    _tableState.value = _tableState.value.copyWith(isLoading: false);
+    final localMutiroes = await GetIt.I<MutiraoRepository>().getAll();
+
+    List<MutiraoItem> list = localMutiroes
+        .map((item) => MutiraoItem.fromDbMutirao(item))
+        .toList();
+
+    for (final mutirao in remoteMutiroes) {
+      final localIndex = list.indexWhere((item) => item.id == mutirao.id);
+      final item = MutiraoItem.fromApiMutirao(mutirao);
+
+      if (localIndex != -1) {
+        final localDbItem = localMutiroes.firstWhere((m) => m.id == mutirao.id);
+        final lastSync = await GetIt.I<HistoricoSincronizacaoRepository>()
+            .getLast(mutirao.id);
+
+        if (lastSync != null) {
+          final remoteNewer = lastSync.remoteTs < mutirao.atualizadoEm;
+          final localNewer = lastSync.localTs < localDbItem.atualizadoEm;
+
+          if (remoteNewer && localNewer) {
+            item.syncStatus = SyncStatus.toMerge;
+            list[localIndex] = item;
+          } else if (remoteNewer) {
+            item.syncStatus = SyncStatus.toDownload;
+            list[localIndex] = item;
+          } else if (localNewer) {
+            list[localIndex].syncStatus = SyncStatus.toUpload;
+          } else {
+            list[localIndex].syncStatus = SyncStatus.upToDate;
+          }
+        } else {
+          item.syncStatus = SyncStatus.toMerge;
+          list[localIndex] = item;
+        }
+      } else {
+        list.add(item);
+      }
+    }
+
+    mutiroes = list
+        .where((item) => item.status != ModelStatus.deleted.index)
+        .toList();
+    isLoading = false;
+    setState(() {});
   }
 
   void _createMutirao() {
@@ -95,9 +125,7 @@ class _MutiroesPageState extends State<MutiroesPage> {
       context: context,
       builder: (context) => MutiraoFormDialog(
         onSubmit: (mutirao) {
-          _tableState.value = _tableState.value.copyWith(
-            mutiroes: [..._tableState.value.mutiroes, mutirao],
-          );
+          // mutiroes = [...mutiroes, mutirao];
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Mutirão criado com sucesso!')),
           );
@@ -106,27 +134,27 @@ class _MutiroesPageState extends State<MutiroesPage> {
     );
   }
 
-  void _editMutirao(MutiraoInfo mutirao) {
-    showDialog(
-      context: context,
-      builder: (context) => MutiraoFormDialog(
-        mutirao: mutirao,
-        onSubmit: (updatedMutirao) {
-          final mutiroes = [..._tableState.value.mutiroes];
-          final index = mutiroes.indexWhere((m) => m.id == mutirao.id);
-          if (index != -1) {
-            mutiroes[index] = updatedMutirao;
-            _tableState.value = _tableState.value.copyWith(mutiroes: mutiroes);
-          }
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Mutirão atualizado com sucesso!')),
-          );
-        },
-      ),
-    );
+  void _editMutirao(MutiraoItem mutirao) {
+    // showDialog(
+    //   context: context,
+    //   builder: (context) => MutiraoFormDialog(
+    //     mutirao: mutirao,
+    //     onSubmit: (updatedMutirao) {
+    //       final mutiroes = [...this.mutiroes];
+    //       final index = mutiroes.indexWhere((m) => m.id == mutirao.id);
+    //       if (index != -1) {
+    //         mutiroes[index] = updatedMutirao;
+    //         this.mutiroes = mutiroes;
+    //       }
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         const SnackBar(content: Text('Mutirão atualizado com sucesso!')),
+    //       );
+    //     },
+    //   ),
+    // );
   }
 
-  void _deleteMutirao(MutiraoInfo mutirao) async {
+  void _deleteMutirao(MutiraoItem mutirao) async {
     final confirmed = await AppAlert.show(
       context: context,
       title: 'Confirmar exclusão',
@@ -142,17 +170,15 @@ class _MutiroesPageState extends State<MutiroesPage> {
     }
   }
 
-  void _generateReport(MutiraoInfo mutirao) {
+  void _generateReport(MutiraoItem mutirao) {
     // TODO: Abrir dialog de relatórios
   }
 
-  void _managePermissions(MutiraoInfo mutirao) {
+  void _managePermissions(MutiraoItem mutirao) {
     // TODO: Abrir dialog de permissões
   }
 
-  void _syncMutirao(MutiraoInfo mutirao) async {
-    // TODO: Implementar sincronização
-  }
+  void _syncMutirao(MutiraoItem mutirao) async {}
 
   String _capitalize(String text) {
     if (text.isEmpty) return text;
@@ -169,99 +195,94 @@ class _MutiroesPageState extends State<MutiroesPage> {
           children: [
             _buildHeaderSection(),
             const SizedBox(height: 32),
-            ValueListenableBuilder<TableState>(
-              valueListenable: _tableState,
-              builder: (context, state, _) {
-                return AppDataTable<MutiraoInfo>(
-                  items: state.mutiroes,
-                  isLoading: state.isLoading,
-                  searchHint: 'Filtrar',
-                  emptyMessage: 'Sem dados',
-                  emptySearchMessage: 'Nenhum resultado para',
-                  actions: [
-                    OutlinedButton.icon(
-                      onPressed: state.isLoading ? null : _loadData,
-                      icon: const Icon(Icons.sync, size: 16),
-                      label: const Text('Atualizar'),
+            AppDataTable<MutiraoItem>(
+              items: mutiroes,
+              isLoading: isLoading,
+              searchHint: 'Filtrar',
+              emptyMessage: 'Sem dados',
+              emptySearchMessage: 'Nenhum resultado para',
+              actions: [
+                OutlinedButton.icon(
+                  onPressed: isLoading ? null : _loadData,
+                  icon: const Icon(Icons.sync, size: 16),
+                  label: const Text('Atualizar'),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  onPressed: isLoading ? null : _createMutirao,
+                  icon: const Icon(Icons.add, size: 16),
+                  label: const Text('Criar mutirão'),
+                ),
+              ],
+              onRowTap: (item) {
+                if (item.tipo == "refracao") {
+                  AppRouter.goToMutiraoRefracao(mutiraoId: item.id);
+                } else if (item.tipo == "cirurgia") {
+                  AppRouter.goToMutiraoCirurgia(mutiraoId: item.id);
+                } else {
+                  AppRouter.goToMutiraoGenerico(
+                    mutiraoId: item.id,
+                    nomeMutirao: item.municipio,
+                    tipoMutirao: _capitalize(item.tipo),
+                    periodoMutirao: formatDateRangeFromString(
+                      item.dataInicio,
+                      item.dataFinal,
                     ),
-                    const SizedBox(width: 8),
-                    ElevatedButton.icon(
-                      onPressed: state.isLoading ? null : _createMutirao,
-                      icon: const Icon(Icons.add, size: 16),
-                      label: const Text('Criar mutirão'),
-                    ),
-                  ],
-                  onRowTap: (item) {
-                    if (item.tipo == "refracao") {
-                      AppRouter.goToMutiraoRefracao(mutiraoId: item.id);
-                    } else if (item.tipo == "cirurgia") {
-                      AppRouter.goToMutiraoCirurgia(mutiraoId: item.id);
-                    } else {
-                      AppRouter.goToMutiraoGenerico(
-                        mutiraoId: item.id,
-                        nomeMutirao: item.municipio,
-                        tipoMutirao: _capitalize(item.tipo),
-                        periodoMutirao: formatDateRangeFromString(
-                          item.dataInicio,
-                          item.dataFinal,
-                        ),
-                      );
-                    }
-                  },
-                  columns: [
-                    TableColumnConfig(
-                      label: 'Data',
-                      getValue: (mutirao) => formatDateRangeFromString(
-                        mutirao.dataInicio,
-                        mutirao.dataFinal,
-                      ),
-                    ),
-                    TableColumnConfig(
-                      label: 'Tipo',
-                      getValue: (mutirao) => _capitalize(mutirao.tipo),
-                    ),
-                    TableColumnConfig(
-                      label: 'Município',
-                      getValue: (mutirao) => mutirao.municipio,
-                    ),
-                    TableColumnConfig(
-                      label: 'Local',
-                      getValue: (mutirao) => mutirao.local,
-                    ),
-                  ],
-                  getSearchText: (mutirao) =>
-                      '${mutirao.municipio} ${mutirao.local} ${mutirao.tipo} ${mutirao.dataInicio} ${mutirao.dataFinal}',
-                  rowActions: [
-                    TableRowAction(
-                      icon: Icons.sync,
-                      tooltip: 'Sincronizar (Ctrl+S)',
-                      onPressed: _syncMutirao,
-                    ),
-                  ],
-                  menuActions: [
-                    TableRowMenuAction(
-                      label: 'Gerar relatório',
-                      icon: Icons.description,
-                      onPressed: _generateReport,
-                    ),
-                    TableRowMenuAction(
-                      label: 'Editar mutirão',
-                      icon: Icons.edit,
-                      onPressed: _editMutirao,
-                    ),
-                    TableRowMenuAction(
-                      label: 'Gerenciar acesso',
-                      icon: Icons.people,
-                      onPressed: _managePermissions,
-                    ),
-                    TableRowMenuAction(
-                      label: 'Apagar mutirão',
-                      icon: Icons.delete,
-                      onPressed: _deleteMutirao,
-                    ),
-                  ],
-                );
+                  );
+                }
               },
+              columns: [
+                TableColumnConfig(
+                  label: 'Data',
+                  getValue: (mutirao) => formatDateRangeFromString(
+                    mutirao.dataInicio,
+                    mutirao.dataFinal,
+                  ),
+                ),
+                TableColumnConfig(
+                  label: 'Tipo',
+                  getValue: (mutirao) => _capitalize(mutirao.tipo),
+                ),
+                TableColumnConfig(
+                  label: 'Município',
+                  getValue: (mutirao) => mutirao.municipio,
+                ),
+                TableColumnConfig(
+                  label: 'Local',
+                  getValue: (mutirao) => mutirao.local,
+                ),
+              ],
+              getSearchText: (mutirao) =>
+                  '${mutirao.municipio} ${mutirao.local} ${mutirao.tipo} ${mutirao.dataInicio} ${mutirao.dataFinal}',
+              rowActions: [
+                TableRowAction(
+                  icon: Icons.sync,
+                  tooltip: 'Sincronizar (Ctrl+S)',
+                  onPressed: _syncMutirao,
+                ),
+              ],
+              menuActions: [
+                TableRowMenuAction(
+                  label: 'Gerar relatório',
+                  icon: Icons.description,
+                  onPressed: _generateReport,
+                ),
+                TableRowMenuAction(
+                  label: 'Editar mutirão',
+                  icon: Icons.edit,
+                  onPressed: _editMutirao,
+                ),
+                TableRowMenuAction(
+                  label: 'Gerenciar acesso',
+                  icon: Icons.people,
+                  onPressed: _managePermissions,
+                ),
+                TableRowMenuAction(
+                  label: 'Apagar mutirão',
+                  icon: Icons.delete,
+                  onPressed: _deleteMutirao,
+                ),
+              ],
             ),
           ],
         ),
@@ -273,38 +294,31 @@ class _MutiroesPageState extends State<MutiroesPage> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isNarrow = constraints.maxWidth < 1200;
-
-        // Stats cards reagem ao _tableState
-        final statsCards = ValueListenableBuilder<TableState>(
-          valueListenable: _tableState,
-          builder: (context, state, _) {
-            return Wrap(
-              spacing: 16,
-              runSpacing: 16,
-              children: [
-                StatCard(
-                  title: 'Mutirões criados',
-                  value: state.mutiroes.length.toString(),
-                  icon: Icons.calendar_today_outlined,
-                ),
-                StatCard(
-                  title: 'Pacientes atendidos',
-                  value: _pacientesCount.toString(),
-                  icon: Icons.people_outline,
-                ),
-                StatCard(
-                  title: 'Cirurgias realizadas',
-                  value: _cirurgiasCount.toString(),
-                  icon: Icons.medical_services_outlined,
-                ),
-                StatCard(
-                  title: 'Prescrições de óculos realizadas',
-                  value: _prescricoesOculosCount.toString(),
-                  icon: Icons.visibility_outlined,
-                ),
-              ],
-            );
-          },
+        final statsCards = Wrap(
+          spacing: 16,
+          runSpacing: 16,
+          children: [
+            StatCard(
+              title: 'Mutirões criados',
+              value: mutiroes.length.toString(),
+              icon: Icons.calendar_today_outlined,
+            ),
+            StatCard(
+              title: 'Pacientes atendidos',
+              value: _pacientesCount.toString(),
+              icon: Icons.people_outline,
+            ),
+            StatCard(
+              title: 'Cirurgias realizadas',
+              value: _cirurgiasCount.toString(),
+              icon: Icons.medical_services_outlined,
+            ),
+            StatCard(
+              title: 'Prescrições de óculos realizadas',
+              value: _prescricoesOculosCount.toString(),
+              icon: Icons.visibility_outlined,
+            ),
+          ],
         );
 
         final titleSection = Column(

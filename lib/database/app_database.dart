@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 
 part 'app_database.g.dart';
 
+@DataClassName('Mutirao')
 class Mutiroes extends Table {
   IntColumn get id => integer()();
   TextColumn get tipo => text()();
@@ -24,6 +25,7 @@ class Mutiroes extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+@DataClassName('Permissao')
 class Permissoes extends Table {
   IntColumn get mutiraoId =>
       integer().customConstraint('REFERENCES mutiroes(id) ON DELETE CASCADE')();
@@ -33,6 +35,7 @@ class Permissoes extends Table {
   Set<Column> get primaryKey => {mutiraoId, email};
 }
 
+@DataClassName('Colaborador')
 class Colaboradores extends Table {
   IntColumn get id => integer()();
   IntColumn get mutiraoId => integer()();
@@ -45,6 +48,7 @@ class Colaboradores extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+@DataClassName('Paciente')
 class Pacientes extends Table {
   IntColumn get id => integer()();
 
@@ -65,6 +69,7 @@ class Pacientes extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+@DataClassName('Medico')
 class Medicos extends Table {
   IntColumn get id => integer()();
   IntColumn get mutiraoId => integer().references(Mutiroes, #id)();
@@ -77,6 +82,7 @@ class Medicos extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+@DataClassName('Conduta')
 class Condutas extends Table {
   IntColumn get id => integer()();
   TextColumn get data => text().nullable()();
@@ -94,6 +100,7 @@ class Condutas extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+@DataClassName('Procedimento')
 class Procedimentos extends Table {
   IntColumn get id => integer()();
   TextColumn get data => text().nullable()();
@@ -113,6 +120,7 @@ class Procedimentos extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+@DataClassName('CondutaGenerica')
 class CondutasGenericas extends Table {
   IntColumn get id => integer()();
   TextColumn get data => text().nullable()();
@@ -130,6 +138,7 @@ class CondutasGenericas extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+@DataClassName('MutiraoConduta')
 class MutiraoCondutas extends Table {
   IntColumn get mutiraoId => integer().references(Mutiroes, #id)();
   TextColumn get conduta => text().nullable()();
@@ -170,9 +179,9 @@ class AppDatabase extends _$AppDatabase {
 
 LazyDatabase _openConnection() {
   return LazyDatabase(() async {
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'db.sqlite'));
+    final directory = await getApplicationSupportDirectory();
+    final file = File(p.join(directory.path, 'db.sqlite'));
 
-    return NativeDatabase.createInBackground(file);
+    return NativeDatabase(file, logStatements: false);
   });
 }
