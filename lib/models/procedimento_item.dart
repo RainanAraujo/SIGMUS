@@ -1,4 +1,4 @@
-import 'package:sigmus/generated/sigmus_api.swagger.dart';
+import 'package:sigmus/database/app_database.dart';
 
 class ProcedimentoItem {
   final Paciente paciente;

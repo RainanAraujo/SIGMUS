@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:get_it/get_it.dart';
 import 'package:sigmus/data/brasil_data.dart';
-import 'package:sigmus/generated/sigmus_api.models.swagger.dart';
+import 'package:sigmus/models/mutirao_item.dart';
+import 'package:sigmus/repositories/colaborador_repository.dart';
+import 'package:sigmus/repositories/medico_repository.dart';
+import 'package:sigmus/repositories/mutirao_repository.dart';
 import 'package:sigmus/theme/app_colors.dart';
 import 'package:sigmus/widgets/app_date_range_picker.dart';
 import 'package:sigmus/widgets/app_dialog.dart';
@@ -10,9 +13,23 @@ import 'package:sigmus/widgets/app_searchable_select.dart';
 import 'package:sigmus/widgets/app_toast.dart';
 import 'package:sigmus/widgets/form_row.dart';
 
+class ColaboradorItem {
+  final String nome;
+  final String funcao;
+
+  ColaboradorItem({required this.nome, required this.funcao});
+}
+
+class MedicoItem {
+  final String nome;
+  final String crm;
+
+  MedicoItem({required this.nome, required this.crm});
+}
+
 class MutiraoFormDialog extends StatefulWidget {
-  final MutiraoInfo? mutirao;
-  final Function(MutiraoInfo)? onSubmit;
+  final MutiraoItem? mutirao;
+  final Function(MutiraoItem)? onSubmit;
 
   const MutiraoFormDialog({super.key, this.mutirao, this.onSubmit});
 
@@ -31,9 +48,9 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
   DateTime? _dataFinal;
   String _demandante = '';
   String _contratante = '';
-  final List<Colaborador> _equipe = [];
-  final List<String> _condutas = [];
-  final List<Medico> _medicos = [];
+  List<ColaboradorItem> _colaboradores = [];
+  List<MedicoItem> _medicos = [];
+  List<String> _condutas = [];
 
   final _colaboradorNomeController = TextEditingController();
   final _colaboradorFuncaoController = TextEditingController();
@@ -51,18 +68,39 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
     }
   }
 
-  void _loadMutirao(MutiraoInfo mutirao) {
-    setState(() {
-      _tipo = mutirao.tipo;
-      _estado = mutirao.estado;
-      _municipio = mutirao.municipio;
-      _local = mutirao.local;
-      _dataInicio = DateTime.tryParse(mutirao.dataInicio);
-      _dataFinal = DateTime.tryParse(mutirao.dataFinal);
-      _demandante = mutirao.demandante;
-      _contratante = mutirao.contratante;
-      // TODO: Carregar equipe, condutas e médicos
-    });
+  void _loadMutirao(MutiraoItem mutirao) async {
+    _tipo = mutirao.tipo;
+    _estado = mutirao.estado;
+    _municipio = mutirao.municipio;
+    _local = mutirao.local;
+    _dataInicio = DateTime.tryParse(mutirao.dataInicio);
+    _dataFinal = DateTime.tryParse(mutirao.dataFinal);
+    _demandante = mutirao.demandante;
+    _contratante = mutirao.contratante;
+    final colaboradorList = await GetIt.I<ColaboradorRepository>().getAll(
+      mutiraoId: mutirao.id,
+    );
+    _colaboradores = colaboradorList
+        .map(
+          (colaborador) => ColaboradorItem(
+            nome: colaborador.nome,
+            funcao: colaborador.funcao,
+          ),
+        )
+        .toList();
+    _condutas = await GetIt.I<MutiraoRepository>().getCondutas(
+      mutiraoId: mutirao.id,
+    );
+
+    final medicoList = await GetIt.I<MedicoRepository>().getAll(
+      mutiraoId: mutirao.id,
+    );
+
+    _medicos = medicoList
+        .map((medico) => MedicoItem(nome: medico.nome, crm: medico.crm))
+        .toList();
+
+    setState(() {});
   }
 
   @override
@@ -108,8 +146,8 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
     }
 
     setState(() {
-      _equipe.add(
-        Colaborador(
+      _colaboradores.add(
+        ColaboradorItem(
           nome: _colaboradorNomeController.text,
           funcao: _colaboradorFuncaoController.text,
         ),
@@ -119,9 +157,9 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
     });
   }
 
-  void _removeColaborador(Colaborador colaborador) {
+  void _removeColaborador(ColaboradorItem colaborador) {
     setState(() {
-      _equipe.remove(colaborador);
+      _colaboradores.remove(colaborador);
     });
   }
 
@@ -155,7 +193,7 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
 
     setState(() {
       _medicos.add(
-        Medico(
+        MedicoItem(
           nome: _medicoNomeController.text,
           crm: _medicoCRMController.text,
         ),
@@ -165,7 +203,7 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
     });
   }
 
-  void _removeMedico(Medico medico) {
+  void _removeMedico(MedicoItem medico) {
     setState(() {
       _medicos.remove(medico);
     });
@@ -203,7 +241,6 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Tipo e Data
             FormRow(
               children: [
                 AppDropdown<String>(
@@ -245,10 +282,7 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
                 ),
               ],
             ),
-
             const SizedBox(height: 16),
-
-            // Estado
             AppSearchableSelect<String>(
               key: const ValueKey('estado'),
               label: 'Estado',
@@ -266,10 +300,7 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
                 return null;
               },
             ),
-
             const SizedBox(height: 16),
-
-            // Município e Local
             FormRow(
               children: [
                 AppSearchableSelect<String>(
@@ -302,10 +333,7 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
                 ),
               ],
             ),
-
             const SizedBox(height: 16),
-
-            // Demandante e Contratante
             FormRow(
               children: [
                 TextFormField(
@@ -338,8 +366,6 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
                 ),
               ],
             ),
-
-            // Condutas (apenas para tipo genérico)
             if (_tipo == 'generico') ...[
               const SizedBox(height: 24),
               Container(
@@ -376,8 +402,6 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
                 _buildCondutasTable(),
               ],
             ],
-
-            // Equipe envolvida
             const SizedBox(height: 24),
             Container(
               margin: const EdgeInsets.only(bottom: 16),
@@ -415,12 +439,10 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
                 ),
               ],
             ),
-            if (_equipe.isNotEmpty) ...[
+            if (_colaboradores.isNotEmpty) ...[
               const SizedBox(height: 16),
               _buildEquipeTable(),
             ],
-
-            // Profissionais de saúde
             const SizedBox(height: 24),
             Container(
               margin: const EdgeInsets.only(bottom: 16),
@@ -513,7 +535,7 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
-        children: _equipe.asMap().entries.map((entry) {
+        children: _colaboradores.asMap().entries.map((entry) {
           final index = entry.key;
           final colaborador = entry.value;
           return Container(
@@ -609,19 +631,4 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
       _estado,
     ).map((cidade) => SelectOption(value: cidade, label: cidade)).toList();
   }
-}
-
-// Classes auxiliares
-class Colaborador {
-  final String nome;
-  final String funcao;
-
-  Colaborador({required this.nome, required this.funcao});
-}
-
-class Medico {
-  final String nome;
-  final String crm;
-
-  Medico({required this.nome, required this.crm});
 }

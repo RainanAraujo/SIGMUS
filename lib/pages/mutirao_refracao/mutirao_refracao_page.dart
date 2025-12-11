@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sigmus/models/conduta_item.dart';
+import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/pages/mutirao_refracao/refracao_dialog.dart';
 import 'package:sigmus/theme/app_colors.dart';
 import 'package:sigmus/theme/app_typography.dart';
@@ -10,9 +11,9 @@ import 'package:sigmus/widgets/app_dropdown.dart';
 import 'package:sigmus/widgets/stat_card.dart';
 
 class MutiraoRefracaoPage extends StatefulWidget {
-  final int mutiraoId;
+  final MutiraoItem mutirao;
 
-  const MutiraoRefracaoPage({super.key, required this.mutiraoId});
+  const MutiraoRefracaoPage({super.key, required this.mutirao});
 
   @override
   State<MutiraoRefracaoPage> createState() => _MutiraoRefracaoPageState();

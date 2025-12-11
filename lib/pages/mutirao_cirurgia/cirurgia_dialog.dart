@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sigmus/generated/sigmus_api.swagger.dart';
+import 'package:sigmus/database/app_database.dart';
+import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/models/procedimento_item.dart';
 import 'package:sigmus/theme/app_colors.dart';
 import 'package:sigmus/utils/date_utils.dart';
@@ -10,6 +11,7 @@ import 'package:sigmus/widgets/form_row.dart';
 import 'package:sigmus/widgets/paciente_form_section.dart';
 
 class CirurgiaFormDialog extends StatefulWidget {
+  final MutiraoItem mutirao;
   final ProcedimentoItem? procedimento;
   final List<String> datasDisponiveis;
   final List<Medico> medicosDisponiveis;
@@ -18,6 +20,7 @@ class CirurgiaFormDialog extends StatefulWidget {
   const CirurgiaFormDialog({
     super.key,
     this.procedimento,
+    required this.mutirao,
     required this.datasDisponiveis,
     required this.medicosDisponiveis,
     this.onSubmit,
@@ -120,6 +123,7 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
       final now = DateTime.now().millisecondsSinceEpoch;
 
       final paciente = Paciente(
+        id: widget.procedimento?.paciente.id ?? now,
         atualizadoEm: now,
         status: 1,
         cpf: _pacienteController.cpf.isEmpty ? null : _pacienteController.cpf,
@@ -142,6 +146,8 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
       );
 
       final procedimento = Procedimento(
+        id: widget.procedimento?.procedimento.id ?? now,
+        mutiraoId: widget.mutirao.id,
         atualizadoEm: now,
         status: 1,
         pacienteId: widget.procedimento?.procedimento.pacienteId ?? 0,
@@ -151,7 +157,7 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
         dioptriaLente: _dioptriaController.text.isEmpty
             ? null
             : _dioptriaController.text,
-        medicoId: _medicoId.value,
+        medicoId: _medicoId.value!,
         intercorrencia: _possuiIntercorrencia.value ? 'Sim' : null,
         observacao: _observacoesController.text.isEmpty
             ? null
@@ -370,7 +376,7 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
               enabled: !_isLoading,
               items: widget.medicosDisponiveis.map((medico) {
                 return DropdownMenuItem(
-                  value: medico.crm.hashCode, // TODO: usar ID real do médico
+                  value: medico.crm.hashCode,
                   child: Text(medico.nome),
                 );
               }).toList(),

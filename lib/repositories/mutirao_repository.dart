@@ -70,11 +70,11 @@ class MutiraoRepository implements IRepository<Mutirao, MutiroesCompanion> {
     );
   }
 
-  Future<List<String?>> getCondutas(int id) async {
+  Future<List<String>> getCondutas({required int mutiraoId}) async {
     final res = await (_db.select(
       _db.mutiraoCondutas,
-    )..where((mc) => mc.mutiraoId.equals(id))).get();
-    return res.map((item) => item.conduta).toList();
+    )..where((mc) => mc.mutiraoId.equals(mutiraoId))).get();
+    return res.map((item) => item.conduta).nonNulls.toList();
   }
 
   @override

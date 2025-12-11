@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sigmus/models/conduta_item.dart';
+import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/pages/mutirao_generico/generico_dialog.dart';
 import 'package:sigmus/theme/app_colors.dart';
 import 'package:sigmus/theme/app_typography.dart';
@@ -10,18 +11,9 @@ import 'package:sigmus/widgets/app_dropdown.dart';
 import 'package:sigmus/widgets/stat_card.dart';
 
 class MutiraoGenericoPage extends StatefulWidget {
-  final int mutiraoId;
-  final String nomeMutirao;
-  final String tipoMutirao;
-  final String periodoMutirao;
+  final MutiraoItem mutirao;
 
-  const MutiraoGenericoPage({
-    super.key,
-    required this.mutiraoId,
-    required this.nomeMutirao,
-    required this.tipoMutirao,
-    required this.periodoMutirao,
-  });
+  const MutiraoGenericoPage({super.key, required this.mutirao});
 
   @override
   State<MutiraoGenericoPage> createState() => _MutiraoGenericoPageState();

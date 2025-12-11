@@ -60,6 +60,20 @@ class MutiraoItem {
       permissoes = const {},
       status = item.status,
       syncStatus = SyncStatus.toUpload;
+
+  Mutirao toDbMutirao({required int atualizadoEm}) => Mutirao(
+    id: id,
+    tipo: tipo,
+    contratante: contratante,
+    dataFinal: dataFinal,
+    dataInicio: dataInicio,
+    demandante: demandante,
+    estado: estado,
+    local: local,
+    municipio: municipio,
+    status: status,
+    atualizadoEm: atualizadoEm,
+  );
 }
 
 enum SyncStatus { toDownload, toUpload, toMerge, upToDate }

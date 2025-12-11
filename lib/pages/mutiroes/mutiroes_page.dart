@@ -148,23 +148,26 @@ class _MutiroesPageState extends State<MutiroesPage> {
   }
 
   void _editMutirao(MutiraoItem mutirao) {
-    // showDialog(
-    //   context: context,
-    //   builder: (context) => MutiraoFormDialog(
-    //     mutirao: mutirao,
-    //     onSubmit: (updatedMutirao) {
-    //       final mutiroes = [...this.mutiroes];
-    //       final index = mutiroes.indexWhere((m) => m.id == mutirao.id);
-    //       if (index != -1) {
-    //         mutiroes[index] = updatedMutirao;
-    //         this.mutiroes = mutiroes;
-    //       }
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         const SnackBar(content: Text('Mutirão atualizado com sucesso!')),
-    //       );
-    //     },
-    //   ),
-    // );
+    showDialog(
+      context: context,
+      builder: (context) => MutiraoFormDialog(
+        mutirao: mutirao,
+        onSubmit: (updatedMutirao) async {
+          await GetIt.I<MutiraoRepository>().update(
+            updatedMutirao.id,
+            updatedMutirao
+                .toDbMutirao(
+                  atualizadoEm: DateTime.now().millisecondsSinceEpoch,
+                )
+                .toCompanion(true),
+          );
+          await _loadData();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Mutirão atualizado com sucesso!')),
+          );
+        },
+      ),
+    );
   }
 
   void _deleteMutirao(MutiraoItem mutirao) async {
@@ -254,19 +257,11 @@ class _MutiroesPageState extends State<MutiroesPage> {
               ],
               onRowTap: (item) {
                 if (item.tipo == "refracao") {
-                  AppRouter.goToMutiraoRefracao(mutiraoId: item.id);
+                  AppRouter.goToMutiraoRefracao(mutirao: item);
                 } else if (item.tipo == "cirurgia") {
-                  AppRouter.goToMutiraoCirurgia(mutiraoId: item.id);
+                  AppRouter.goToMutiraoCirurgia(mutirao: item);
                 } else {
-                  AppRouter.goToMutiraoGenerico(
-                    mutiraoId: item.id,
-                    nomeMutirao: item.municipio,
-                    tipoMutirao: _capitalize(item.tipo),
-                    periodoMutirao: formatDateRangeFromString(
-                      item.dataInicio,
-                      item.dataFinal,
-                    ),
-                  );
+                  AppRouter.goToMutiraoGenerico(mutirao: item);
                 }
               },
               columns: [

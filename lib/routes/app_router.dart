@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sigmus/pages/mutiroes/mutiroes_page.dart';
+import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/pages/mutirao_cirurgia/mutirao_cirurgia_page.dart';
 import 'package:sigmus/pages/mutirao_generico/mutirao_generico_page.dart';
 import 'package:sigmus/pages/mutirao_refracao/mutirao_refracao_page.dart';
+import 'package:sigmus/pages/mutiroes/mutiroes_page.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -29,33 +30,25 @@ class AppRouter {
 
       case AppRoutes.mutiraoCirurgia:
         final args = settings.arguments as Map<String, dynamic>?;
-        final mutiraoId = args?['mutiraoId'] as int? ?? 0;
+        final mutirao = args?['mutirao'] as MutiraoItem;
         return MaterialPageRoute(
-          builder: (_) => MutiraoCirurgiaPage(mutiraoId: mutiraoId),
+          builder: (_) => MutiraoCirurgiaPage(mutirao: mutirao),
           settings: settings,
         );
 
       case AppRoutes.mutiraoRefracao:
         final args = settings.arguments as Map<String, dynamic>?;
-        final mutiraoId = args?['mutiraoId'] as int? ?? 0;
+        final mutirao = args?['mutirao'] as MutiraoItem;
         return MaterialPageRoute(
-          builder: (_) => MutiraoRefracaoPage(mutiraoId: mutiraoId),
+          builder: (_) => MutiraoRefracaoPage(mutirao: mutirao),
           settings: settings,
         );
 
       case AppRoutes.mutiraoGenerico:
         final args = settings.arguments as Map<String, dynamic>?;
-        final mutiraoId = args?['mutiraoId'] as int? ?? 0;
-        final nomeMutirao = args?['nomeMutirao'] as String? ?? '';
-        final tipoMutirao = args?['tipoMutirao'] as String? ?? '';
-        final periodoMutirao = args?['periodoMutirao'] as String? ?? '';
+        final mutirao = args?['mutirao'] as MutiraoItem;
         return MaterialPageRoute(
-          builder: (_) => MutiraoGenericoPage(
-            mutiraoId: mutiraoId,
-            nomeMutirao: nomeMutirao,
-            tipoMutirao: tipoMutirao,
-            periodoMutirao: periodoMutirao,
-          ),
+          builder: (_) => MutiraoGenericoPage(mutirao: mutirao),
           settings: settings,
         );
 
@@ -94,28 +87,15 @@ class AppRouter {
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 
-  static void goToMutiraoCirurgia({required int mutiraoId}) {
-    push(AppRoutes.mutiraoCirurgia, arguments: {'mutiraoId': mutiraoId});
+  static void goToMutiraoCirurgia({required MutiraoItem mutirao}) {
+    push(AppRoutes.mutiraoCirurgia, arguments: {'mutirao': mutirao});
   }
 
-  static void goToMutiraoRefracao({required int mutiraoId}) {
-    push(AppRoutes.mutiraoRefracao, arguments: {'mutiraoId': mutiraoId});
+  static void goToMutiraoRefracao({required MutiraoItem mutirao}) {
+    push(AppRoutes.mutiraoRefracao, arguments: {'mutirao': mutirao});
   }
 
-  static void goToMutiraoGenerico({
-    required int mutiraoId,
-    required String nomeMutirao,
-    required String tipoMutirao,
-    required String periodoMutirao,
-  }) {
-    push(
-      AppRoutes.mutiraoGenerico,
-      arguments: {
-        'mutiraoId': mutiraoId,
-        'nomeMutirao': nomeMutirao,
-        'tipoMutirao': tipoMutirao,
-        'periodoMutirao': periodoMutirao,
-      },
-    );
+  static void goToMutiraoGenerico({required MutiraoItem mutirao}) {
+    push(AppRoutes.mutiraoGenerico, arguments: {'mutirao': mutirao});
   }
 }
