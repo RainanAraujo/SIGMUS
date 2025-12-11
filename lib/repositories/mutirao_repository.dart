@@ -19,7 +19,7 @@ class MutiraoRepository implements IRepository<Mutirao, MutiroesCompanion> {
       return PermissoesCompanion.insert(
         mutiraoId: id,
         email: entry.key,
-        permissoes: entry.value.join(','),
+        permissoes: entry.value,
       );
     }).toList();
 
@@ -41,7 +41,7 @@ class MutiraoRepository implements IRepository<Mutirao, MutiroesCompanion> {
     )..where((p) => p.mutiraoId.equals(id))).get();
 
     return res.fold<Map<String, List<String>>>({}, (prev, item) {
-      prev[item.email] = item.permissoes.split(',');
+      prev[item.email] = item.permissoes;
       return prev;
     });
   }

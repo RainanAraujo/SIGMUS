@@ -94,7 +94,8 @@ class SyncService {
     final lastSinc =
         await (_db.select(_db.historicoSincronizacao)
               ..where((tbl) => tbl.mutiraoId.equals(mutiraoId))
-              ..orderBy([(tbl) => OrderingTerm.desc(tbl.remoteTs)]))
+              ..orderBy([(tbl) => OrderingTerm.desc(tbl.remoteTs)])
+              ..limit(1))
             .getSingleOrNull();
 
     return (localTs: lastSinc?.localTs ?? 0, remoteTs: lastSinc?.remoteTs ?? 0);
@@ -280,15 +281,14 @@ class SyncService {
             _db.permissoes,
           )..where((tbl) => tbl.mutiraoId.equals(mutiraoId))).go();
           for (var entry in mutirao.permissoes.entries) {
-            final permissoes =
-                (entry.value as Map<String, dynamic>)['permissoes'] as String;
+            final permissoes = entry.value as List<dynamic>;
             await _db
                 .into(_db.permissoes)
                 .insert(
                   PermissoesCompanion(
                     mutiraoId: Value(mutiraoId),
                     email: Value(entry.key),
-                    permissoes: Value(permissoes),
+                    permissoes: Value(permissoes.cast<String>()),
                   ),
                   mode: InsertMode.replace,
                 );

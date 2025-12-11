@@ -675,17 +675,15 @@ class $PermissoesTable extends Permissoes
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _permissoesMeta = const VerificationMeta(
-    'permissoes',
-  );
   @override
-  late final GeneratedColumn<String> permissoes = GeneratedColumn<String>(
-    'permissoes',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
+  late final GeneratedColumnWithTypeConverter<List<String>, String> permissoes =
+      GeneratedColumn<String>(
+        'permissoes',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<List<String>>($PermissoesTable.$converterpermissoes);
   @override
   List<GeneratedColumn> get $columns => [mutiraoId, email, permissoes];
   @override
@@ -716,14 +714,6 @@ class $PermissoesTable extends Permissoes
     } else if (isInserting) {
       context.missing(_emailMeta);
     }
-    if (data.containsKey('permissoes')) {
-      context.handle(
-        _permissoesMeta,
-        permissoes.isAcceptableOrUnknown(data['permissoes']!, _permissoesMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_permissoesMeta);
-    }
     return context;
   }
 
@@ -741,10 +731,12 @@ class $PermissoesTable extends Permissoes
         DriftSqlType.string,
         data['${effectivePrefix}email'],
       )!,
-      permissoes: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}permissoes'],
-      )!,
+      permissoes: $PermissoesTable.$converterpermissoes.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}permissoes'],
+        )!,
+      ),
     );
   }
 
@@ -752,12 +744,15 @@ class $PermissoesTable extends Permissoes
   $PermissoesTable createAlias(String alias) {
     return $PermissoesTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<List<String>, String> $converterpermissoes =
+      const StringListConverter();
 }
 
 class Permissao extends DataClass implements Insertable<Permissao> {
   final int mutiraoId;
   final String email;
-  final String permissoes;
+  final List<String> permissoes;
   const Permissao({
     required this.mutiraoId,
     required this.email,
@@ -768,7 +763,11 @@ class Permissao extends DataClass implements Insertable<Permissao> {
     final map = <String, Expression>{};
     map['mutirao_id'] = Variable<int>(mutiraoId);
     map['email'] = Variable<String>(email);
-    map['permissoes'] = Variable<String>(permissoes);
+    {
+      map['permissoes'] = Variable<String>(
+        $PermissoesTable.$converterpermissoes.toSql(permissoes),
+      );
+    }
     return map;
   }
 
@@ -788,7 +787,7 @@ class Permissao extends DataClass implements Insertable<Permissao> {
     return Permissao(
       mutiraoId: serializer.fromJson<int>(json['mutiraoId']),
       email: serializer.fromJson<String>(json['email']),
-      permissoes: serializer.fromJson<String>(json['permissoes']),
+      permissoes: serializer.fromJson<List<String>>(json['permissoes']),
     );
   }
   @override
@@ -797,16 +796,19 @@ class Permissao extends DataClass implements Insertable<Permissao> {
     return <String, dynamic>{
       'mutiraoId': serializer.toJson<int>(mutiraoId),
       'email': serializer.toJson<String>(email),
-      'permissoes': serializer.toJson<String>(permissoes),
+      'permissoes': serializer.toJson<List<String>>(permissoes),
     };
   }
 
-  Permissao copyWith({int? mutiraoId, String? email, String? permissoes}) =>
-      Permissao(
-        mutiraoId: mutiraoId ?? this.mutiraoId,
-        email: email ?? this.email,
-        permissoes: permissoes ?? this.permissoes,
-      );
+  Permissao copyWith({
+    int? mutiraoId,
+    String? email,
+    List<String>? permissoes,
+  }) => Permissao(
+    mutiraoId: mutiraoId ?? this.mutiraoId,
+    email: email ?? this.email,
+    permissoes: permissoes ?? this.permissoes,
+  );
   Permissao copyWithCompanion(PermissoesCompanion data) {
     return Permissao(
       mutiraoId: data.mutiraoId.present ? data.mutiraoId.value : this.mutiraoId,
@@ -841,7 +843,7 @@ class Permissao extends DataClass implements Insertable<Permissao> {
 class PermissoesCompanion extends UpdateCompanion<Permissao> {
   final Value<int> mutiraoId;
   final Value<String> email;
-  final Value<String> permissoes;
+  final Value<List<String>> permissoes;
   final Value<int> rowid;
   const PermissoesCompanion({
     this.mutiraoId = const Value.absent(),
@@ -852,7 +854,7 @@ class PermissoesCompanion extends UpdateCompanion<Permissao> {
   PermissoesCompanion.insert({
     required int mutiraoId,
     required String email,
-    required String permissoes,
+    required List<String> permissoes,
     this.rowid = const Value.absent(),
   }) : mutiraoId = Value(mutiraoId),
        email = Value(email),
@@ -874,7 +876,7 @@ class PermissoesCompanion extends UpdateCompanion<Permissao> {
   PermissoesCompanion copyWith({
     Value<int>? mutiraoId,
     Value<String>? email,
-    Value<String>? permissoes,
+    Value<List<String>>? permissoes,
     Value<int>? rowid,
   }) {
     return PermissoesCompanion(
@@ -895,7 +897,9 @@ class PermissoesCompanion extends UpdateCompanion<Permissao> {
       map['email'] = Variable<String>(email.value);
     }
     if (permissoes.present) {
-      map['permissoes'] = Variable<String>(permissoes.value);
+      map['permissoes'] = Variable<String>(
+        $PermissoesTable.$converterpermissoes.toSql(permissoes.value),
+      );
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -5759,14 +5763,14 @@ typedef $$PermissoesTableCreateCompanionBuilder =
     PermissoesCompanion Function({
       required int mutiraoId,
       required String email,
-      required String permissoes,
+      required List<String> permissoes,
       Value<int> rowid,
     });
 typedef $$PermissoesTableUpdateCompanionBuilder =
     PermissoesCompanion Function({
       Value<int> mutiraoId,
       Value<String> email,
-      Value<String> permissoes,
+      Value<List<String>> permissoes,
       Value<int> rowid,
     });
 
@@ -5808,9 +5812,10 @@ class $$PermissoesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get permissoes => $composableBuilder(
+  ColumnWithTypeConverterFilters<List<String>, List<String>, String>
+  get permissoes => $composableBuilder(
     column: $table.permissoes,
-    builder: (column) => ColumnFilters(column),
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   $$MutiroesTableFilterComposer get mutiraoId {
@@ -5892,10 +5897,11 @@ class $$PermissoesTableAnnotationComposer
   GeneratedColumn<String> get email =>
       $composableBuilder(column: $table.email, builder: (column) => column);
 
-  GeneratedColumn<String> get permissoes => $composableBuilder(
-    column: $table.permissoes,
-    builder: (column) => column,
-  );
+  GeneratedColumnWithTypeConverter<List<String>, String> get permissoes =>
+      $composableBuilder(
+        column: $table.permissoes,
+        builder: (column) => column,
+      );
 
   $$MutiroesTableAnnotationComposer get mutiraoId {
     final $$MutiroesTableAnnotationComposer composer = $composerBuilder(
@@ -5951,7 +5957,7 @@ class $$PermissoesTableTableManager
               ({
                 Value<int> mutiraoId = const Value.absent(),
                 Value<String> email = const Value.absent(),
-                Value<String> permissoes = const Value.absent(),
+                Value<List<String>> permissoes = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => PermissoesCompanion(
                 mutiraoId: mutiraoId,
@@ -5963,7 +5969,7 @@ class $$PermissoesTableTableManager
               ({
                 required int mutiraoId,
                 required String email,
-                required String permissoes,
+                required List<String> permissoes,
                 Value<int> rowid = const Value.absent(),
               }) => PermissoesCompanion.insert(
                 mutiraoId: mutiraoId,

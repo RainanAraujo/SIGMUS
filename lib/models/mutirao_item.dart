@@ -11,7 +11,7 @@ class MutiraoItem {
   String estado;
   String local;
   String municipio;
-  Map<String, dynamic> permissoes;
+  Map<String, List<String>> permissoes;
   int status;
   SyncStatus syncStatus;
 
@@ -40,7 +40,10 @@ class MutiraoItem {
       estado = item.estado,
       local = item.local,
       municipio = item.municipio,
-      permissoes = item.permissoes,
+      permissoes = (item.permissoes).map(
+        (key, value) =>
+            MapEntry(key, (value as List<dynamic>).cast<String>().toList()),
+      ),
       status = item.status,
       syncStatus = SyncStatus.toDownload;
 

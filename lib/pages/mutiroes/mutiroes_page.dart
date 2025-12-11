@@ -9,6 +9,7 @@ import 'package:sigmus/repositories/historico_sincronizacao_repository.dart';
 import 'package:sigmus/repositories/mutirao_repository.dart';
 import 'package:sigmus/routes/app_router.dart';
 import 'package:sigmus/services/sigmus_api.dart';
+import 'package:sigmus/services/sync_service.dart';
 import 'package:sigmus/theme/app_typography.dart';
 import 'package:sigmus/utils/date_utils.dart';
 import 'package:sigmus/widgets/app_alert.dart';
@@ -76,9 +77,15 @@ class _MutiroesPageState extends State<MutiroesPage> {
 
     final localMutiroes = await GetIt.I<MutiraoRepository>().getAll();
 
-    List<MutiraoItem> list = localMutiroes
+    List<MutiraoItem> list = await localMutiroes
         .map((item) => MutiraoItem.fromDbMutirao(item))
-        .toList();
+        .map((item) async {
+          item.permissoes = await GetIt.I<MutiraoRepository>().getPermissoes(
+            item.id,
+          );
+          return item;
+        })
+        .wait;
 
     for (final mutirao in remoteMutiroes) {
       final localIndex = list.indexWhere((item) => item.id == mutirao.id);
@@ -115,6 +122,12 @@ class _MutiroesPageState extends State<MutiroesPage> {
 
     mutiroes = list
         .where((item) => item.status != ModelStatus.deleted.index)
+        .where(
+          (item) =>
+              item.permissoes[sigmusApi.authService.userData.value?.email]
+                  ?.contains('leitura') ??
+              false,
+        )
         .toList();
     isLoading = false;
     setState(() {});
@@ -178,7 +191,26 @@ class _MutiroesPageState extends State<MutiroesPage> {
     // TODO: Abrir dialog de permissões
   }
 
-  void _syncMutirao(MutiraoItem mutirao) async {}
+  Future<void> _syncAllMutiroes() async {
+    for (final mutirao in mutiroes) {
+      await _syncMutirao(mutirao);
+    }
+    _loadData();
+  }
+
+  Future<void> _syncMutirao(MutiraoItem mutirao) async {
+    if (mutirao.syncStatus == SyncStatus.toUpload ||
+        mutirao.syncStatus == SyncStatus.toMerge) {
+      await SyncService.instance.uploadMutiraoMudancas(mutirao.id);
+    }
+
+    if (mutirao.syncStatus == SyncStatus.toDownload ||
+        mutirao.syncStatus == SyncStatus.toMerge) {
+      await SyncService.instance.downloadMutiraoMudancas(mutirao.id);
+    }
+
+    _loadData();
+  }
 
   String _capitalize(String text) {
     if (text.isEmpty) return text;
@@ -206,6 +238,12 @@ class _MutiroesPageState extends State<MutiroesPage> {
                   onPressed: isLoading ? null : _loadData,
                   icon: const Icon(Icons.sync, size: 16),
                   label: const Text('Atualizar'),
+                ),
+                const SizedBox(width: 8),
+                OutlinedButton.icon(
+                  onPressed: isLoading ? null : _syncAllMutiroes,
+                  icon: const Icon(Icons.sync, size: 16),
+                  label: const Text('Sincronizar todos'),
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton.icon(
@@ -256,7 +294,11 @@ class _MutiroesPageState extends State<MutiroesPage> {
                   '${mutirao.municipio} ${mutirao.local} ${mutirao.tipo} ${mutirao.dataInicio} ${mutirao.dataFinal}',
               rowActions: (item) => [
                 TableRowAction(
-                  icon: Icons.sync,
+                  enabled: item.syncStatus != SyncStatus.upToDate,
+                  icon: switch (item.syncStatus) {
+                    SyncStatus.upToDate => Icons.check_sharp,
+                    _ => Icons.cached_sharp,
+                  },
                   tooltip: 'Sincronizar (Ctrl+S)',
                   onPressed: _syncMutirao,
                 ),

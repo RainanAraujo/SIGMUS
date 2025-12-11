@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:drift/drift.dart';
@@ -6,6 +7,21 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 part 'app_database.g.dart';
+
+class StringListConverter extends TypeConverter<List<String>, String> {
+  const StringListConverter();
+
+  @override
+  List<String> fromSql(String fromDb) {
+    final decoded = jsonDecode(fromDb);
+    return List<String>.from(decoded);
+  }
+
+  @override
+  String toSql(List<String> value) {
+    return jsonEncode(value);
+  }
+}
 
 @DataClassName('Mutirao')
 class Mutiroes extends Table {
@@ -30,7 +46,7 @@ class Permissoes extends Table {
   IntColumn get mutiraoId =>
       integer().customConstraint('REFERENCES mutiroes(id) ON DELETE CASCADE')();
   TextColumn get email => text()();
-  TextColumn get permissoes => text()();
+  TextColumn get permissoes => text().map(const StringListConverter())();
   @override
   Set<Column> get primaryKey => {mutiraoId, email};
 }
