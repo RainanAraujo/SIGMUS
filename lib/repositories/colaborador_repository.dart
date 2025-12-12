@@ -49,6 +49,16 @@ class ColaboradorRepository
     return false;
   }
 
+  Future<bool> deleteAll({required int mutiraoId}) async {
+    final result = await (_db.delete(
+      _db.colaboradores,
+    )..where((c) => c.mutiraoId.equals(mutiraoId))).go();
+    if (result > 0) {
+      return true;
+    }
+    return false;
+  }
+
   @override
   Future<Colaborador?> getById(int id) async {
     return (_db.select(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sigmus/data/brasil_data.dart';
+import 'package:sigmus/database/app_database.dart';
 import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/repositories/colaborador_repository.dart';
 import 'package:sigmus/repositories/medico_repository.dart';
@@ -29,7 +30,13 @@ class MedicoItem {
 
 class MutiraoFormDialog extends StatefulWidget {
   final MutiraoItem? mutirao;
-  final Function(MutiraoItem)? onSubmit;
+  final Function(
+    Mutirao,
+    List<ColaboradorItem>,
+    List<MedicoItem>,
+    List<String>,
+  )?
+  onSubmit;
 
   const MutiraoFormDialog({super.key, this.mutirao, this.onSubmit});
 
@@ -124,9 +131,22 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
         _isLoading = true;
       });
 
-      final mutirao = widget.mutirao;
+      final id = widget.mutirao?.id ?? DateTime.now().millisecondsSinceEpoch;
+      final mutirao = Mutirao(
+        id: id,
+        tipo: _tipo,
+        dataInicio: _dataInicio!.toIso8601String(),
+        dataFinal: _dataFinal!.toIso8601String(),
+        estado: _estado,
+        municipio: _municipio,
+        local: _local,
+        demandante: _demandante,
+        contratante: _contratante,
+        atualizadoEm: DateTime.now().millisecondsSinceEpoch,
+        status: 0,
+      );
 
-      widget.onSubmit?.call(mutirao!);
+      widget.onSubmit?.call(mutirao, _colaboradores, _medicos, _condutas);
 
       setState(() {
         _isLoading = false;

@@ -56,6 +56,13 @@ class MedicoRepository implements IRepository<Medico, MedicosCompanion> {
   }
 
   @override
+  Future<Medico?> getByCrm(String crm) async {
+    return (_db.select(
+      _db.medicos,
+    )..where((m) => m.crm.equals(crm))).getSingleOrNull();
+  }
+
+  @override
   Future<List<Medico>> getAll({int? mutiraoId}) async {
     final query = _db.select(_db.medicos)
       ..where((m) => m.status.equals(ModelStatus.deleted.index).not());

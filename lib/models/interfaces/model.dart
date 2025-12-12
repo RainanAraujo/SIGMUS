@@ -1,4 +1,1 @@
-enum ModelStatus {
-  ok,
-  deleted,
-}
+enum ModelStatus { active, deleted }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sigmus/database/app_database.dart';
+import 'package:sigmus/models/interfaces/model.dart';
 import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/models/procedimento_item.dart';
 import 'package:sigmus/theme/app_colors.dart';
@@ -15,7 +16,7 @@ class CirurgiaFormDialog extends StatefulWidget {
   final ProcedimentoItem? procedimento;
   final List<String> datasDisponiveis;
   final List<Medico> medicosDisponiveis;
-  final Function(ProcedimentoItem)? onSubmit;
+  final Function(Procedimento, Paciente)? onSubmit;
 
   const CirurgiaFormDialog({
     super.key,
@@ -35,15 +36,12 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
 
   late final PacienteFormController _pacienteController;
 
-  // Controllers para campos de texto
   late final TextEditingController _dioptriaController;
   late final TextEditingController _observacoesController;
-
-  // ValueNotifiers para dropdowns (evita rebuild do form inteiro)
   late final ValueNotifier<String?> _dataSelecionada;
   late final ValueNotifier<String> _tipoProcedimento;
   late final ValueNotifier<String> _olhoOperado;
-  late final ValueNotifier<int?> _medicoId;
+  late final ValueNotifier<Medico?> _medico;
   late final ValueNotifier<bool> _possuiIntercorrencia;
 
   bool _isLoading = false;
@@ -53,16 +51,12 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
     super.initState();
 
     _pacienteController = PacienteFormController();
-
-    // Inicializar controllers de texto
     _dioptriaController = TextEditingController();
     _observacoesController = TextEditingController();
-
-    // Inicializar ValueNotifiers
     _dataSelecionada = ValueNotifier(null);
     _tipoProcedimento = ValueNotifier('Catarata');
     _olhoOperado = ValueNotifier('OE');
-    _medicoId = ValueNotifier(null);
+    _medico = ValueNotifier(null);
     _possuiIntercorrencia = ValueNotifier(false);
 
     if (widget.procedimento != null) {
@@ -77,7 +71,7 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
     _dataSelecionada.dispose();
     _tipoProcedimento.dispose();
     _olhoOperado.dispose();
-    _medicoId.dispose();
+    _medico.dispose();
     _possuiIntercorrencia.dispose();
     super.dispose();
   }
@@ -86,7 +80,6 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
     final paciente = item.paciente;
     final procedimento = item.procedimento;
 
-    // Carrega dados do paciente
     _pacienteController.cpf = paciente.cpf ?? '';
     _pacienteController.cns = paciente.cns ?? '';
     _pacienteController.nome = paciente.nome ?? '';
@@ -99,12 +92,13 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
     _pacienteController.estado = paciente.uf ?? '';
     _pacienteController.municipio = paciente.municipio ?? '';
 
-    // Carrega dados do procedimento
     _dataSelecionada.value = procedimento.data;
-    _tipoProcedimento.value = procedimento.tipo ?? 'Catarata';
-    _olhoOperado.value = procedimento.olho ?? 'OE';
+    _tipoProcedimento.value = procedimento.tipo;
+    _olhoOperado.value = procedimento.olho;
     _dioptriaController.text = procedimento.dioptriaLente ?? '';
-    _medicoId.value = procedimento.medicoId;
+    _medico.value = widget.medicosDisponiveis.firstWhere(
+      (medico) => medico.id == procedimento.medicoId,
+    );
     _possuiIntercorrencia.value =
         procedimento.intercorrencia?.isNotEmpty ?? false;
     _observacoesController.text = procedimento.observacao ?? '';
@@ -124,8 +118,6 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
 
       final paciente = Paciente(
         id: widget.procedimento?.paciente.id ?? now,
-        atualizadoEm: now,
-        status: 1,
         cpf: _pacienteController.cpf.isEmpty ? null : _pacienteController.cpf,
         cns: _pacienteController.cns.isEmpty ? null : _pacienteController.cns,
         nome: _pacienteController.nome,
@@ -143,36 +135,30 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
         municipio: _pacienteController.municipio.isEmpty
             ? null
             : _pacienteController.municipio,
+        status: ModelStatus.active.index,
+        atualizadoEm: now,
       );
 
       final procedimento = Procedimento(
         id: widget.procedimento?.procedimento.id ?? now,
         mutiraoId: widget.mutirao.id,
-        atualizadoEm: now,
-        status: 1,
-        pacienteId: widget.procedimento?.procedimento.pacienteId ?? 0,
+        pacienteId: paciente.id,
         data: _dataSelecionada.value,
         tipo: _tipoProcedimento.value,
         olho: _olhoOperado.value,
         dioptriaLente: _dioptriaController.text.isEmpty
             ? null
             : _dioptriaController.text,
-        medicoId: _medicoId.value!,
+        medicoId: _medico.value!.id,
         intercorrencia: _possuiIntercorrencia.value ? 'Sim' : null,
         observacao: _observacoesController.text.isEmpty
             ? null
             : _observacoesController.text,
+        status: ModelStatus.active.index,
+        atualizadoEm: now,
       );
 
-      widget.onSubmit?.call(
-        ProcedimentoItem(
-          paciente: paciente,
-          procedimento: procedimento,
-          medico: widget.medicosDisponiveis.firstWhere(
-            (medico) => medico.crm.hashCode == _medicoId.value,
-          ),
-        ),
-      );
+      widget.onSubmit?.call(procedimento, paciente);
 
       if (mounted) {
         Navigator.of(context).pop();
@@ -365,10 +351,10 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
 
         const SizedBox(height: 16),
 
-        ValueListenableBuilder<int?>(
-          valueListenable: _medicoId,
+        ValueListenableBuilder<Medico?>(
+          valueListenable: _medico,
           builder: (context, medico, _) {
-            return AppDropdown<int>(
+            return AppDropdown<Medico>(
               value: medico,
               label: 'Nome do Médico',
               hint: 'Selecione',
@@ -376,11 +362,11 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
               enabled: !_isLoading,
               items: widget.medicosDisponiveis.map((medico) {
                 return DropdownMenuItem(
-                  value: medico.crm.hashCode,
+                  value: medico,
                   child: Text(medico.nome),
                 );
               }).toList(),
-              onChanged: (value) => _medicoId.value = value,
+              onChanged: (value) => _medico.value = value,
               validator: (value) {
                 if (value == null) {
                   return 'Selecione um médico';

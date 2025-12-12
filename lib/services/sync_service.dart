@@ -7,9 +7,7 @@ import 'package:sigmus/services/sigmus_api.dart';
 
 class SyncService {
   final AppDatabase _db;
-
-  SyncService._(this._db);
-  static final SyncService instance = SyncService._(AppDatabase());
+  SyncService(this._db);
 
   Future<int> getLastLocalModification(int mutiraoId) async {
     final mutiroesTS = await (_db.select(

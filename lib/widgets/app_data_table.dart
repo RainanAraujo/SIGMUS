@@ -247,8 +247,8 @@ class _AppDataTableState<T> extends State<AppDataTable<T>> {
           source: _DataTableSourceAdapter<T>(
             items: _filteredItems,
             columns: widget.columns,
-            rowActions: (item) => widget.rowActions!(item),
-            menuActions: (item) => widget.menuActions!(item),
+            rowActions: (item) => widget.rowActions?.call(item) ?? [],
+            menuActions: (item) => widget.menuActions?.call(item) ?? [],
             onRowTap: widget.onRowTap,
           ),
         ),

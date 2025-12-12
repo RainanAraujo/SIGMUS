@@ -30,6 +30,20 @@ class MutiraoItem {
     required this.syncStatus,
   });
 
+  MutiraoItem.createEmpty()
+    : id = 0,
+      tipo = '',
+      contratante = '',
+      dataFinal = '',
+      dataInicio = '',
+      demandante = '',
+      estado = '',
+      local = '',
+      municipio = '',
+      permissoes = const {},
+      status = 0,
+      syncStatus = SyncStatus.toDownload;
+
   MutiraoItem.fromApiMutirao(MutiraoInfo item)
     : id = item.id,
       tipo = item.tipo,

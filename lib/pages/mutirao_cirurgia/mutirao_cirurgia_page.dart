@@ -1,7 +1,9 @@
 import 'package:collection/collection.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sigmus/database/app_database.dart';
+import 'package:sigmus/models/interfaces/model.dart';
 import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/models/procedimento_item.dart';
 import 'package:sigmus/pages/mutirao_cirurgia/cirurgia_dialog.dart';
@@ -78,8 +80,6 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
         mutiraoId: widget.mutirao.id,
       );
 
-      print(medicoList);
-
       _filterData();
 
       isLoading = false;
@@ -118,6 +118,9 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
             (m) => m.id == proc.medicoId,
           );
 
+          print(paciente);
+          print(medico);
+
           if (paciente == null || medico == null) {
             return null;
           }
@@ -132,7 +135,7 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
         .toList();
 
     procedimentos = items;
-    isLoading = false;
+    setState(() {});
   }
 
   List<String> _getDatasDisponiveis() {
@@ -157,8 +160,14 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
         mutirao: widget.mutirao,
         datasDisponiveis: _getDatasDisponiveis(),
         medicosDisponiveis: medicoList,
-        onSubmit: (item) {
-          procedimentos = [...procedimentos, item];
+        onSubmit: (procedimento, paciente) async {
+          await GetIt.I<ProcedimentoRepository>().upsert(
+            procedimento.toCompanion(true),
+          );
+          await GetIt.I<PacienteRepository>().upsert(
+            paciente.toCompanion(true),
+          );
+          _loadData();
           AppToast.success(context, message: 'Procedimento criado com sucesso');
         },
       ),
@@ -173,13 +182,14 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
         procedimento: item,
         datasDisponiveis: _getDatasDisponiveis(),
         medicosDisponiveis: medicoList,
-        onSubmit: (updatedItem) {
-          final index = procedimentos.indexWhere(
-            (p) => p.procedimento.pacienteId == item.procedimento.pacienteId,
+        onSubmit: (procedimento, paciente) async {
+          await GetIt.I<ProcedimentoRepository>().upsert(
+            procedimento.toCompanion(true),
           );
-          if (index != -1) {
-            procedimentos[index] = updatedItem;
-          }
+          await GetIt.I<PacienteRepository>().upsert(
+            paciente.toCompanion(true),
+          );
+          _loadData();
           AppToast.success(
             context,
             message: 'Procedimento atualizado com sucesso',
@@ -200,10 +210,17 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
       isDestructive: true,
     );
 
+    final now = DateTime.now().millisecondsSinceEpoch;
+
     if (confirmed == true) {
-      procedimentos.removeWhere(
-        (p) => p.procedimento.pacienteId == item.procedimento.pacienteId,
+      await GetIt.I<ProcedimentoRepository>().update(
+        item.procedimento.id,
+        ProcedimentosCompanion(
+          status: drift.Value(ModelStatus.deleted.index),
+          atualizadoEm: drift.Value(now),
+        ),
       );
+      _loadData();
     }
   }
 
@@ -275,16 +292,16 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
                     ],
                     columns: [
                       TableColumnConfig(
-                        label: 'Nome',
-                        getValue: (p) => p.paciente.nome ?? '',
-                      ),
-                      TableColumnConfig(
                         label: 'CPF',
                         getValue: (p) => _formatCpf(p.paciente.cpf ?? ''),
                       ),
                       TableColumnConfig(
                         label: 'CNS',
                         getValue: (p) => p.paciente.cns ?? '',
+                      ),
+                      TableColumnConfig(
+                        label: 'Nome',
+                        getValue: (p) => p.paciente.nome ?? '',
                       ),
                       TableColumnConfig(
                         label: 'Telefone',

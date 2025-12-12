@@ -1,11 +1,15 @@
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sigmus/database/app_database.dart';
 import 'package:sigmus/extensions/response_ext.dart';
 import 'package:sigmus/generated/sigmus_api.swagger.dart';
 import 'package:sigmus/models/interfaces/model.dart';
 import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/pages/mutiroes/mutirao_form_dialog.dart';
+import 'package:sigmus/repositories/colaborador_repository.dart';
 import 'package:sigmus/repositories/historico_sincronizacao_repository.dart';
+import 'package:sigmus/repositories/medico_repository.dart';
 import 'package:sigmus/repositories/mutirao_repository.dart';
 import 'package:sigmus/routes/app_router.dart';
 import 'package:sigmus/services/sigmus_api.dart';
@@ -137,8 +141,43 @@ class _MutiroesPageState extends State<MutiroesPage> {
     showDialog(
       context: context,
       builder: (context) => MutiraoFormDialog(
-        onSubmit: (mutirao) {
-          // mutiroes = [...mutiroes, mutirao];
+        onSubmit: (mutirao, colaboradores, medicos, condutas) async {
+          final now = DateTime.now().millisecondsSinceEpoch;
+          await GetIt.I<MutiraoRepository>().create(mutirao.toCompanion(true));
+          await GetIt.I<MutiraoRepository>().setCondutas(mutirao.id, condutas);
+          await GetIt.I<ColaboradorRepository>().deleteAll(
+            mutiraoId: mutirao.id,
+          );
+          for (final colaborador in colaboradores) {
+            await GetIt.I<ColaboradorRepository>().upsert(
+              ColaboradoresCompanion(
+                id: drift.Value(now),
+                mutiraoId: drift.Value(mutirao.id),
+                nome: drift.Value(colaborador.nome),
+                funcao: drift.Value(colaborador.funcao),
+                status: drift.Value(ModelStatus.active.index),
+                atualizadoEm: drift.Value(now),
+              ),
+            );
+          }
+          for (final medico in medicos) {
+            final medicoExists = await GetIt.I<MedicoRepository>().getByCrm(
+              medico.crm,
+            );
+            final id = medicoExists?.id ?? now;
+            await GetIt.I<MedicoRepository>().upsert(
+              MedicosCompanion(
+                id: drift.Value(id),
+                mutiraoId: drift.Value(mutirao.id),
+                nome: drift.Value(medico.nome),
+                crm: drift.Value(medico.crm),
+                status: drift.Value(ModelStatus.active.index),
+                atualizadoEm: drift.Value(now),
+              ),
+            );
+          }
+
+          await _loadData();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Mutirão criado com sucesso!')),
           );
@@ -152,19 +191,108 @@ class _MutiroesPageState extends State<MutiroesPage> {
       context: context,
       builder: (context) => MutiraoFormDialog(
         mutirao: mutirao,
-        onSubmit: (updatedMutirao) async {
+        onSubmit: (updatedMutirao, colaboradores, medicos, condutas) async {
+          final now = DateTime.now().millisecondsSinceEpoch;
           await GetIt.I<MutiraoRepository>().update(
             updatedMutirao.id,
-            updatedMutirao
-                .toDbMutirao(
-                  atualizadoEm: DateTime.now().millisecondsSinceEpoch,
-                )
-                .toCompanion(true),
+            updatedMutirao.toCompanion(true),
           );
+          var tempId = now;
+
+          final currentColaboradores = await GetIt.I<ColaboradorRepository>()
+              .getAll(mutiraoId: updatedMutirao.id);
+
+          for (final colaborador in colaboradores) {
+            final old = currentColaboradores
+                .where((c) => c.nome == colaborador.nome)
+                .firstOrNull;
+            if (old != null) {
+              await GetIt.I<ColaboradorRepository>().update(
+                old.id,
+                ColaboradoresCompanion(
+                  mutiraoId: drift.Value(updatedMutirao.id),
+                  nome: drift.Value(colaborador.nome),
+                  funcao: drift.Value(colaborador.funcao),
+                  status: drift.Value(ModelStatus.active.index),
+                  atualizadoEm: drift.Value(now),
+                ),
+              );
+            } else {
+              await GetIt.I<ColaboradorRepository>().create(
+                ColaboradoresCompanion(
+                  id: drift.Value(++tempId),
+                  mutiraoId: drift.Value(updatedMutirao.id),
+                  nome: drift.Value(colaborador.nome),
+                  funcao: drift.Value(colaborador.funcao),
+                  status: drift.Value(ModelStatus.active.index),
+                  atualizadoEm: drift.Value(now),
+                ),
+              );
+            }
+          }
+
+          final newColaboradoresNames = colaboradores
+              .map((c) => c.nome)
+              .toSet();
+          for (final old in currentColaboradores) {
+            if (!newColaboradoresNames.contains(old.nome)) {
+              await GetIt.I<ColaboradorRepository>().update(
+                old.id,
+                ColaboradoresCompanion(
+                  status: drift.Value(ModelStatus.deleted.index),
+                  atualizadoEm: drift.Value(now),
+                ),
+              );
+            }
+          }
+
+          final currentMedicos = await GetIt.I<MedicoRepository>().getAll(
+            mutiraoId: updatedMutirao.id,
+          );
+
+          for (final medico in medicos) {
+            final old = currentMedicos
+                .where((m) => m.crm == medico.crm)
+                .firstOrNull;
+
+            if (old != null) {
+              await GetIt.I<MedicoRepository>().update(
+                old.id,
+                MedicosCompanion(
+                  mutiraoId: drift.Value(updatedMutirao.id),
+                  nome: drift.Value(medico.nome),
+                  crm: drift.Value(medico.crm),
+                  status: drift.Value(ModelStatus.active.index),
+                  atualizadoEm: drift.Value(now),
+                ),
+              );
+            } else {
+              await GetIt.I<MedicoRepository>().create(
+                MedicosCompanion(
+                  id: drift.Value(++tempId),
+                  mutiraoId: drift.Value(updatedMutirao.id),
+                  nome: drift.Value(medico.nome),
+                  crm: drift.Value(medico.crm),
+                  status: drift.Value(ModelStatus.active.index),
+                  atualizadoEm: drift.Value(now),
+                ),
+              );
+            }
+          }
+
+          final newMedicosCrms = medicos.map((m) => m.crm).toSet();
+          for (final old in currentMedicos) {
+            if (!newMedicosCrms.contains(old.crm)) {
+              await GetIt.I<MedicoRepository>().update(
+                old.id,
+                MedicosCompanion(
+                  status: drift.Value(ModelStatus.deleted.index),
+                  atualizadoEm: drift.Value(now),
+                ),
+              );
+            }
+          }
           await _loadData();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Mutirão atualizado com sucesso!')),
-          );
         },
       ),
     );
@@ -204,12 +332,12 @@ class _MutiroesPageState extends State<MutiroesPage> {
   Future<void> _syncMutirao(MutiraoItem mutirao) async {
     if (mutirao.syncStatus == SyncStatus.toUpload ||
         mutirao.syncStatus == SyncStatus.toMerge) {
-      await SyncService.instance.uploadMutiraoMudancas(mutirao.id);
+      await GetIt.I<SyncService>().uploadMutiraoMudancas(mutirao.id);
     }
 
     if (mutirao.syncStatus == SyncStatus.toDownload ||
         mutirao.syncStatus == SyncStatus.toMerge) {
-      await SyncService.instance.downloadMutiraoMudancas(mutirao.id);
+      await GetIt.I<SyncService>().downloadMutiraoMudancas(mutirao.id);
     }
 
     _loadData();
