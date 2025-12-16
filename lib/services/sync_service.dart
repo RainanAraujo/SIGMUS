@@ -127,9 +127,7 @@ class SyncService {
       final permissoes = await (_db.select(
         _db.permissoes,
       )..where((tbl) => tbl.mutiraoId.equals(mutiraoId))).get();
-      permissoesMap = {
-        for (var p in permissoes) p.email: {'permissoes': p.permissoes},
-      };
+      permissoesMap = {for (var p in permissoes) p.email: p.permissoes};
 
       final mutiraoCondutas = await (_db.select(
         _db.mutiraoCondutas,
@@ -234,6 +232,8 @@ class SyncService {
 
     if (res.isSuccessful && res.body?.timestamp != null) {
       await setLastSinc(mutiraoId, res.body!.timestamp);
+    } else {
+      throw Exception("Sincronização falhou.");
     }
   }
 

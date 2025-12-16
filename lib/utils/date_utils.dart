@@ -19,9 +19,8 @@ String formatDateFromString(String date) {
   return dateFormatted;
 }
 
-/// Formata uma data para o formato DD/MM/AAAA
 String formatDate(DateTime date) {
-  return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+  return DateFormat('dd/MM/yyyy', 'pt_BR').format(date);
 }
 
 /// Formata uma data para o formato AAAA-MM-DD (ISO)

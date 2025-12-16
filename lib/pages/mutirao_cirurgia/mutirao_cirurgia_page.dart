@@ -12,6 +12,7 @@ import 'package:sigmus/repositories/paciente_repository.dart';
 import 'package:sigmus/repositories/procedimento_repository.dart';
 import 'package:sigmus/theme/app_colors.dart';
 import 'package:sigmus/theme/app_typography.dart';
+import 'package:sigmus/utils/date_utils.dart';
 import 'package:sigmus/widgets/app_alert.dart';
 import 'package:sigmus/widgets/app_data_table.dart';
 import 'package:sigmus/widgets/app_dropdown.dart';
@@ -28,7 +29,7 @@ class MutiraoCirurgiaPage extends StatefulWidget {
 }
 
 class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
-  final _condutaFiltro = ValueNotifier<String?>(null);
+  final _filter = ValueNotifier<String?>(null);
   late final Listenable _dataListener;
 
   List<ProcedimentoItem> procedimentos = [];
@@ -38,19 +39,19 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
   List<Paciente> pacienteList = [];
   List<Medico> medicoList = [];
 
-  int get _pacientesCount => procedimentos.length;
-  int get _cirurgiasCatarataCount => procedimentos
-      .where((p) => (p.procedimento.tipo).toLowerCase().contains('catarata'))
+  int get _pacientesCount => procedimentoList.length;
+  int get _cirurgiasCatarataCount => procedimentoList
+      .where((p) => (p.tipo).toLowerCase().contains('catarata'))
       .length;
-  int get _cirurgiasPterigioCount => procedimentos
-      .where((p) => (p.procedimento.tipo).toLowerCase().contains('pterígio'))
+  int get _cirurgiasPterigioCount => procedimentoList
+      .where((p) => (p.tipo).toLowerCase().contains('pterigio'))
       .length;
 
   @override
   void initState() {
     super.initState();
 
-    _dataListener = Listenable.merge([_condutaFiltro]);
+    _dataListener = Listenable.merge([_filter]);
     _dataListener.addListener(_filterData);
 
     _loadData();
@@ -59,7 +60,7 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
   @override
   void dispose() {
     _dataListener.removeListener(_filterData);
-    _condutaFiltro.dispose();
+    _filter.dispose();
     super.dispose();
   }
 
@@ -92,24 +93,9 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
   }
 
   void _filterData() {
-    final condutaFiltro = _condutaFiltro.value;
+    final filter = _filter.value;
 
-    final procedimentosFiltrados = procedimentoList.where((proc) {
-      final tipo = (proc.tipo).toLowerCase();
-      if (!tipo.contains('catarata') && !tipo.contains('pterígio')) {
-        return false;
-      }
-
-      if (condutaFiltro != null) {
-        if (!tipo.contains(condutaFiltro.toLowerCase())) {
-          return false;
-        }
-      }
-
-      return true;
-    }).toList();
-
-    final items = procedimentosFiltrados
+    final items = procedimentoList
         .map((proc) {
           final paciente = pacienteList.firstWhereOrNull(
             (p) => p.id == proc.pacienteId,
@@ -117,9 +103,6 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
           final medico = medicoList.firstWhereOrNull(
             (m) => m.id == proc.medicoId,
           );
-
-          print(paciente);
-          print(medico);
 
           if (paciente == null || medico == null) {
             return null;
@@ -132,6 +115,20 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
           );
         })
         .nonNulls
+        .where(
+          (proc) => switch (filter) {
+            'catarata' => proc.procedimento.tipo.toLowerCase().contains(
+              'catarata',
+            ),
+            'pterigio' => proc.procedimento.tipo.toLowerCase().contains(
+              'pterigio',
+            ),
+            'sem_cpf' => proc.paciente.cpf?.isNotEmpty != true,
+            'sem_cns' => proc.paciente.cns?.isNotEmpty != true,
+            'sem_tel' => proc.paciente.tel?.isNotEmpty != true,
+            _ => true,
+          },
+        )
         .toList();
 
     procedimentos = items;
@@ -147,7 +144,7 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
     final datas = <String>[];
     var current = dataInicio;
     while (!current.isAfter(dataFinal)) {
-      datas.add(current.toIso8601String().split('T').first);
+      datas.add(formatDate(current));
       current = current.add(const Duration(days: 1));
     }
     return datas;
@@ -258,7 +255,7 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
                         width: 150,
                         height: 40,
                         child: AppDropdown<String>(
-                          value: _condutaFiltro.value,
+                          initialValue: _filter.value,
                           label: 'Conduta',
                           hint: 'Todos',
                           items: const [
@@ -271,9 +268,21 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
                               value: 'pterigio',
                               child: Text('Pterígio'),
                             ),
+                            DropdownMenuItem(
+                              value: 'sem_cpf',
+                              child: Text('Sem CPF'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'sem_cns',
+                              child: Text('Sem CNS'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'sem_tel',
+                              child: Text('Sem Telefone'),
+                            ),
                           ],
                           onChanged: (value) {
-                            _condutaFiltro.value = value;
+                            _filter.value = value;
                           },
                         ),
                       ),

@@ -212,7 +212,7 @@ class _GenericoFormDialogState extends State<GenericoFormDialog> {
           valueListenable: _dataSelecionada,
           builder: (context, data, _) {
             return AppDropdown<String>(
-              value: data,
+              initialValue: data,
               label: 'Data',
               hint: 'Selecione',
               items: widget.datasDisponiveis.map((data) {
@@ -233,7 +233,7 @@ class _GenericoFormDialogState extends State<GenericoFormDialog> {
           valueListenable: _conduta,
           builder: (context, conduta, _) {
             return AppDropdown<String>(
-              value: conduta,
+              initialValue: conduta,
               label: 'Conduta',
               hint: 'Selecione',
               isRequired: true,
@@ -282,7 +282,7 @@ class _GenericoFormDialogState extends State<GenericoFormDialog> {
           valueListenable: _profissionalId,
           builder: (context, profissional, _) {
             return AppDropdown<int>(
-              value: profissional,
+              initialValue: profissional,
               label: 'Nome do profissional responsável',
               hint: 'Selecione',
               isRequired: true,

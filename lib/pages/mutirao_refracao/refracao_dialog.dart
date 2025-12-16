@@ -316,7 +316,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                   valueListenable: _dataSelecionada,
                   builder: (context, data, _) {
                     return AppDropdown<String>(
-                      value: data,
+                      initialValue: data,
                       label: 'Data',
                       hint: 'Selecione',
                       isRequired: true,
@@ -338,7 +338,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                   },
                 ),
                 AppDropdown<String>(
-                  value: conduta,
+                  initialValue: conduta,
                   label: 'Conduta',
                   isRequired: true,
 
@@ -372,7 +372,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
               valueListenable: _medicoId,
               builder: (context, medico, _) {
                 return AppDropdown<int>(
-                  value: medico,
+                  initialValue: medico,
                   label: 'Nome do Médico',
                   hint: 'Selecione (opcional)',
 
@@ -614,7 +614,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                     valueListenable: _tipoCirurgia,
                     builder: (context, tipo, _) {
                       return AppDropdown<int>(
-                        value: tipo,
+                        initialValue: tipo,
                         label: 'Tipo de Cirurgia',
                         hint: 'Selecione',
 
@@ -630,7 +630,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                     valueListenable: _olho,
                     builder: (context, olho, _) {
                       return AppDropdown<String>(
-                        value: olho,
+                        initialValue: olho,
                         label: 'Olho',
                         hint: 'Selecione',
 

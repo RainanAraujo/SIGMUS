@@ -271,7 +271,7 @@ class _MutiraoRefracaoPageState extends State<MutiraoRefracaoPage> {
           width: 200,
           height: 40,
           child: AppDropdown<String>(
-            value: _condutaFiltro.value,
+            initialValue: _condutaFiltro.value,
             label: 'Conduta',
             hint: 'Todos',
             items: const [

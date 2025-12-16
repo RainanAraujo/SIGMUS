@@ -4,7 +4,6 @@ import 'package:sigmus/models/interfaces/model.dart';
 import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/models/procedimento_item.dart';
 import 'package:sigmus/theme/app_colors.dart';
-import 'package:sigmus/utils/date_utils.dart';
 import 'package:sigmus/widgets/app_dialog.dart';
 import 'package:sigmus/widgets/app_dropdown.dart';
 import 'package:sigmus/widgets/app_toast.dart';
@@ -243,16 +242,13 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
           valueListenable: _dataSelecionada,
           builder: (context, data, _) {
             return AppDropdown<String>(
-              value: data,
+              initialValue: data,
               label: 'Data',
               hint: 'Selecione',
               isRequired: true,
               enabled: !_isLoading,
               items: widget.datasDisponiveis.map((data) {
-                return DropdownMenuItem(
-                  value: data,
-                  child: Text(formatDateFromString(data)),
-                );
+                return DropdownMenuItem(value: data, child: Text(data));
               }).toList(),
               onChanged: (value) => _dataSelecionada.value = value,
               validator: (value) {
@@ -271,13 +267,13 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
           valueListenable: _tipoProcedimento,
           builder: (context, tipo, _) {
             return AppDropdown<String>(
-              value: tipo,
+              initialValue: tipo,
               label: 'Tipo de procedimento',
               isRequired: true,
               enabled: !_isLoading,
               items: const [
-                DropdownMenuItem(value: 'Catarata', child: Text('Catarata')),
-                DropdownMenuItem(value: 'Pterígio', child: Text('Pterígio')),
+                DropdownMenuItem(value: 'catarata', child: Text('Catarata')),
+                DropdownMenuItem(value: 'pterigio', child: Text('Pterígio')),
               ],
               onChanged: (value) => _tipoProcedimento.value = value!,
               validator: (value) {
@@ -301,7 +297,7 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
                   valueListenable: _olhoOperado,
                   builder: (context, olho, _) {
                     return AppDropdown<String>(
-                      value: olho,
+                      initialValue: olho,
                       label: 'Olho operado',
                       isRequired: true,
                       enabled: !_isLoading,
@@ -355,7 +351,7 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
           valueListenable: _medico,
           builder: (context, medico, _) {
             return AppDropdown<Medico>(
-              value: medico,
+              initialValue: medico,
               label: 'Nome do Médico',
               hint: 'Selecione',
               isRequired: true,
@@ -383,7 +379,7 @@ class _CirurgiaFormDialogState extends State<CirurgiaFormDialog> {
           valueListenable: _possuiIntercorrencia,
           builder: (context, intercorrencia, _) {
             return AppDropdown<bool>(
-              value: intercorrencia,
+              initialValue: intercorrencia,
               label: 'Possui intercorrência?',
               enabled: !_isLoading,
               items: const [

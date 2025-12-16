@@ -264,7 +264,7 @@ class _MutiraoFormDialogState extends State<MutiraoFormDialog> {
             FormRow(
               children: [
                 AppDropdown<String>(
-                  value: _tipo,
+                  initialValue: _tipo,
                   label: 'Tipo de Mutirão',
                   isRequired: true,
                   enabled: widget.mutirao == null,

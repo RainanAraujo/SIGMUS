@@ -8,7 +8,6 @@ import 'package:sigmus/models/interfaces/model.dart';
 import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/pages/mutiroes/mutirao_form_dialog.dart';
 import 'package:sigmus/repositories/colaborador_repository.dart';
-import 'package:sigmus/repositories/historico_sincronizacao_repository.dart';
 import 'package:sigmus/repositories/medico_repository.dart';
 import 'package:sigmus/repositories/mutirao_repository.dart';
 import 'package:sigmus/routes/app_router.dart';
@@ -97,27 +96,21 @@ class _MutiroesPageState extends State<MutiroesPage> {
 
       if (localIndex != -1) {
         final localDbItem = localMutiroes.firstWhere((m) => m.id == mutirao.id);
-        final lastSync = await GetIt.I<HistoricoSincronizacaoRepository>()
-            .getLast(mutirao.id);
+        final lastSync = await GetIt.I<SyncService>().getLastSinc(mutirao.id);
 
-        if (lastSync != null) {
-          final remoteNewer = lastSync.remoteTs < mutirao.atualizadoEm;
-          final localNewer = lastSync.localTs < localDbItem.atualizadoEm;
+        final remoteNewer = lastSync.remoteTs < mutirao.atualizadoEm;
+        final localNewer = lastSync.localTs < localDbItem.atualizadoEm;
 
-          if (remoteNewer && localNewer) {
-            item.syncStatus = SyncStatus.toMerge;
-            list[localIndex] = item;
-          } else if (remoteNewer) {
-            item.syncStatus = SyncStatus.toDownload;
-            list[localIndex] = item;
-          } else if (localNewer) {
-            list[localIndex].syncStatus = SyncStatus.toUpload;
-          } else {
-            list[localIndex].syncStatus = SyncStatus.upToDate;
-          }
-        } else {
+        if (remoteNewer && localNewer) {
           item.syncStatus = SyncStatus.toMerge;
           list[localIndex] = item;
+        } else if (remoteNewer) {
+          item.syncStatus = SyncStatus.toDownload;
+          list[localIndex] = item;
+        } else if (localNewer) {
+          list[localIndex].syncStatus = SyncStatus.toUpload;
+        } else {
+          list[localIndex].syncStatus = SyncStatus.upToDate;
         }
       } else {
         list.add(item);
@@ -330,6 +323,7 @@ class _MutiroesPageState extends State<MutiroesPage> {
   }
 
   Future<void> _syncMutirao(MutiraoItem mutirao) async {
+    print('Syncing mutirao ${mutirao.syncStatus}');
     if (mutirao.syncStatus == SyncStatus.toUpload ||
         mutirao.syncStatus == SyncStatus.toMerge) {
       await GetIt.I<SyncService>().uploadMutiraoMudancas(mutirao.id);
@@ -340,7 +334,7 @@ class _MutiroesPageState extends State<MutiroesPage> {
       await GetIt.I<SyncService>().downloadMutiraoMudancas(mutirao.id);
     }
 
-    _loadData();
+    await _loadData();
   }
 
   String _capitalize(String text) {
@@ -383,7 +377,10 @@ class _MutiroesPageState extends State<MutiroesPage> {
                   label: const Text('Criar mutirão'),
                 ),
               ],
-              onRowTap: (item) {
+              onRowTap: (item) async {
+                if (item.syncStatus == SyncStatus.toDownload) {
+                  await _syncMutirao(item);
+                }
                 if (item.tipo == "refracao") {
                   AppRouter.goToMutiraoRefracao(mutirao: item);
                 } else if (item.tipo == "cirurgia") {

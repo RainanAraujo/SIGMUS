@@ -147,6 +147,8 @@ class _PacienteFormSectionState extends State<PacienteFormSection> {
                         ? (value) {
                             setState(() {
                               widget.controller.semCpfCns = value ?? false;
+                              _cpfController.clear();
+                              _cnsController.clear();
                             });
                             _notifyChange();
                           }
@@ -187,12 +189,12 @@ class _PacienteFormSectionState extends State<PacienteFormSection> {
                   _notifyChange();
                 },
                 validator: (value) {
-                  if (!widget.controller.semCpfCns &&
-                      (value == null || value.isEmpty) &&
-                      widget.controller.cns.isEmpty) {
-                    return 'CPF ou CNS obrigatório';
+                  if (widget.controller.semCpfCns) return null;
+                  if (value == null ||
+                      value.isEmpty && widget.controller.cns.isEmpty) {
+                    return 'Preencha o CPF';
                   }
-                  if (value != null && value.isNotEmpty) {
+                  if (value.isNotEmpty) {
                     return validateCpf(value);
                   }
                   return null;
@@ -217,12 +219,12 @@ class _PacienteFormSectionState extends State<PacienteFormSection> {
                   _notifyChange();
                 },
                 validator: (value) {
-                  if (!widget.controller.semCpfCns &&
-                      (value == null || value.isEmpty) &&
-                      widget.controller.cpf.isEmpty) {
-                    return 'CPF ou CNS obrigatório';
+                  if (widget.controller.semCpfCns) return null;
+                  if (value == null ||
+                      value.isEmpty && widget.controller.cpf.isEmpty) {
+                    return 'Preencha o CNS';
                   }
-                  if (value != null && value.isNotEmpty) {
+                  if (value.isNotEmpty) {
                     return validateCns(value);
                   }
                   return null;

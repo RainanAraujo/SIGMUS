@@ -227,7 +227,7 @@ class _MutiraoGenericoPageState extends State<MutiraoGenericoPage> {
           width: 200,
           height: 40,
           child: AppDropdown<String>(
-            value: _condutaFiltro.value,
+            initialValue: _condutaFiltro.value,
             label: '',
             hint: 'Todos',
             items: const [
