@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/material.dart';
 import 'package:sigmus/database/app_database.dart';
 import 'package:sigmus/generated/sigmus_api.swagger.dart' as api;
 import 'package:sigmus/services/sigmus_api.dart';
@@ -439,7 +440,7 @@ class SyncService {
 
       await setLastSinc(mutiraoId, data.timestamp);
     } catch (e) {
-      print('Error during sync download: $e');
+      debugPrint('Error during sync download: $e');
       rethrow;
     }
   }

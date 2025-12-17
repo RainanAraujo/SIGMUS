@@ -1,6 +1,10 @@
+import 'dart:convert';
+
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:sigmus/generated/sigmus_api.swagger.dart';
+import 'package:sigmus/database/app_database.dart';
 import 'package:sigmus/models/conduta_item.dart';
+import 'package:sigmus/models/interfaces/model.dart';
 import 'package:sigmus/theme/app_colors.dart';
 import 'package:sigmus/utils/date_utils.dart';
 import 'package:sigmus/widgets/app_dialog.dart';
@@ -130,36 +134,43 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
     _parseDados(conduta.dados);
   }
 
-  void _parseDados(Map<String, dynamic>? dados) {
-    if (dados == null) return;
+  void _parseDados(String? dadosJson) {
+    if (dadosJson == null || dadosJson.isEmpty) return;
 
-    // OD
-    _esfericoDireitoController.text = dados['od_esferico']?.toString() ?? '';
-    _cilindricoDireitoController.text =
-        dados['od_cilindrico']?.toString() ?? '';
-    _eixoDireitoController.text = dados['od_eixo']?.toString() ?? '';
+    try {
+      final dados = jsonDecode(dadosJson) as Map<String, dynamic>;
 
-    // OE
-    _esfericoEsquerdoController.text = dados['oe_esferico']?.toString() ?? '';
-    _cilindricoEsquerdoController.text =
-        dados['oe_cilindrico']?.toString() ?? '';
-    _eixoEsquerdoController.text = dados['oe_eixo']?.toString() ?? '';
+      // OD
+      _esfericoDireitoController.text = dados['od_esferico']?.toString() ?? '';
+      _cilindricoDireitoController.text =
+          dados['od_cilindrico']?.toString() ?? '';
+      _eixoDireitoController.text = dados['od_eixo']?.toString() ?? '';
 
-    // Outros
-    _adicaoController.text = dados['adicao']?.toString() ?? '';
-    _dpController.text = dados['dp']?.toString() ?? '';
-    _observacoesController.text = dados['observacoes']?.toString() ?? '';
-    _encaminhamentoController.text = dados['encaminhamento']?.toString() ?? '';
-    _tipoEncaminhamentoController.text =
-        dados['tipo_encaminhamento']?.toString() ?? '';
+      // OE
+      _esfericoEsquerdoController.text = dados['oe_esferico']?.toString() ?? '';
+      _cilindricoEsquerdoController.text =
+          dados['oe_cilindrico']?.toString() ?? '';
+      _eixoEsquerdoController.text = dados['oe_eixo']?.toString() ?? '';
 
-    // Cirurgia
-    _tipoCirurgia.value = dados['tipo_cirurgia'] as int?;
-    _olho.value = dados['olho'] as String?;
+      // Outros
+      _adicaoController.text = dados['adicao']?.toString() ?? '';
+      _dpController.text = dados['dp']?.toString() ?? '';
+      _observacoesController.text = dados['observacoes']?.toString() ?? '';
+      _encaminhamentoController.text =
+          dados['encaminhamento']?.toString() ?? '';
+      _tipoEncaminhamentoController.text =
+          dados['tipo_encaminhamento']?.toString() ?? '';
+
+      // Cirurgia
+      _tipoCirurgia.value = dados['tipo_cirurgia'] as int?;
+      _olho.value = dados['olho'] as String?;
+    } catch (e) {
+      debugPrint('Erro ao parsear dados: $e');
+    }
   }
 
-  Map<String, dynamic> _buildDados() {
-    return {
+  String _buildDados() {
+    final dados = {
       'od_esferico': _esfericoDireitoController.text.isNotEmpty
           ? _esfericoDireitoController.text
           : null,
@@ -194,6 +205,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
       'tipo_cirurgia': _tipoCirurgia.value,
       'olho': _olho.value,
     };
+    return jsonEncode(dados);
   }
 
   void _handleSubmit() async {
@@ -205,8 +217,9 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
       final now = DateTime.now().millisecondsSinceEpoch;
 
       final paciente = Paciente(
+        id: widget.condutaItem?.paciente.id ?? now,
         atualizadoEm: now,
-        status: 1,
+        status: ModelStatus.active.index,
         cpf: _pacienteController.cpf.isEmpty ? null : _pacienteController.cpf,
         cns: _pacienteController.cns.isEmpty ? null : _pacienteController.cns,
         nome: _pacienteController.nome,
@@ -227,10 +240,12 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
       );
 
       final conduta = Conduta(
+        id: widget.condutaItem?.conduta.id ?? now,
+        mutiraoId: widget.condutaItem?.conduta.mutiraoId ?? 0,
         atualizadoEm: now,
-        status: 1,
-        pacienteId: widget.condutaItem?.conduta.pacienteId ?? 0,
-        data: _dataSelecionada.value,
+        status: ModelStatus.active.index,
+        pacienteId: paciente.id,
+        data: _dataSelecionada.value ?? '',
         tipo: _conduta.value,
         medicoId: _medicoId.value,
         dados: _buildDados(),
@@ -238,9 +253,8 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
 
       Medico? medico;
       if (_medicoId.value != null) {
-        medico = widget.medicosDisponiveis.firstWhere(
-          (m) => m.crm.hashCode == _medicoId.value,
-          orElse: () => Medico(atualizadoEm: 0, status: 0, nome: '', crm: ''),
+        medico = widget.medicosDisponiveis.firstWhereOrNull(
+          (m) => m.id == _medicoId.value,
         );
       }
 
@@ -378,7 +392,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
 
                   items: widget.medicosDisponiveis.map((medico) {
                     return DropdownMenuItem(
-                      value: medico.crm.hashCode,
+                      value: medico.id,
                       child: Text(medico.nome),
                     );
                   }).toList(),

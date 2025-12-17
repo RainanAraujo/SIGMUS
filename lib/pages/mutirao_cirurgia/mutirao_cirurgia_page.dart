@@ -3,6 +3,7 @@ import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sigmus/database/app_database.dart';
+import 'package:sigmus/extensions/mutirao_item_ext.dart';
 import 'package:sigmus/models/interfaces/model.dart';
 import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/models/procedimento_item.dart';
@@ -12,7 +13,6 @@ import 'package:sigmus/repositories/paciente_repository.dart';
 import 'package:sigmus/repositories/procedimento_repository.dart';
 import 'package:sigmus/theme/app_colors.dart';
 import 'package:sigmus/theme/app_typography.dart';
-import 'package:sigmus/utils/date_utils.dart';
 import 'package:sigmus/widgets/app_alert.dart';
 import 'package:sigmus/widgets/app_data_table.dart';
 import 'package:sigmus/widgets/app_dropdown.dart';
@@ -135,27 +135,12 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
     setState(() {});
   }
 
-  List<String> _getDatasDisponiveis() {
-    final dataInicio = DateTime.tryParse(widget.mutirao.dataInicio);
-    final dataFinal = DateTime.tryParse(widget.mutirao.dataFinal);
-
-    if (dataInicio == null || dataFinal == null) return [];
-
-    final datas = <String>[];
-    var current = dataInicio;
-    while (!current.isAfter(dataFinal)) {
-      datas.add(formatDate(current));
-      current = current.add(const Duration(days: 1));
-    }
-    return datas;
-  }
-
   void _createProcedimento() {
     showDialog(
       context: context,
       builder: (context) => CirurgiaFormDialog(
         mutirao: widget.mutirao,
-        datasDisponiveis: _getDatasDisponiveis(),
+        datasDisponiveis: widget.mutirao.availableDates,
         medicosDisponiveis: medicoList,
         onSubmit: (procedimento, paciente) async {
           await GetIt.I<ProcedimentoRepository>().upsert(
@@ -177,7 +162,7 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
       builder: (context) => CirurgiaFormDialog(
         mutirao: widget.mutirao,
         procedimento: item,
-        datasDisponiveis: _getDatasDisponiveis(),
+        datasDisponiveis: widget.mutirao.availableDates,
         medicosDisponiveis: medicoList,
         onSubmit: (procedimento, paciente) async {
           await GetIt.I<ProcedimentoRepository>().upsert(

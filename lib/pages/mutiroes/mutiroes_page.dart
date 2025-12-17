@@ -323,15 +323,20 @@ class _MutiroesPageState extends State<MutiroesPage> {
   }
 
   Future<void> _syncMutirao(MutiraoItem mutirao) async {
-    print('Syncing mutirao ${mutirao.syncStatus}');
-    if (mutirao.syncStatus == SyncStatus.toUpload ||
-        mutirao.syncStatus == SyncStatus.toMerge) {
-      await GetIt.I<SyncService>().uploadMutiraoMudancas(mutirao.id);
-    }
+    debugPrint('Syncing mutirao ${mutirao.syncStatus}');
 
-    if (mutirao.syncStatus == SyncStatus.toDownload ||
-        mutirao.syncStatus == SyncStatus.toMerge) {
-      await GetIt.I<SyncService>().downloadMutiraoMudancas(mutirao.id);
+    try {
+      if (mutirao.syncStatus == SyncStatus.toUpload ||
+          mutirao.syncStatus == SyncStatus.toMerge) {
+        await GetIt.I<SyncService>().uploadMutiraoMudancas(mutirao.id);
+      }
+
+      if (mutirao.syncStatus == SyncStatus.toDownload ||
+          mutirao.syncStatus == SyncStatus.toMerge) {
+        await GetIt.I<SyncService>().downloadMutiraoMudancas(mutirao.id);
+      }
+    } catch (e) {
+      debugPrint('Error during sync: $e');
     }
 
     await _loadData();
