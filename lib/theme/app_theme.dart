@@ -295,6 +295,7 @@ class AppTheme {
     popupMenuTheme: PopupMenuThemeData(
       color: AppColors.popover,
       elevation: 4,
+      menuPadding: const EdgeInsets.symmetric(vertical: 0),
       shadowColor: Colors.black.withOpacity(0.1),
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(

@@ -44,7 +44,7 @@ class AppDialog extends StatelessWidget {
           children: [
             _buildHeader(context),
 
-            Expanded(
+            Flexible(
               child: SingleChildScrollView(
                 physics: const ClampingScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),

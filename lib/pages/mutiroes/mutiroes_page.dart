@@ -6,6 +6,7 @@ import 'package:sigmus/extensions/response_ext.dart';
 import 'package:sigmus/generated/sigmus_api.swagger.dart';
 import 'package:sigmus/models/interfaces/model.dart';
 import 'package:sigmus/models/mutirao_item.dart';
+import 'package:sigmus/pages/mutiroes/editar_permissoes_dialog.dart';
 import 'package:sigmus/pages/mutiroes/mutirao_form_dialog.dart';
 import 'package:sigmus/repositories/colaborador_repository.dart';
 import 'package:sigmus/repositories/medico_repository.dart';
@@ -312,7 +313,10 @@ class _MutiroesPageState extends State<MutiroesPage> {
   }
 
   void _managePermissions(MutiraoItem mutirao) {
-    // TODO: Abrir dialog de permissões
+    showDialog(
+      context: context,
+      builder: (context) => EditarPermissoesDialog(mutirao: mutirao),
+    );
   }
 
   Future<void> _syncAllMutiroes() async {

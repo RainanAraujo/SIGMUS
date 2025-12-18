@@ -7,6 +7,7 @@ import 'package:sigmus/generated/sigmus_api.models.swagger.dart';
 import 'package:sigmus/services/sigmus_api.dart';
 import 'package:sigmus/theme/app_colors.dart';
 import 'package:sigmus/widgets/app_toast.dart';
+import 'package:sigmus/widgets/gerenciar_usuarios_dialog.dart';
 import 'package:sigmus/widgets/login_dialog.dart';
 
 class AppHeader extends StatefulWidget implements PreferredSizeWidget {
@@ -164,6 +165,22 @@ class _AppHeaderState extends State<AppHeader> {
         ),
         color: AppColors.popover,
         itemBuilder: (context) => [
+          PopupMenuItem(
+            onTap: () => GerenciarUsuariosDialog.show(context),
+            value: 'usuarios',
+            child: Row(
+              children: const [
+                Icon(
+                  Icons.people_outline,
+                  size: 18,
+                  color: AppColors.foreground,
+                ),
+                SizedBox(width: 8),
+                Text('Gerenciar Usuários'),
+              ],
+            ),
+          ),
+          const PopupMenuDivider(height: 0),
           PopupMenuItem(
             onTap: _handleLogout,
             value: 'logout',
