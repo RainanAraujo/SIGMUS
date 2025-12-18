@@ -69,6 +69,8 @@ class _PacienteFormSectionState extends State<PacienteFormSection> {
   late final TextEditingController _nomeDaMaeController;
   late final TextEditingController _enderecoController;
 
+  final GlobalKey<FormFieldState> _cpfFieldKey = GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> _cnsFieldKey = GlobalKey<FormFieldState>();
   @override
   void initState() {
     super.initState();
@@ -147,8 +149,12 @@ class _PacienteFormSectionState extends State<PacienteFormSection> {
                         ? (value) {
                             setState(() {
                               widget.controller.semCpfCns = value ?? false;
+                              _cpfFieldKey.currentState?.reset();
+                              _cnsFieldKey.currentState?.reset();
                               _cpfController.clear();
                               _cnsController.clear();
+                              widget.controller.cpf = '';
+                              widget.controller.cns = '';
                             });
                             _notifyChange();
                           }
@@ -171,6 +177,7 @@ class _PacienteFormSectionState extends State<PacienteFormSection> {
           FormRow(
             children: [
               TextFormField(
+                key: _cpfFieldKey,
                 controller: _cpfController,
                 enabled: widget.enabled && !widget.controller.semCpfCns,
                 decoration: InputDecoration(
@@ -192,7 +199,7 @@ class _PacienteFormSectionState extends State<PacienteFormSection> {
                   if (widget.controller.semCpfCns) return null;
                   if (value == null ||
                       value.isEmpty && widget.controller.cns.isEmpty) {
-                    return 'Preencha o CPF';
+                    return 'Preencha o CPF ou CNS';
                   }
                   if (value.isNotEmpty) {
                     return validateCpf(value);
@@ -201,6 +208,7 @@ class _PacienteFormSectionState extends State<PacienteFormSection> {
                 },
               ),
               TextFormField(
+                key: _cnsFieldKey,
                 controller: _cnsController,
                 enabled: widget.enabled && !widget.controller.semCpfCns,
                 decoration: InputDecoration(
@@ -222,7 +230,7 @@ class _PacienteFormSectionState extends State<PacienteFormSection> {
                   if (widget.controller.semCpfCns) return null;
                   if (value == null ||
                       value.isEmpty && widget.controller.cpf.isEmpty) {
-                    return 'Preencha o CNS';
+                    return 'Preencha o CNS ou CPF';
                   }
                   if (value.isNotEmpty) {
                     return validateCns(value);
