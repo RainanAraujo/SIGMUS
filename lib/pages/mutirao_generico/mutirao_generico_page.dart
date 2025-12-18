@@ -357,7 +357,7 @@ class _MutiraoGenericoPageState extends State<MutiraoGenericoPage> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  widget.mutirao.tipo,
+                  'Mutirão Genérico  - ${widget.mutirao.dataInicio == widget.mutirao.dataFinal ? widget.mutirao.dataInicio : "${widget.mutirao.dataInicio} a ${widget.mutirao.dataFinal}"}',
                   style: AppTypography.textTheme.bodySmall?.copyWith(
                     color: AppColors.mutedForeground,
                   ),

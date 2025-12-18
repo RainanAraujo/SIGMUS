@@ -4,6 +4,7 @@ import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/pages/mutirao_refracao/refracao_dialog.dart';
 import 'package:sigmus/theme/app_colors.dart';
 import 'package:sigmus/theme/app_typography.dart';
+import 'package:sigmus/utils/date_utils.dart';
 import 'package:sigmus/utils/formatters.dart';
 import 'package:sigmus/widgets/app_alert.dart';
 import 'package:sigmus/widgets/app_data_table.dart';
@@ -173,14 +174,14 @@ class _MutiraoRefracaoPageState extends State<MutiraoRefracaoPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Cidade",
+                  widget.mutirao.municipio,
                   style: AppTypography.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'TIPO + DATA DO MUTIRÃO',
+                  'Mutirão de Refração - ${widget.mutirao.dataInicio == widget.mutirao.dataFinal ? widget.mutirao.dataInicio : "${widget.mutirao.dataInicio} a ${widget.mutirao.dataFinal}"}',
                   style: AppTypography.textTheme.bodySmall?.copyWith(
                     color: AppColors.mutedForeground,
                   ),

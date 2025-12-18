@@ -359,7 +359,7 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  widget.mutirao.tipo,
+                  'Mutirão de Cirurgia - ${widget.mutirao.dataInicio == widget.mutirao.dataFinal ? widget.mutirao.dataInicio : "${widget.mutirao.dataInicio} a ${widget.mutirao.dataFinal}"}',
                   style: AppTypography.textTheme.bodySmall?.copyWith(
                     color: AppColors.mutedForeground,
                   ),
