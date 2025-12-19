@@ -73,12 +73,12 @@ class _MutiraoGenericoPageState extends State<MutiraoGenericoPage> {
         mutiraoId: widget.mutirao.id,
       );
 
-      pacienteList = await GetIt.I<PacienteRepository>().getAll(
+      condutaOptions = await GetIt.I<MutiraoRepository>().getCondutas(
         mutiraoId: widget.mutirao.id,
       );
 
-      condutaOptions = await GetIt.I<MutiraoRepository>().getCondutas(
-        mutiraoId: widget.mutirao.id,
+      pacienteList = await GetIt.I<PacienteRepository>().getAll(
+        ids: condutaList.map((c) => c.pacienteId).toList(),
       );
 
       _filterData();
@@ -116,9 +116,13 @@ class _MutiraoGenericoPageState extends State<MutiraoGenericoPage> {
         })
         .nonNulls
         .where((item) {
-          final tipo = (item.conduta.conduta ?? '').toLowerCase();
-          if (filter == null) return true;
-          return tipo.contains(filter.toLowerCase());
+          return switch (filter) {
+            'sem_cpf' => item.paciente.cpf?.isNotEmpty != true,
+            'sem_cns' => item.paciente.cns?.isNotEmpty != true,
+            'sem_tel' => item.paciente.tel?.isNotEmpty != true,
+            String filter => item.conduta.conduta == filter,
+            _ => true,
+          };
         })
         .toList();
 
@@ -237,35 +241,22 @@ class _MutiraoGenericoPageState extends State<MutiraoGenericoPage> {
                           initialValue: _filter.value,
                           label: 'Conduta',
                           hint: 'Todos',
-                          items: const [
+                          items: [
                             DropdownMenuItem(value: null, child: Text('Todos')),
-                            DropdownMenuItem(
-                              value: 'APLICACAO DE FLUOR + KIT HIGIENE',
-                              child: Text('Aplicação de Flúor'),
+                            ...condutaOptions.map(
+                              (e) => DropdownMenuItem(value: e, child: Text(e)),
                             ),
                             DropdownMenuItem(
-                              value: 'CONSULTA CLINICA',
-                              child: Text('Consulta Clínica'),
+                              value: 'sem_cpf',
+                              child: Text('Sem CPF'),
                             ),
                             DropdownMenuItem(
-                              value: 'EXTRACAO',
-                              child: Text('Extração'),
+                              value: 'sem_cns',
+                              child: Text('Sem CNS'),
                             ),
                             DropdownMenuItem(
-                              value: 'PROFILAXIA',
-                              child: Text('Profilaxia'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'PROTESE INFERIOR',
-                              child: Text('Prótese Inferior'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'PROTESE SUPERIOR',
-                              child: Text('Prótese Superior'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'RESTAURACAO',
-                              child: Text('Restauração'),
+                              value: 'sem_tel',
+                              child: Text('Sem Telefone'),
                             ),
                           ],
                           onChanged: (value) {

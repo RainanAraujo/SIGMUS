@@ -596,7 +596,8 @@
             "required": [
                 "atualizado_em",
                 "pacienteId",
-                "status"
+                "status",
+                "tipo"
             ],
             "properties": {
                 "atualizado_em": {

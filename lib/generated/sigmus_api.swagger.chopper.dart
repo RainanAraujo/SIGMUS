@@ -44,7 +44,7 @@ final class _$SigmusApi extends SigmusApi {
 
   @override
   Future<Response<PersonData>> _getBuscarCNS({
-    required String cns,
+    required String? cns,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Busca os dados de uma pessoa utilizando o CNS (Cartão Nacional de Saúde)',
@@ -69,7 +69,7 @@ final class _$SigmusApi extends SigmusApi {
 
   @override
   Future<Response<PersonData>> _getBuscarCPF({
-    required String cpf,
+    required String? cpf,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Busca os dados de uma pessoa utilizando o CPF (Cadastro de Pessoas Físicas)',
@@ -94,7 +94,7 @@ final class _$SigmusApi extends SigmusApi {
 
   @override
   Future<Response<PostEntrarRes>> _postEntrar({
-    required PostEntrarReq body,
+    required PostEntrarReq? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Autentica um usuário e retorna um token JWT se bem-sucedido',
@@ -121,7 +121,7 @@ final class _$SigmusApi extends SigmusApi {
 
   @override
   Future<Response<GetMutiraoMudancasRes>> _getMutiraoMudancas({
-    required int mutiraoID,
+    required int? mutiraoID,
     int? depoisDe,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
@@ -151,8 +151,8 @@ final class _$SigmusApi extends SigmusApi {
 
   @override
   Future<Response<PostMutiraoMudancasRes>> _postMutiraoMudancas({
-    required int mutiraoID,
-    required PostMutiraoMudancasReq body,
+    required int? mutiraoID,
+    required PostMutiraoMudancasReq? body,
     String? authorization,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: 'Salvar mudanças nas Edições do Mutirão pelo ID do Mutirão',
@@ -185,8 +185,8 @@ final class _$SigmusApi extends SigmusApi {
 
   @override
   Future<Response<PutMutiraoPermissoesRes>> _putMutiraoPermissoes({
-    required int mutiraoID,
-    required PutMutiraoPermissoesReq body,
+    required int? mutiraoID,
+    required PutMutiraoPermissoesReq? body,
     String? authorization,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
@@ -220,7 +220,7 @@ final class _$SigmusApi extends SigmusApi {
 
   @override
   Future<Response<PostRegistarRes>> _postRegistrar({
-    required PostRegistarReq body,
+    required PostRegistarReq? body,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Cria um novo usuário com email e senha fornecidos ou atualiza se o email já existir',
@@ -247,7 +247,7 @@ final class _$SigmusApi extends SigmusApi {
 
   @override
   Future<Response<GetUsuarioMutiroesRes>> _getUsuarioMutiroes({
-    required int usuarioID,
+    required int? usuarioID,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description:
           'Retorna uma lista de mutirões que o usuário especificado pode ler',
@@ -295,7 +295,7 @@ final class _$SigmusApi extends SigmusApi {
 
   @override
   Future<Response<DelUserRes>> _deleteUsuario({
-    required int id,
+    required int? id,
     SwaggerMetaData swaggerMetaData = const SwaggerMetaData(
       description: 'Deleta um usuário baseado no ID fornecido na URL',
       summary: 'Deletar usuário',

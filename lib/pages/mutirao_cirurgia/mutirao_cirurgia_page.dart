@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
@@ -78,31 +80,50 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
       );
 
       pacienteList = await GetIt.I<PacienteRepository>().getAll(
-        mutiraoId: widget.mutirao.id,
+        ids: procedimentoList.map((p) => p.pacienteId).toList(),
       );
 
-      _filterData();
+      await _filterData();
 
       isLoading = false;
       setState(() {});
     } catch (e) {
-      AppToast.error(context, message: 'Erro: $e');
+      if (mounted) {
+        AppToast.error(context, message: 'Erro: $e');
+      }
       isLoading = false;
       setState(() {});
     }
   }
 
-  void _filterData() {
+  Future<void> _filterData() async {
     final filter = _filter.value;
+    final procs = List<Procedimento>.from(procedimentoList);
+    final pacs = List<Paciente>.from(pacienteList);
+    final meds = List<Medico>.from(medicoList);
 
-    final items = procedimentoList
+    final items = await Isolate.run(
+      () => _processItems(procs, pacs, meds, filter),
+    );
+
+    if (mounted) {
+      procedimentos = items;
+      setState(() {});
+    }
+  }
+
+  static List<ProcedimentoItem> _processItems(
+    List<Procedimento> procs,
+    List<Paciente> pacs,
+    List<Medico> meds,
+    String? filter,
+  ) {
+    return procs
         .map((proc) {
-          final paciente = pacienteList.firstWhereOrNull(
+          final paciente = pacs.firstWhereOrNull(
             (p) => p.id == proc.pacienteId,
           );
-          final medico = medicoList.firstWhereOrNull(
-            (m) => m.id == proc.medicoId,
-          );
+          final medico = meds.firstWhereOrNull((m) => m.id == proc.medicoId);
 
           if (paciente == null || medico == null) {
             return null;
@@ -116,23 +137,16 @@ class _MutiraoCirurgiaPageState extends State<MutiraoCirurgiaPage> {
         })
         .nonNulls
         .where(
-          (proc) => switch (filter) {
-            'catarata' => proc.procedimento.tipo.toLowerCase().contains(
-              'catarata',
-            ),
-            'pterigio' => proc.procedimento.tipo.toLowerCase().contains(
-              'pterigio',
-            ),
-            'sem_cpf' => proc.paciente.cpf?.isNotEmpty != true,
-            'sem_cns' => proc.paciente.cns?.isNotEmpty != true,
-            'sem_tel' => proc.paciente.tel?.isNotEmpty != true,
+          (item) => switch (filter) {
+            'catarata' => item.procedimento.tipo.contains('catarata'),
+            'pterigio' => item.procedimento.tipo.contains('pterigio'),
+            'sem_cpf' => item.paciente.cpf?.isNotEmpty != true,
+            'sem_cns' => item.paciente.cns?.isNotEmpty != true,
+            'sem_tel' => item.paciente.tel?.isNotEmpty != true,
             _ => true,
           },
         )
         .toList();
-
-    procedimentos = items;
-    setState(() {});
   }
 
   void _createProcedimento() {

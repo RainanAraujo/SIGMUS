@@ -104,7 +104,7 @@ class Conduta {
     this.medicoId,
     required this.pacienteId,
     required this.status,
-    this.tipo,
+    required this.tipo,
   });
 
   factory Conduta.fromJson(Map<String, dynamic> json) =>
@@ -126,7 +126,7 @@ class Conduta {
   @JsonKey(name: 'status')
   final int status;
   @JsonKey(name: 'tipo')
-  final String? tipo;
+  final String tipo;
   static const fromJsonFactory = _$CondutaFromJson;
 
   @override
@@ -201,7 +201,7 @@ extension $CondutaExtension on Conduta {
     Wrapped<int?>? medicoId,
     Wrapped<int>? pacienteId,
     Wrapped<int>? status,
-    Wrapped<String?>? tipo,
+    Wrapped<String>? tipo,
   }) {
     return Conduta(
       atualizadoEm: (atualizadoEm != null

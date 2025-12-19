@@ -28,7 +28,7 @@ Conduta _$CondutaFromJson(Map<String, dynamic> json) => Conduta(
   medicoId: (json['medicoId'] as num?)?.toInt(),
   pacienteId: (json['pacienteId'] as num).toInt(),
   status: (json['status'] as num).toInt(),
-  tipo: json['tipo'] as String?,
+  tipo: json['tipo'] as String,
 );
 
 Map<String, dynamic> _$CondutaToJson(Conduta instance) => <String, dynamic>{

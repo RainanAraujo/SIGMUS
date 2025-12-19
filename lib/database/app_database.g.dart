@@ -2405,6 +2405,15 @@ class $CondutasTable extends Condutas with TableInfo<$CondutasTable, Conduta> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _tipoMeta = const VerificationMeta('tipo');
+  @override
+  late final GeneratedColumn<String> tipo = GeneratedColumn<String>(
+    'tipo',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _dataMeta = const VerificationMeta('data');
   @override
   late final GeneratedColumn<String> data = GeneratedColumn<String>(
@@ -2453,15 +2462,6 @@ class $CondutasTable extends Condutas with TableInfo<$CondutasTable, Conduta> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _tipoMeta = const VerificationMeta('tipo');
-  @override
-  late final GeneratedColumn<String> tipo = GeneratedColumn<String>(
-    'tipo',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
   static const VerificationMeta _dadosMeta = const VerificationMeta('dados');
   @override
   late final GeneratedColumn<String> dados = GeneratedColumn<String>(
@@ -2495,11 +2495,11 @@ class $CondutasTable extends Condutas with TableInfo<$CondutasTable, Conduta> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    tipo,
     data,
     mutiraoId,
     pacienteId,
     medicoId,
-    tipo,
     dados,
     atualizadoEm,
     status,
@@ -2518,6 +2518,14 @@ class $CondutasTable extends Condutas with TableInfo<$CondutasTable, Conduta> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('tipo')) {
+      context.handle(
+        _tipoMeta,
+        tipo.isAcceptableOrUnknown(data['tipo']!, _tipoMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tipoMeta);
     }
     if (data.containsKey('data')) {
       context.handle(
@@ -2545,12 +2553,6 @@ class $CondutasTable extends Condutas with TableInfo<$CondutasTable, Conduta> {
       context.handle(
         _medicoIdMeta,
         medicoId.isAcceptableOrUnknown(data['medico_id']!, _medicoIdMeta),
-      );
-    }
-    if (data.containsKey('tipo')) {
-      context.handle(
-        _tipoMeta,
-        tipo.isAcceptableOrUnknown(data['tipo']!, _tipoMeta),
       );
     }
     if (data.containsKey('dados')) {
@@ -2589,6 +2591,10 @@ class $CondutasTable extends Condutas with TableInfo<$CondutasTable, Conduta> {
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
+      tipo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tipo'],
+      )!,
       data: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}data'],
@@ -2604,10 +2610,6 @@ class $CondutasTable extends Condutas with TableInfo<$CondutasTable, Conduta> {
       medicoId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}medico_id'],
-      ),
-      tipo: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}tipo'],
       ),
       dados: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -2632,21 +2634,21 @@ class $CondutasTable extends Condutas with TableInfo<$CondutasTable, Conduta> {
 
 class Conduta extends DataClass implements Insertable<Conduta> {
   final int id;
+  final String tipo;
   final String? data;
   final int mutiraoId;
   final int pacienteId;
   final int? medicoId;
-  final String? tipo;
   final String? dados;
   final int atualizadoEm;
   final int status;
   const Conduta({
     required this.id,
+    required this.tipo,
     this.data,
     required this.mutiraoId,
     required this.pacienteId,
     this.medicoId,
-    this.tipo,
     this.dados,
     required this.atualizadoEm,
     required this.status,
@@ -2655,6 +2657,7 @@ class Conduta extends DataClass implements Insertable<Conduta> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['tipo'] = Variable<String>(tipo);
     if (!nullToAbsent || data != null) {
       map['data'] = Variable<String>(data);
     }
@@ -2662,9 +2665,6 @@ class Conduta extends DataClass implements Insertable<Conduta> {
     map['paciente_id'] = Variable<int>(pacienteId);
     if (!nullToAbsent || medicoId != null) {
       map['medico_id'] = Variable<int>(medicoId);
-    }
-    if (!nullToAbsent || tipo != null) {
-      map['tipo'] = Variable<String>(tipo);
     }
     if (!nullToAbsent || dados != null) {
       map['dados'] = Variable<String>(dados);
@@ -2677,13 +2677,13 @@ class Conduta extends DataClass implements Insertable<Conduta> {
   CondutasCompanion toCompanion(bool nullToAbsent) {
     return CondutasCompanion(
       id: Value(id),
+      tipo: Value(tipo),
       data: data == null && nullToAbsent ? const Value.absent() : Value(data),
       mutiraoId: Value(mutiraoId),
       pacienteId: Value(pacienteId),
       medicoId: medicoId == null && nullToAbsent
           ? const Value.absent()
           : Value(medicoId),
-      tipo: tipo == null && nullToAbsent ? const Value.absent() : Value(tipo),
       dados: dados == null && nullToAbsent
           ? const Value.absent()
           : Value(dados),
@@ -2699,11 +2699,11 @@ class Conduta extends DataClass implements Insertable<Conduta> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Conduta(
       id: serializer.fromJson<int>(json['id']),
+      tipo: serializer.fromJson<String>(json['tipo']),
       data: serializer.fromJson<String?>(json['data']),
       mutiraoId: serializer.fromJson<int>(json['mutiraoId']),
       pacienteId: serializer.fromJson<int>(json['pacienteId']),
       medicoId: serializer.fromJson<int?>(json['medicoId']),
-      tipo: serializer.fromJson<String?>(json['tipo']),
       dados: serializer.fromJson<String?>(json['dados']),
       atualizadoEm: serializer.fromJson<int>(json['atualizadoEm']),
       status: serializer.fromJson<int>(json['status']),
@@ -2714,11 +2714,11 @@ class Conduta extends DataClass implements Insertable<Conduta> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'tipo': serializer.toJson<String>(tipo),
       'data': serializer.toJson<String?>(data),
       'mutiraoId': serializer.toJson<int>(mutiraoId),
       'pacienteId': serializer.toJson<int>(pacienteId),
       'medicoId': serializer.toJson<int?>(medicoId),
-      'tipo': serializer.toJson<String?>(tipo),
       'dados': serializer.toJson<String?>(dados),
       'atualizadoEm': serializer.toJson<int>(atualizadoEm),
       'status': serializer.toJson<int>(status),
@@ -2727,21 +2727,21 @@ class Conduta extends DataClass implements Insertable<Conduta> {
 
   Conduta copyWith({
     int? id,
+    String? tipo,
     Value<String?> data = const Value.absent(),
     int? mutiraoId,
     int? pacienteId,
     Value<int?> medicoId = const Value.absent(),
-    Value<String?> tipo = const Value.absent(),
     Value<String?> dados = const Value.absent(),
     int? atualizadoEm,
     int? status,
   }) => Conduta(
     id: id ?? this.id,
+    tipo: tipo ?? this.tipo,
     data: data.present ? data.value : this.data,
     mutiraoId: mutiraoId ?? this.mutiraoId,
     pacienteId: pacienteId ?? this.pacienteId,
     medicoId: medicoId.present ? medicoId.value : this.medicoId,
-    tipo: tipo.present ? tipo.value : this.tipo,
     dados: dados.present ? dados.value : this.dados,
     atualizadoEm: atualizadoEm ?? this.atualizadoEm,
     status: status ?? this.status,
@@ -2749,13 +2749,13 @@ class Conduta extends DataClass implements Insertable<Conduta> {
   Conduta copyWithCompanion(CondutasCompanion data) {
     return Conduta(
       id: data.id.present ? data.id.value : this.id,
+      tipo: data.tipo.present ? data.tipo.value : this.tipo,
       data: data.data.present ? data.data.value : this.data,
       mutiraoId: data.mutiraoId.present ? data.mutiraoId.value : this.mutiraoId,
       pacienteId: data.pacienteId.present
           ? data.pacienteId.value
           : this.pacienteId,
       medicoId: data.medicoId.present ? data.medicoId.value : this.medicoId,
-      tipo: data.tipo.present ? data.tipo.value : this.tipo,
       dados: data.dados.present ? data.dados.value : this.dados,
       atualizadoEm: data.atualizadoEm.present
           ? data.atualizadoEm.value
@@ -2768,11 +2768,11 @@ class Conduta extends DataClass implements Insertable<Conduta> {
   String toString() {
     return (StringBuffer('Conduta(')
           ..write('id: $id, ')
+          ..write('tipo: $tipo, ')
           ..write('data: $data, ')
           ..write('mutiraoId: $mutiraoId, ')
           ..write('pacienteId: $pacienteId, ')
           ..write('medicoId: $medicoId, ')
-          ..write('tipo: $tipo, ')
           ..write('dados: $dados, ')
           ..write('atualizadoEm: $atualizadoEm, ')
           ..write('status: $status')
@@ -2783,11 +2783,11 @@ class Conduta extends DataClass implements Insertable<Conduta> {
   @override
   int get hashCode => Object.hash(
     id,
+    tipo,
     data,
     mutiraoId,
     pacienteId,
     medicoId,
-    tipo,
     dados,
     atualizadoEm,
     status,
@@ -2797,11 +2797,11 @@ class Conduta extends DataClass implements Insertable<Conduta> {
       identical(this, other) ||
       (other is Conduta &&
           other.id == this.id &&
+          other.tipo == this.tipo &&
           other.data == this.data &&
           other.mutiraoId == this.mutiraoId &&
           other.pacienteId == this.pacienteId &&
           other.medicoId == this.medicoId &&
-          other.tipo == this.tipo &&
           other.dados == this.dados &&
           other.atualizadoEm == this.atualizadoEm &&
           other.status == this.status);
@@ -2809,56 +2809,57 @@ class Conduta extends DataClass implements Insertable<Conduta> {
 
 class CondutasCompanion extends UpdateCompanion<Conduta> {
   final Value<int> id;
+  final Value<String> tipo;
   final Value<String?> data;
   final Value<int> mutiraoId;
   final Value<int> pacienteId;
   final Value<int?> medicoId;
-  final Value<String?> tipo;
   final Value<String?> dados;
   final Value<int> atualizadoEm;
   final Value<int> status;
   const CondutasCompanion({
     this.id = const Value.absent(),
+    this.tipo = const Value.absent(),
     this.data = const Value.absent(),
     this.mutiraoId = const Value.absent(),
     this.pacienteId = const Value.absent(),
     this.medicoId = const Value.absent(),
-    this.tipo = const Value.absent(),
     this.dados = const Value.absent(),
     this.atualizadoEm = const Value.absent(),
     this.status = const Value.absent(),
   });
   CondutasCompanion.insert({
     this.id = const Value.absent(),
+    required String tipo,
     this.data = const Value.absent(),
     required int mutiraoId,
     required int pacienteId,
     this.medicoId = const Value.absent(),
-    this.tipo = const Value.absent(),
     this.dados = const Value.absent(),
     required int atualizadoEm,
     this.status = const Value.absent(),
-  }) : mutiraoId = Value(mutiraoId),
+  }) : tipo = Value(tipo),
+       mutiraoId = Value(mutiraoId),
        pacienteId = Value(pacienteId),
        atualizadoEm = Value(atualizadoEm);
   static Insertable<Conduta> custom({
     Expression<int>? id,
+    Expression<String>? tipo,
     Expression<String>? data,
     Expression<int>? mutiraoId,
     Expression<int>? pacienteId,
     Expression<int>? medicoId,
-    Expression<String>? tipo,
     Expression<String>? dados,
     Expression<int>? atualizadoEm,
     Expression<int>? status,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (tipo != null) 'tipo': tipo,
       if (data != null) 'data': data,
       if (mutiraoId != null) 'mutirao_id': mutiraoId,
       if (pacienteId != null) 'paciente_id': pacienteId,
       if (medicoId != null) 'medico_id': medicoId,
-      if (tipo != null) 'tipo': tipo,
       if (dados != null) 'dados': dados,
       if (atualizadoEm != null) 'atualizado_em': atualizadoEm,
       if (status != null) 'status': status,
@@ -2867,22 +2868,22 @@ class CondutasCompanion extends UpdateCompanion<Conduta> {
 
   CondutasCompanion copyWith({
     Value<int>? id,
+    Value<String>? tipo,
     Value<String?>? data,
     Value<int>? mutiraoId,
     Value<int>? pacienteId,
     Value<int?>? medicoId,
-    Value<String?>? tipo,
     Value<String?>? dados,
     Value<int>? atualizadoEm,
     Value<int>? status,
   }) {
     return CondutasCompanion(
       id: id ?? this.id,
+      tipo: tipo ?? this.tipo,
       data: data ?? this.data,
       mutiraoId: mutiraoId ?? this.mutiraoId,
       pacienteId: pacienteId ?? this.pacienteId,
       medicoId: medicoId ?? this.medicoId,
-      tipo: tipo ?? this.tipo,
       dados: dados ?? this.dados,
       atualizadoEm: atualizadoEm ?? this.atualizadoEm,
       status: status ?? this.status,
@@ -2895,6 +2896,9 @@ class CondutasCompanion extends UpdateCompanion<Conduta> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
+    if (tipo.present) {
+      map['tipo'] = Variable<String>(tipo.value);
+    }
     if (data.present) {
       map['data'] = Variable<String>(data.value);
     }
@@ -2906,9 +2910,6 @@ class CondutasCompanion extends UpdateCompanion<Conduta> {
     }
     if (medicoId.present) {
       map['medico_id'] = Variable<int>(medicoId.value);
-    }
-    if (tipo.present) {
-      map['tipo'] = Variable<String>(tipo.value);
     }
     if (dados.present) {
       map['dados'] = Variable<String>(dados.value);
@@ -2926,11 +2927,11 @@ class CondutasCompanion extends UpdateCompanion<Conduta> {
   String toString() {
     return (StringBuffer('CondutasCompanion(')
           ..write('id: $id, ')
+          ..write('tipo: $tipo, ')
           ..write('data: $data, ')
           ..write('mutiraoId: $mutiraoId, ')
           ..write('pacienteId: $pacienteId, ')
           ..write('medicoId: $medicoId, ')
-          ..write('tipo: $tipo, ')
           ..write('dados: $dados, ')
           ..write('atualizadoEm: $atualizadoEm, ')
           ..write('status: $status')
@@ -4719,6 +4720,18 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $HistoricoSincronizacaoTable historicoSincronizacao =
       $HistoricoSincronizacaoTable(this);
+  late final Index idxCondutasPacienteMutirao = Index(
+    'idx_condutas_paciente_mutirao',
+    'CREATE INDEX idx_condutas_paciente_mutirao ON condutas (paciente_id, mutirao_id)',
+  );
+  late final Index idxProcedimentosPacienteMutirao = Index(
+    'idx_procedimentos_paciente_mutirao',
+    'CREATE INDEX idx_procedimentos_paciente_mutirao ON procedimentos (paciente_id, mutirao_id)',
+  );
+  late final Index idxCondutasGenericasPacienteMutirao = Index(
+    'idx_condutas_genericas_paciente_mutirao',
+    'CREATE INDEX idx_condutas_genericas_paciente_mutirao ON condutas_genericas (paciente_id, mutirao_id)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4734,6 +4747,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     condutasGenericas,
     mutiraoCondutas,
     historicoSincronizacao,
+    idxCondutasPacienteMutirao,
+    idxProcedimentosPacienteMutirao,
+    idxCondutasGenericasPacienteMutirao,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -7436,11 +7452,11 @@ typedef $$MedicosTableProcessedTableManager =
 typedef $$CondutasTableCreateCompanionBuilder =
     CondutasCompanion Function({
       Value<int> id,
+      required String tipo,
       Value<String?> data,
       required int mutiraoId,
       required int pacienteId,
       Value<int?> medicoId,
-      Value<String?> tipo,
       Value<String?> dados,
       required int atualizadoEm,
       Value<int> status,
@@ -7448,11 +7464,11 @@ typedef $$CondutasTableCreateCompanionBuilder =
 typedef $$CondutasTableUpdateCompanionBuilder =
     CondutasCompanion Function({
       Value<int> id,
+      Value<String> tipo,
       Value<String?> data,
       Value<int> mutiraoId,
       Value<int> pacienteId,
       Value<int?> medicoId,
-      Value<String?> tipo,
       Value<String?> dados,
       Value<int> atualizadoEm,
       Value<int> status,
@@ -7513,6 +7529,11 @@ class $$CondutasTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get tipo => $composableBuilder(
+    column: $table.tipo,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get data => $composableBuilder(
     column: $table.data,
     builder: (column) => ColumnFilters(column),
@@ -7520,11 +7541,6 @@ class $$CondutasTableFilterComposer
 
   ColumnFilters<int> get medicoId => $composableBuilder(
     column: $table.medicoId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get tipo => $composableBuilder(
-    column: $table.tipo,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -7604,6 +7620,11 @@ class $$CondutasTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get tipo => $composableBuilder(
+    column: $table.tipo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get data => $composableBuilder(
     column: $table.data,
     builder: (column) => ColumnOrderings(column),
@@ -7611,11 +7632,6 @@ class $$CondutasTableOrderingComposer
 
   ColumnOrderings<int> get medicoId => $composableBuilder(
     column: $table.medicoId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get tipo => $composableBuilder(
-    column: $table.tipo,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -7693,14 +7709,14 @@ class $$CondutasTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<String> get tipo =>
+      $composableBuilder(column: $table.tipo, builder: (column) => column);
+
   GeneratedColumn<String> get data =>
       $composableBuilder(column: $table.data, builder: (column) => column);
 
   GeneratedColumn<int> get medicoId =>
       $composableBuilder(column: $table.medicoId, builder: (column) => column);
-
-  GeneratedColumn<String> get tipo =>
-      $composableBuilder(column: $table.tipo, builder: (column) => column);
 
   GeneratedColumn<String> get dados =>
       $composableBuilder(column: $table.dados, builder: (column) => column);
@@ -7789,21 +7805,21 @@ class $$CondutasTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                Value<String> tipo = const Value.absent(),
                 Value<String?> data = const Value.absent(),
                 Value<int> mutiraoId = const Value.absent(),
                 Value<int> pacienteId = const Value.absent(),
                 Value<int?> medicoId = const Value.absent(),
-                Value<String?> tipo = const Value.absent(),
                 Value<String?> dados = const Value.absent(),
                 Value<int> atualizadoEm = const Value.absent(),
                 Value<int> status = const Value.absent(),
               }) => CondutasCompanion(
                 id: id,
+                tipo: tipo,
                 data: data,
                 mutiraoId: mutiraoId,
                 pacienteId: pacienteId,
                 medicoId: medicoId,
-                tipo: tipo,
                 dados: dados,
                 atualizadoEm: atualizadoEm,
                 status: status,
@@ -7811,21 +7827,21 @@ class $$CondutasTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                required String tipo,
                 Value<String?> data = const Value.absent(),
                 required int mutiraoId,
                 required int pacienteId,
                 Value<int?> medicoId = const Value.absent(),
-                Value<String?> tipo = const Value.absent(),
                 Value<String?> dados = const Value.absent(),
                 required int atualizadoEm,
                 Value<int> status = const Value.absent(),
               }) => CondutasCompanion.insert(
                 id: id,
+                tipo: tipo,
                 data: data,
                 mutiraoId: mutiraoId,
                 pacienteId: pacienteId,
                 medicoId: medicoId,
-                tipo: tipo,
                 dados: dados,
                 atualizadoEm: atualizadoEm,
                 status: status,

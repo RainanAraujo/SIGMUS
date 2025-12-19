@@ -381,7 +381,7 @@ class SyncService {
               data: Value(conduta.data),
               pacienteId: Value(conduta.pacienteId),
               medicoId: Value(conduta.medicoId),
-              tipo: Value(conduta.tipo),
+              tipo: Value(conduta.tipo ?? ''),
               dados: Value(conduta.dados.toString()),
               atualizadoEm: Value(now),
               status: Value(conduta.status),

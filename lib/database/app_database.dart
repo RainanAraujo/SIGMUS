@@ -101,14 +101,12 @@ class Medicos extends Table {
 @DataClassName('Conduta')
 class Condutas extends Table {
   IntColumn get id => integer()();
+  TextColumn get tipo => text()();
   TextColumn get data => text().nullable()();
   IntColumn get mutiraoId => integer().references(Mutiroes, #id)();
   IntColumn get pacienteId => integer().references(Pacientes, #id)();
   IntColumn get medicoId => integer().nullable()();
-
-  TextColumn get tipo => text().nullable()();
   TextColumn get dados => text().nullable()();
-
   IntColumn get atualizadoEm => integer().named('atualizado_em')();
   IntColumn get status => integer().withDefault(const Constant(0))();
 

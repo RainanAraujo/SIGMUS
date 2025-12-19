@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:sigmus/database/app_database.dart';
 import 'package:sigmus/models/conduta_item.dart';
 import 'package:sigmus/models/interfaces/model.dart';
+import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/theme/app_colors.dart';
-import 'package:sigmus/utils/date_utils.dart';
 import 'package:sigmus/widgets/app_dialog.dart';
 import 'package:sigmus/widgets/app_dropdown.dart';
 import 'package:sigmus/widgets/app_toast.dart';
@@ -14,6 +14,7 @@ import 'package:sigmus/widgets/form_row.dart';
 import 'package:sigmus/widgets/paciente_form_section.dart';
 
 class RefracaoFormDialog extends StatefulWidget {
+  final MutiraoItem mutirao;
   final CondutaItem? condutaItem;
   final List<String> datasDisponiveis;
   final List<Medico> medicosDisponiveis;
@@ -21,6 +22,7 @@ class RefracaoFormDialog extends StatefulWidget {
 
   const RefracaoFormDialog({
     super.key,
+    required this.mutirao,
     this.condutaItem,
     required this.datasDisponiveis,
     required this.medicosDisponiveis,
@@ -49,12 +51,13 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
   late final TextEditingController _encaminhamentoController;
   late final TextEditingController _tipoEncaminhamentoController;
 
-  // ValueNotifiers para dropdowns (evita rebuild do form inteiro)
   late final ValueNotifier<String?> _dataSelecionada;
   late final ValueNotifier<String> _conduta;
   late final ValueNotifier<int?> _medicoId;
   late final ValueNotifier<int?> _tipoCirurgia;
   late final ValueNotifier<String?> _olho;
+
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -62,7 +65,6 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
 
     _pacienteController = PacienteFormController();
 
-    // Inicializar controllers de texto
     _esfericoDireitoController = TextEditingController();
     _cilindricoDireitoController = TextEditingController();
     _eixoDireitoController = TextEditingController();
@@ -75,7 +77,6 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
     _encaminhamentoController = TextEditingController();
     _tipoEncaminhamentoController = TextEditingController();
 
-    // Inicializar ValueNotifiers
     _dataSelecionada = ValueNotifier(null);
     _conduta = ValueNotifier('Prescrição de óculos');
     _medicoId = ValueNotifier(null);
@@ -112,7 +113,6 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
     final paciente = item.paciente;
     final conduta = item.conduta;
 
-    // Carrega dados do paciente
     _pacienteController.cpf = paciente.cpf ?? '';
     _pacienteController.cns = paciente.cns ?? '';
     _pacienteController.nome = paciente.nome ?? '';
@@ -125,12 +125,10 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
     _pacienteController.estado = paciente.uf ?? '';
     _pacienteController.municipio = paciente.municipio ?? '';
 
-    // Carrega dados da conduta
     _dataSelecionada.value = conduta.data;
-    _conduta.value = conduta.tipo ?? 'Prescrição de óculos';
+    _conduta.value = conduta.tipo;
     _medicoId.value = conduta.medicoId;
 
-    // Parse dos dados da refração
     _parseDados(conduta.dados);
   }
 
@@ -213,6 +211,10 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
       return;
     }
 
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       final now = DateTime.now().millisecondsSinceEpoch;
 
@@ -241,11 +243,11 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
 
       final conduta = Conduta(
         id: widget.condutaItem?.conduta.id ?? now,
-        mutiraoId: widget.condutaItem?.conduta.mutiraoId ?? 0,
+        mutiraoId: widget.mutirao.id,
         atualizadoEm: now,
         status: ModelStatus.active.index,
         pacienteId: paciente.id,
-        data: _dataSelecionada.value ?? '',
+        data: _dataSelecionada.value!,
         tipo: _conduta.value,
         medicoId: _medicoId.value,
         dados: _buildDados(),
@@ -267,6 +269,12 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
       }
     } catch (e) {
       AppToast.error(context, message: 'Erro: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -283,10 +291,22 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
       maxHeight: 750,
       actions: [
         OutlinedButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
           child: const Text('Cancelar'),
         ),
-        ElevatedButton(onPressed: _handleSubmit, child: const Text('Salvar')),
+        ElevatedButton(
+          onPressed: _isLoading ? null : _handleSubmit,
+          child: _isLoading
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.primaryForeground,
+                  ),
+                )
+              : const Text('Salvar'),
+        ),
       ],
       child: Form(
         key: _formKey,
@@ -295,7 +315,10 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
           children: [
             Expanded(
               flex: 1,
-              child: PacienteFormSection(controller: _pacienteController),
+              child: PacienteFormSection(
+                controller: _pacienteController,
+                enabled: !_isLoading,
+              ),
             ),
             const SizedBox(width: 32),
             Container(width: 1, height: 500, color: AppColors.border),
@@ -328,34 +351,32 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
               children: [
                 ValueListenableBuilder<String?>(
                   valueListenable: _dataSelecionada,
-                  builder: (context, data, _) {
-                    return AppDropdown<String>(
-                      initialValue: data,
-                      label: 'Data',
-                      hint: 'Selecione',
-                      isRequired: true,
-
-                      items: widget.datasDisponiveis.map((data) {
-                        return DropdownMenuItem(
-                          value: data,
-                          child: Text(formatDateFromString(data)),
-                        );
-                      }).toList(),
-                      onChanged: (value) => _dataSelecionada.value = value,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Selecione uma data';
-                        }
-                        return null;
-                      },
-                    );
-                  },
+                  builder: (context, data, _) => AppDropdown<String>(
+                    initialValue: data,
+                    label: 'Data',
+                    hint: 'Selecione',
+                    isRequired: true,
+                    enabled: !_isLoading,
+                    items: widget.datasDisponiveis
+                        .map(
+                          (data) =>
+                              DropdownMenuItem(value: data, child: Text(data)),
+                        )
+                        .toList(),
+                    onChanged: (value) => _dataSelecionada.value = value,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Selecione uma data';
+                      }
+                      return null;
+                    },
+                  ),
                 ),
                 AppDropdown<String>(
                   initialValue: conduta,
                   label: 'Conduta',
                   isRequired: true,
-
+                  enabled: !_isLoading,
                   items: const [
                     DropdownMenuItem(
                       value: 'Prescrição de óculos',
@@ -389,7 +410,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                   initialValue: medico,
                   label: 'Nome do Médico',
                   hint: 'Selecione (opcional)',
-
+                  enabled: !_isLoading,
                   items: widget.medicosDisponiveis.map((medico) {
                     return DropdownMenuItem(
                       value: medico.id,
@@ -432,7 +453,6 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Headers
                         const Row(
                           children: [
                             Expanded(
@@ -476,7 +496,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                             Expanded(
                               child: TextFormField(
                                 controller: _esfericoDireitoController,
-
+                                enabled: !_isLoading,
                                 decoration: const InputDecoration(
                                   hintText: 'OD',
                                 ),
@@ -491,7 +511,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                             Expanded(
                               child: TextFormField(
                                 controller: _cilindricoDireitoController,
-
+                                enabled: !_isLoading,
                                 decoration: const InputDecoration(
                                   hintText: 'OD',
                                 ),
@@ -506,7 +526,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                             Expanded(
                               child: TextFormField(
                                 controller: _eixoDireitoController,
-
+                                enabled: !_isLoading,
                                 decoration: const InputDecoration(
                                   hintText: 'OD',
                                 ),
@@ -522,7 +542,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                             Expanded(
                               child: TextFormField(
                                 controller: _esfericoEsquerdoController,
-
+                                enabled: !_isLoading,
                                 decoration: const InputDecoration(
                                   hintText: 'OE',
                                 ),
@@ -537,7 +557,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                             Expanded(
                               child: TextFormField(
                                 controller: _cilindricoEsquerdoController,
-
+                                enabled: !_isLoading,
                                 decoration: const InputDecoration(
                                   hintText: 'OE',
                                 ),
@@ -552,7 +572,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                             Expanded(
                               child: TextFormField(
                                 controller: _eixoEsquerdoController,
-
+                                enabled: !_isLoading,
                                 decoration: const InputDecoration(
                                   hintText: 'OE',
                                 ),
@@ -582,7 +602,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _dpController,
-
+                          enabled: !_isLoading,
                           decoration: const InputDecoration(hintText: 'DP'),
                           keyboardType: TextInputType.number,
                         ),
@@ -596,7 +616,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
 
               TextFormField(
                 controller: _adicaoController,
-
+                enabled: !_isLoading,
                 decoration: const InputDecoration(
                   labelText: "ADD",
                   hintText: 'Digite o ADD',
@@ -612,7 +632,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _observacoesController,
-
+                enabled: !_isLoading,
                 decoration: const InputDecoration(
                   labelText: 'Observações',
                   hintText: 'Digite as observações',
@@ -631,7 +651,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                         initialValue: tipo,
                         label: 'Tipo de Cirurgia',
                         hint: 'Selecione',
-
+                        enabled: !_isLoading,
                         items: const [
                           DropdownMenuItem(value: 1, child: Text('Catarata')),
                           DropdownMenuItem(value: 2, child: Text('Pterígio')),
@@ -647,7 +667,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
                         initialValue: olho,
                         label: 'Olho',
                         hint: 'Selecione',
-
+                        enabled: !_isLoading,
                         items: const [
                           DropdownMenuItem(
                             value: "OD",
@@ -673,7 +693,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _encaminhamentoController,
-
+                enabled: !_isLoading,
                 decoration: const InputDecoration(
                   labelText: 'Encaminhamento (se houver)',
                   hintText: 'Digite o encaminhamento',
@@ -684,7 +704,7 @@ class _RefracaoFormDialogState extends State<RefracaoFormDialog> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _tipoEncaminhamentoController,
-
+                enabled: !_isLoading,
                 decoration: const InputDecoration(
                   labelText: 'Tipo de Encaminhamento',
                   hintText: 'Digite o tipo de encaminhamento',

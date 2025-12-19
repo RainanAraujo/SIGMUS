@@ -1,15 +1,28 @@
+import 'package:collection/collection.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:sigmus/database/app_database.dart';
+import 'package:sigmus/extensions/mutirao_item_ext.dart';
 import 'package:sigmus/models/conduta_item.dart';
+import 'package:sigmus/models/interfaces/model.dart';
 import 'package:sigmus/models/mutirao_item.dart';
 import 'package:sigmus/pages/mutirao_refracao/refracao_dialog.dart';
+import 'package:sigmus/repositories/conduta_repository.dart';
+import 'package:sigmus/repositories/medico_repository.dart';
+import 'package:sigmus/repositories/paciente_repository.dart';
 import 'package:sigmus/theme/app_colors.dart';
 import 'package:sigmus/theme/app_typography.dart';
-import 'package:sigmus/utils/date_utils.dart';
-import 'package:sigmus/utils/formatters.dart';
 import 'package:sigmus/widgets/app_alert.dart';
 import 'package:sigmus/widgets/app_data_table.dart';
 import 'package:sigmus/widgets/app_dropdown.dart';
+import 'package:sigmus/widgets/app_toast.dart';
 import 'package:sigmus/widgets/stat_card.dart';
+
+// prescOculos
+// cirurgia
+// encam
+// alta
 
 class MutiraoRefracaoPage extends StatefulWidget {
   final MutiraoItem mutirao;
@@ -21,66 +34,132 @@ class MutiraoRefracaoPage extends StatefulWidget {
 }
 
 class _MutiraoRefracaoPageState extends State<MutiraoRefracaoPage> {
-  final _condutaFiltro = ValueNotifier<String?>(null);
-  final _condutas = ValueNotifier<List<CondutaItem>>([]);
+  final _filter = ValueNotifier<String?>(null);
+  late final Listenable _dataListener;
+
+  List<CondutaItem> condutas = [];
+  bool isLoading = false;
+
+  List<Conduta> condutaList = [];
+  List<Paciente> pacienteList = [];
+  List<Medico> medicoList = [];
+
+  int get _pacientesCount => condutaList.length;
+
+  int get _altasCount =>
+      condutaList.where((c) => c.tipo.contains('alta')).length;
+
+  int get _encaminhamentosCount =>
+      condutaList.where((c) => c.tipo.contains('encam')).length;
+
+  int get _prescricoesCount =>
+      condutaList.where((c) => c.tipo.contains('prescOculos')).length;
+
+  int get _cirurgiasCount =>
+      condutaList.where((c) => c.tipo.contains('cirurgia')).length;
 
   @override
   void initState() {
     super.initState();
-    _condutaFiltro.addListener(_onFiltroChanged);
+
+    _dataListener = Listenable.merge([_filter]);
+    _dataListener.addListener(_filterData);
+
+    _loadData();
   }
 
   @override
   void dispose() {
-    _condutaFiltro.removeListener(_onFiltroChanged);
-    _condutaFiltro.dispose();
-    _condutas.dispose();
+    _dataListener.removeListener(_filterData);
+    _filter.dispose();
     super.dispose();
   }
 
-  void _onFiltroChanged() {
+  Future<void> _loadData() async {
+    isLoading = true;
+    setState(() {});
+
+    try {
+      condutaList = await GetIt.I<CondutaRepository>().getAll(
+        mutiraoId: widget.mutirao.id,
+      );
+
+      medicoList = await GetIt.I<MedicoRepository>().getAll(
+        mutiraoId: widget.mutirao.id,
+      );
+
+      pacienteList = await GetIt.I<PacienteRepository>().getAll(
+        ids: condutaList.map((c) => c.pacienteId).toList(),
+      );
+
+      _filterData();
+
+      isLoading = false;
+      setState(() {});
+    } catch (e) {
+      AppToast.error(context, message: 'Erro: $e');
+      isLoading = false;
+      setState(() {});
+    }
+  }
+
+  void _filterData() {
+    final filter = _filter.value;
+
+    final items = condutaList
+        .map((conduta) {
+          final paciente = pacienteList.firstWhereOrNull(
+            (p) => p.id == conduta.pacienteId,
+          );
+          final medico = medicoList.firstWhereOrNull(
+            (m) => m.id == conduta.medicoId,
+          );
+
+          if (paciente == null) {
+            return null;
+          }
+
+          return CondutaItem(
+            paciente: paciente,
+            conduta: conduta,
+            medico: medico,
+          );
+        })
+        .nonNulls
+        .where(
+          (item) => switch (filter) {
+            'prescOculos' => item.conduta.tipo.contains('prescOculos'),
+            'cirurgia' => item.conduta.tipo.contains('cirurgia'),
+            'encam' => item.conduta.tipo.contains('encam'),
+            'alta' => item.conduta.tipo.contains('alta'),
+            'sem_cpf' => item.paciente.cpf?.isNotEmpty != true,
+            'sem_cns' => item.paciente.cns?.isNotEmpty != true,
+            'sem_tel' => item.paciente.tel?.isNotEmpty != true,
+            _ => true,
+          },
+        )
+        .toList();
+
+    condutas = items;
     setState(() {});
   }
-
-  List<CondutaItem> get _condutasFiltradas {
-    final filtro = _condutaFiltro.value;
-    if (filtro == null) return _condutas.value;
-
-    return _condutas.value.where((c) {
-      final tipo = (c.conduta.tipo ?? '').toLowerCase();
-      return tipo.contains(filtro.toLowerCase());
-    }).toList();
-  }
-
-  int get _pacientesCount => _condutas.value.length;
-
-  int get _altasCount => _condutas.value
-      .where((c) => (c.conduta.tipo ?? '').toLowerCase().contains('alta'))
-      .length;
-
-  int get _encaminhamentosCount => _condutas.value
-      .where(
-        (c) => (c.conduta.tipo ?? '').toLowerCase().contains('encaminhamento'),
-      )
-      .length;
-
-  int get _prescricoesCount => _condutas.value
-      .where(
-        (c) =>
-            (c.conduta.tipo ?? '').toLowerCase().contains('prescrição') ||
-            (c.conduta.tipo ?? '').toLowerCase().contains('prescricao'),
-      )
-      .length;
 
   void _createConduta() {
     showDialog(
       context: context,
       builder: (context) => RefracaoFormDialog(
-        datasDisponiveis: const [],
-        medicosDisponiveis: const [],
-        onSubmit: (item) {
-          _condutas.value = [..._condutas.value, item];
-          setState(() {});
+        mutirao: widget.mutirao,
+        datasDisponiveis: widget.mutirao.availableDates,
+        medicosDisponiveis: medicoList,
+        onSubmit: (item) async {
+          final conduta = item.conduta.copyWith(mutiraoId: widget.mutirao.id);
+
+          await GetIt.I<CondutaRepository>().upsert(conduta.toCompanion(true));
+          await GetIt.I<PacienteRepository>().upsert(
+            item.paciente.toCompanion(true),
+          );
+          _loadData();
+          AppToast.success(context, message: 'Paciente criado com sucesso');
         },
       ),
     );
@@ -91,25 +170,22 @@ class _MutiraoRefracaoPageState extends State<MutiraoRefracaoPage> {
       context: context,
       builder: (context) => RefracaoFormDialog(
         condutaItem: item,
-        datasDisponiveis: const [],
-        medicosDisponiveis: const [],
-        onSubmit: (updatedItem) {
-          final condutas = [..._condutas.value];
-          final index = condutas.indexWhere(
-            (c) => c.conduta.pacienteId == item.conduta.pacienteId,
+        mutirao: widget.mutirao,
+        datasDisponiveis: widget.mutirao.availableDates,
+        medicosDisponiveis: medicoList,
+        onSubmit: (updatedItem) async {
+          final conduta = updatedItem.conduta.copyWith(
+            mutiraoId: widget.mutirao.id,
           );
-          if (index != -1) {
-            condutas[index] = updatedItem;
-            _condutas.value = condutas;
-            setState(() {});
-          }
+          await GetIt.I<CondutaRepository>().upsert(conduta.toCompanion(true));
+          await GetIt.I<PacienteRepository>().upsert(
+            updatedItem.paciente.toCompanion(true),
+          );
+          _loadData();
+          AppToast.success(context, message: 'Paciente atualizado com sucesso');
         },
       ),
     );
-  }
-
-  void _syncDataSUS() {
-    // TODO: Implementar sincronização com DATASUS
   }
 
   void _deleteConduta(CondutaItem item) async {
@@ -123,14 +199,28 @@ class _MutiraoRefracaoPageState extends State<MutiraoRefracaoPage> {
       isDestructive: true,
     );
 
+    final now = DateTime.now().millisecondsSinceEpoch;
+
     if (confirmed == true) {
-      final condutas = [..._condutas.value];
-      condutas.removeWhere(
-        (c) => c.conduta.pacienteId == item.conduta.pacienteId,
+      await GetIt.I<CondutaRepository>().update(
+        item.conduta.id,
+        CondutasCompanion(
+          status: drift.Value(ModelStatus.deleted.index),
+          atualizadoEm: drift.Value(now),
+        ),
       );
-      _condutas.value = condutas;
-      setState(() {});
+      _loadData();
     }
+  }
+
+  void _syncWithDatasus() {
+    // TODO: Implementar sincronização com DATASUS
+  }
+
+  String _formatCpf(String cpf) {
+    final digits = cpf.replaceAll(RegExp(r'\D'), '');
+    if (digits.length != 11) return cpf;
+    return '${digits.substring(0, 3)}.${digits.substring(3, 6)}.${digits.substring(6, 9)}-${digits.substring(9)}';
   }
 
   @override
@@ -210,7 +300,7 @@ class _MutiraoRefracaoPageState extends State<MutiraoRefracaoPage> {
             ),
             StatCard(
               title: "Cirurgias",
-              value: "0",
+              value: _cirurgiasCount.toString(),
               icon: Icons.medical_services_outlined,
             ),
             StatCard(
@@ -262,8 +352,8 @@ class _MutiraoRefracaoPageState extends State<MutiraoRefracaoPage> {
 
   Widget _buildTable() {
     return AppDataTable<CondutaItem>(
-      items: _condutasFiltradas,
-      isLoading: false,
+      items: condutas,
+      isLoading: isLoading,
       searchHint: 'Filtrar',
       emptyMessage: 'Nenhum paciente cadastrado',
       emptySearchMessage: 'Nenhum resultado para',
@@ -272,36 +362,36 @@ class _MutiraoRefracaoPageState extends State<MutiraoRefracaoPage> {
           width: 200,
           height: 40,
           child: AppDropdown<String>(
-            initialValue: _condutaFiltro.value,
+            initialValue: _filter.value,
             label: 'Conduta',
             hint: 'Todos',
             items: const [
               DropdownMenuItem(value: null, child: Text('Todos')),
               DropdownMenuItem(
-                value: 'prescrição',
+                value: 'prescOculos',
                 child: Text('Prescrição de óculos'),
               ),
               DropdownMenuItem(value: 'cirurgia', child: Text('Cirurgia')),
-              DropdownMenuItem(
-                value: 'encaminhamento',
-                child: Text('Encaminhamento'),
-              ),
+              DropdownMenuItem(value: 'encam', child: Text('Encaminhamento')),
               DropdownMenuItem(value: 'alta', child: Text('Alta')),
+              DropdownMenuItem(value: 'sem_cpf', child: Text('Sem CPF')),
+              DropdownMenuItem(value: 'sem_cns', child: Text('Sem CNS')),
+              DropdownMenuItem(value: 'sem_tel', child: Text('Sem Telefone')),
             ],
             onChanged: (value) {
-              _condutaFiltro.value = value;
+              _filter.value = value;
             },
           ),
         ),
         const SizedBox(width: 8),
         OutlinedButton.icon(
-          onPressed: _syncDataSUS,
+          onPressed: isLoading ? null : _syncWithDatasus,
           icon: const Icon(Icons.sync, size: 16),
           label: const Text('Sinc. com o DATASUS'),
         ),
         const SizedBox(width: 8),
         ElevatedButton.icon(
-          onPressed: _createConduta,
+          onPressed: isLoading ? null : _createConduta,
           icon: const Icon(Icons.add, size: 16),
           label: const Text('Novo atendimento'),
         ),
@@ -313,19 +403,22 @@ class _MutiraoRefracaoPageState extends State<MutiraoRefracaoPage> {
         ),
         TableColumnConfig(
           label: 'CPF',
-          getValue: (c) => formatCpf(c.paciente.cpf ?? ''),
+          getValue: (c) => _formatCpf(c.paciente.cpf ?? ''),
         ),
-        TableColumnConfig(
-          label: 'CNS',
-          getValue: (c) => formatCns(c.paciente.cns ?? ''),
-        ),
+        TableColumnConfig(label: 'CNS', getValue: (c) => c.paciente.cns ?? ''),
         TableColumnConfig(
           label: 'Telefone',
           getValue: (c) => c.paciente.tel ?? '',
         ),
         TableColumnConfig(
           label: 'Conduta',
-          getValue: (c) => c.conduta.tipo ?? '',
+          getValue: (c) => switch (c.conduta.tipo) {
+            'prescOculos' => 'Prescrição de óculos',
+            'cirurgia' => 'Cirurgia',
+            'encam' => 'Encaminhamento',
+            'alta' => 'Alta',
+            _ => c.conduta.tipo,
+          },
         ),
       ],
       getSearchText: (c) =>

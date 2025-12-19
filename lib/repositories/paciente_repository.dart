@@ -56,33 +56,12 @@ class PacienteRepository implements IRepository<Paciente, PacientesCompanion> {
   }
 
   @override
-  Future<List<Paciente>> getAll({int? mutiraoId}) async {
+  Future<List<Paciente>> getAll({List<int>? ids}) async {
     final query = _db.select(_db.pacientes)
       ..where((p) => p.status.equals(ModelStatus.deleted.index).not());
 
-    if (mutiraoId != null) {
-      final joinedQuery = query.join([
-        leftOuterJoin(
-          _db.condutas,
-          _db.pacientes.id.equalsExp(_db.condutas.pacienteId),
-        ),
-        leftOuterJoin(
-          _db.procedimentos,
-          _db.pacientes.id.equalsExp(_db.procedimentos.pacienteId),
-        ),
-        leftOuterJoin(
-          _db.condutasGenericas,
-          _db.pacientes.id.equalsExp(_db.condutasGenericas.pacienteId),
-        ),
-      ]);
-
-      joinedQuery.where(
-        _db.condutas.mutiraoId.isNotNull() |
-            _db.procedimentos.mutiraoId.isNotNull() |
-            _db.condutasGenericas.mutiraoId.isNotNull(),
-      );
-
-      return joinedQuery.map((row) => row.readTable(_db.pacientes)).get();
+    if (ids != null) {
+      query.where((p) => p.id.isIn(ids));
     }
 
     return query.get();
